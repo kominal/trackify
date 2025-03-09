@@ -11,12 +11,14 @@ import { RequestBuilder } from '../../request-builder';
 import { DashboardRequest } from '../../models/dashboard-request';
 
 export interface Get$Params {
+  tenantId: string;
       body: DashboardRequest
 }
 
 export function get(http: HttpClient, rootUrl: string, params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, get.PATH, 'post');
   if (params) {
+    rb.path('tenantId', params.tenantId, {});
     rb.body(params.body, 'application/json');
   }
 

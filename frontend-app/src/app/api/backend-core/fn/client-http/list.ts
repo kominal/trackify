@@ -11,14 +11,28 @@ import { RequestBuilder } from '../../request-builder';
 import { Client } from '../../models/client';
 
 export interface List$Params {
+  tenantId: string;
+  active?: string;
+  direction?: string;
+  pageIndex?: number;
+  pageSize?: number;
+  filter?: string;
+  select?: string;
 }
 
-export function list(http: HttpClient, rootUrl: string, params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+export function list(http: HttpClient, rootUrl: string, params: List$Params, context?: HttpContext): Observable<StrictHttpResponse<{
 'items': Array<Client>;
 'count': number;
 }>> {
   const rb = new RequestBuilder(rootUrl, list.PATH, 'get');
   if (params) {
+    rb.path('tenantId', params.tenantId, {});
+    rb.query('active', params.active, {});
+    rb.query('direction', params.direction, {});
+    rb.query('pageIndex', params.pageIndex, {});
+    rb.query('pageSize', params.pageSize, {});
+    rb.query('filter', params.filter, {});
+    rb.query('select', params.select, {});
   }
 
   return http.request(

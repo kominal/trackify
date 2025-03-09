@@ -5,6 +5,8 @@
 import { PhysicalRiskScenario } from '../models/physical-risk-scenario';
 import { TransitionRiskScenario } from '../models/transition-risk-scenario';
 export interface DashboardRequest {
+  assetId: string;
+  period: Array<Date>;
   physicalRiskScenario: PhysicalRiskScenario;
   transitionRiskScenario: TransitionRiskScenario;
 }

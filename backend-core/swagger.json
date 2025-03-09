@@ -6,15 +6,22 @@
         "operationId": "TenantController_create",
         "parameters": [],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TenantCreateRequest" } } } },
-        "responses": { "201": { "description": "" } },
+        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Tenant" } } } } },
         "summary": "",
         "tags": ["tenant-http"],
         "x-operation-name": "create"
       },
       "get": {
         "operationId": "TenantController_list",
-        "parameters": [],
-        "responses": { "200": { "description": "" } },
+        "parameters": [
+          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Tenant" } } } } } },
         "summary": "",
         "tags": ["tenant-http"],
         "x-operation-name": "list"
@@ -24,7 +31,7 @@
       "get": {
         "operationId": "TenantController_read",
         "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "responses": { "200": { "description": "" } },
+        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Tenant" } } } } },
         "summary": "",
         "tags": ["tenant-http"],
         "x-operation-name": "read"
@@ -42,16 +49,24 @@
     "/tenants/{tenantId}/clients": {
       "post": {
         "operationId": "ClientController_create",
-        "parameters": [],
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
-        "responses": { "201": { "description": "" } },
+        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } } },
         "summary": "",
         "tags": ["client-http"],
         "x-operation-name": "create"
       },
       "get": {
         "operationId": "ClientController_list",
-        "parameters": [],
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -73,15 +88,21 @@
     "/tenants/{tenantId}/clients/{uuid}": {
       "get": {
         "operationId": "ClientController_read",
-        "parameters": [],
-        "responses": { "200": { "description": "" } },
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } } },
         "summary": "",
         "tags": ["client-http"],
         "x-operation-name": "read"
       },
       "put": {
         "operationId": "ClientController_update",
-        "parameters": [],
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
         "responses": { "200": { "description": "" } },
         "summary": "",
@@ -90,7 +111,10 @@
       },
       "delete": {
         "operationId": "ClientController_delete",
-        "parameters": [],
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
         "responses": { "200": { "description": "" } },
         "summary": "",
         "tags": ["client-http"],
@@ -100,7 +124,7 @@
     "/tenants/{tenantId}/dashboard": {
       "post": {
         "operationId": "DashboardController_get",
-        "parameters": [],
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DashboardRequest" } } } },
         "responses": { "201": { "description": "" } },
         "summary": "",
@@ -118,19 +142,55 @@
   "components": {
     "securitySchemes": { "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" } },
     "schemas": {
-      "TenantCreateRequest": { "type": "object", "properties": {} },
-      "TenantUpdateRequest": { "type": "object", "properties": {} },
-      "ClientRequest": { "type": "object", "properties": {} },
-      "Client": { "type": "object", "properties": {} },
+      "TenantCreateRequest": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"] },
+      "StoredFile": {
+        "type": "object",
+        "properties": { "name": { "type": "string" }, "location": { "type": "string" }, "key": { "type": "string" } },
+        "required": ["name", "location", "key"]
+      },
+      "Tenant": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "logo": { "$ref": "#/components/schemas/StoredFile" },
+          "_id": { "type": "string" },
+          "uuid": { "type": "string" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "createdBy": { "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" },
+          "updatedBy": { "type": "string" },
+          "version": { "type": "number" }
+        },
+        "required": ["name", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+      },
+      "TenantUpdateRequest": { "type": "object", "properties": { "name": { "type": "string" }, "logo": { "$ref": "#/components/schemas/StoredFile" } }, "required": ["name"] },
+      "ClientRequest": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"] },
+      "Client": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "tenantId": { "type": "string" },
+          "_id": { "type": "string" },
+          "uuid": { "type": "string" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "createdBy": { "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" },
+          "updatedBy": { "type": "string" },
+          "version": { "type": "number" }
+        },
+        "required": ["name", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+      },
       "PhysicalRiskScenario": { "type": "string", "enum": ["DUMMY"] },
       "TransitionRiskScenario": { "type": "string", "enum": ["DUMMY"] },
       "DashboardRequest": {
         "type": "object",
         "properties": {
           "physicalRiskScenario": { "allOf": [{ "$ref": "#/components/schemas/PhysicalRiskScenario" }] },
-          "transitionRiskScenario": { "allOf": [{ "$ref": "#/components/schemas/TransitionRiskScenario" }] }
+          "transitionRiskScenario": { "allOf": [{ "$ref": "#/components/schemas/TransitionRiskScenario" }] },
+          "assetId": { "type": "string" },
+          "period": { "type": "array", "items": { "format": "date-time", "type": "string" } }
         },
-        "required": ["physicalRiskScenario", "transitionRiskScenario"]
+        "required": ["physicalRiskScenario", "transitionRiskScenario", "assetId", "period"]
       }
     }
   }

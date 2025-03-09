@@ -8,23 +8,24 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { Tenant } from '../../models/tenant';
 
 export interface Read$Params {
   tenantId: string;
 }
 
-export function read(http: HttpClient, rootUrl: string, params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function read(http: HttpClient, rootUrl: string, params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
   const rb = new RequestBuilder(rootUrl, read.PATH, 'get');
   if (params) {
     rb.path('tenantId', params.tenantId, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<Tenant>;
     })
   );
 }

@@ -38,7 +38,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list$Response(params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+  list$Response(params: List$Params, context?: HttpContext): Observable<StrictHttpResponse<{
 'items': Array<Client>;
 'count': number;
 }>> {
@@ -51,7 +51,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list(params?: List$Params, context?: HttpContext): Observable<{
+  list(params: List$Params, context?: HttpContext): Observable<{
 'items': Array<Client>;
 'count': number;
 }> {
@@ -75,7 +75,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Client>> {
     return create(this.http, this.rootUrl, params, context);
   }
 
@@ -85,9 +85,9 @@ export class ClientHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<void> {
+  create(params: Create$Params, context?: HttpContext): Observable<Client> {
     return this.create$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Client>): Client => r.body)
     );
   }
 
@@ -100,7 +100,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read$Response(params?: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<Client>> {
     return read(this.http, this.rootUrl, params, context);
   }
 
@@ -110,9 +110,9 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read(params?: Read$Params, context?: HttpContext): Observable<void> {
+  read(params: Read$Params, context?: HttpContext): Observable<Client> {
     return this.read$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Client>): Client => r.body)
     );
   }
 
@@ -150,7 +150,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  delete$Response(params?: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return delete$(this.http, this.rootUrl, params, context);
   }
 
@@ -160,7 +160,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  delete(params?: Delete$Params, context?: HttpContext): Observable<void> {
+  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
     return this.delete$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );

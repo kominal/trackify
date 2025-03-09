@@ -8,21 +8,34 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { Tenant } from '../../models/tenant';
 
 export interface List$Params {
+  active?: string;
+  direction?: string;
+  pageIndex?: number;
+  pageSize?: number;
+  filter?: string;
+  select?: string;
 }
 
-export function list(http: HttpClient, rootUrl: string, params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function list(http: HttpClient, rootUrl: string, params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
   const rb = new RequestBuilder(rootUrl, list.PATH, 'get');
   if (params) {
+    rb.query('active', params.active, {});
+    rb.query('direction', params.direction, {});
+    rb.query('pageIndex', params.pageIndex, {});
+    rb.query('pageSize', params.pageSize, {});
+    rb.query('filter', params.filter, {});
+    rb.query('select', params.select, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<Array<Tenant>>;
     })
   );
 }

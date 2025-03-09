@@ -17,6 +17,7 @@ import { list } from '../fn/tenant-http/list';
 import { List$Params } from '../fn/tenant-http/list';
 import { read } from '../fn/tenant-http/read';
 import { Read$Params } from '../fn/tenant-http/read';
+import { Tenant } from '../models/tenant';
 import { update } from '../fn/tenant-http/update';
 import { Update$Params } from '../fn/tenant-http/update';
 
@@ -35,7 +36,7 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list$Response(params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  list$Response(params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
     return list(this.http, this.rootUrl, params, context);
   }
 
@@ -45,9 +46,9 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list(params?: List$Params, context?: HttpContext): Observable<void> {
+  list(params?: List$Params, context?: HttpContext): Observable<Array<Tenant>> {
     return this.list$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<Tenant>>): Array<Tenant> => r.body)
     );
   }
 
@@ -60,7 +61,7 @@ export class TenantHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
     return create(this.http, this.rootUrl, params, context);
   }
 
@@ -70,9 +71,9 @@ export class TenantHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<void> {
+  create(params: Create$Params, context?: HttpContext): Observable<Tenant> {
     return this.create$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Tenant>): Tenant => r.body)
     );
   }
 
@@ -85,7 +86,7 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
     return read(this.http, this.rootUrl, params, context);
   }
 
@@ -95,9 +96,9 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read(params: Read$Params, context?: HttpContext): Observable<void> {
+  read(params: Read$Params, context?: HttpContext): Observable<Tenant> {
     return this.read$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Tenant>): Tenant => r.body)
     );
   }
 

@@ -6,6 +6,8 @@ export { Client } from './models/client';
 export { ClientRequest } from './models/client-request';
 export { DashboardRequest } from './models/dashboard-request';
 export { PhysicalRiskScenario } from './models/physical-risk-scenario';
+export { StoredFile } from './models/stored-file';
+export { Tenant } from './models/tenant';
 export { TenantCreateRequest } from './models/tenant-create-request';
 export { TenantUpdateRequest } from './models/tenant-update-request';
 export { TransitionRiskScenario } from './models/transition-risk-scenario';

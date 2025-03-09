@@ -1,1 +1,21 @@
-<p>home works!</p>
+<div class="content">
+  <div class="header">
+    <div class="flex items-center gap-2" style="min-height: 32px">
+      <span class="text-900 text-3xl font-medium">{{ 'simple.tenants' | translate }}</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <p-button [label]="'simple.tenant' | translate" icon="pi pi-plus" (click)="showCreateTenantDialog()" />
+    </div>
+  </div>
+
+  <p-message severity="info" showTransitionOptions="0s">{{ 'home.welcome' | translate }}</p-message>
+
+  @if (tenants$ | async; as tenants) {
+    @for (tenant of tenants; track tenant.uuid) {
+      <div class="shadow-3 hover:surface-100 surface-card flex w-full cursor-pointer items-center gap-2 rounded border-2 border-gray-200 p-3" [routerLink]="'/' + tenant.uuid">
+        <img [src]="tenant?.logo?.location || 'logo.png'" class="round" height="30" width="30" />
+        <span class="text-2xl font-bold">{{ tenant.name }}</span>
+      </div>
+    }
+  }
+</div>

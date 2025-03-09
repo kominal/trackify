@@ -10,11 +10,15 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface Delete$Params {
+  tenantId: string;
+  uuid: string;
 }
 
-export function delete$(http: HttpClient, rootUrl: string, params?: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function delete$(http: HttpClient, rootUrl: string, params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, delete$.PATH, 'delete');
   if (params) {
+    rb.path('tenantId', params.tenantId, {});
+    rb.path('uuid', params.uuid, {});
   }
 
   return http.request(
