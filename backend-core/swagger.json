@@ -97,7 +97,7 @@
         "tags": ["client-http"],
         "x-operation-name": "read"
       },
-      "put": {
+      "patch": {
         "operationId": "ClientController_update",
         "parameters": [
           { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
@@ -108,6 +108,20 @@
         "summary": "",
         "tags": ["client-http"],
         "x-operation-name": "update"
+      },
+      "put": {
+        "operationId": "ClientController_upsert",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
+        "responses": {
+          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Client" }, { "type": "void" }] } } } }
+        },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "upsert"
       },
       "delete": {
         "operationId": "ClientController_delete",

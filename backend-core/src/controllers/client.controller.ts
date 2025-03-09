@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { Client, ClientRequest } from '../entities/client.entity';
 import { TenantGuard } from '../guards/tenant.guard';
 import { UserContext, UserCtx } from '../helpers/context.decorator';
 import { CustomOperationName } from '../helpers/custom-operation-name.decorator';
-import { EntitiesPathParams, EntityPathParams, ListParams, ListResponse, OpenApiPaginationResponse } from '../helpers/entity-service.helper';
+import { EntitiesPathParams, EntityPathParams, ListParams, ListResponse, OpenApiPaginationResponse, OptionalEntityPathParams } from '../helpers/entity-service.helper';
 import { ClientService } from '../services/client.service';
 
 @UseGuards(TenantGuard)
@@ -32,10 +32,17 @@ export class ClientController {
     return this.clientService.read(params);
   }
 
-  @Put(':uuid')
+  @Patch(':uuid')
   @CustomOperationName()
   public update(@UserCtx() userContext: UserContext, @Param() params: EntityPathParams, @Body() request: ClientRequest): Promise<void> {
     return this.clientService.update(userContext, params, request);
+  }
+
+  @Put(':uuid')
+  @CustomOperationName()
+  @ApiOkResponse({ schema: { oneOf: [{ $ref: getSchemaPath(Client) }, { type: 'void' }] } })
+  public upsert(@UserCtx() userContext: UserContext, @Param() params: OptionalEntityPathParams, @Body() request: ClientRequest): Promise<Client | void> {
+    return this.clientService.upsert(userContext, params, request);
   }
 
   @Delete(':uuid')

@@ -71,6 +71,7 @@ export class EntityService<
   Entity extends BaseEntity,
   EntitiesPath extends FilterQuery<Entity> = EntitiesPathParams,
   EntityPath extends FilterQuery<Entity> = EntityPathParams,
+  OptionalEntityPath extends FilterQuery<Entity> = OptionalEntityPathParams,
   PopulatedEntity = Entity,
 > {
   public constructor(
@@ -107,6 +108,13 @@ export class EntityService<
 
   public async update(changeContext: ChangeContext, entityPath: EntityPath, createRequest: Partial<Entity>): Promise<void> {
     await this.model.updateOne(entityPath, changed(changeContext, { ...createRequest, tenantId: entityPath.tenantId }));
+  }
+
+  public async upsert(changeContext: ChangeContext, entityPath: OptionalEntityPath, createRequest: Partial<Entity>): Promise<Entity | void> {
+    if (entityPath.uuid) {
+      return this.update(changeContext, entityPath as unknown as EntityPath, createRequest);
+    }
+    return this.create(changeContext, entityPath as unknown as EntitiesPath, createRequest);
   }
 
   public async delete(params: EntityPath): Promise<any> {
