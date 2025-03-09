@@ -4,7 +4,7 @@ import { JwksClient } from 'jwks-rsa';
 
 @Injectable()
 export class AuthService {
-  private jwksClient = new JwksClient({ jwksUri: 'https://climate-resilience-suite.eu.auth0.com/.well-known/jwks.json' });
+  private jwksClient = new JwksClient({ jwksUri: 'https://kominal.eu.auth0.com/.well-known/jwks.json' });
 
   public async getClaims(bearerHeader: string): Promise<any> {
     if (!bearerHeader) {
