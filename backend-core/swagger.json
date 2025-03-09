@@ -1,0 +1,137 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/tenants": {
+      "post": {
+        "operationId": "TenantController_create",
+        "parameters": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TenantCreateRequest" } } } },
+        "responses": { "201": { "description": "" } },
+        "summary": "",
+        "tags": ["tenant-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "TenantController_list",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["tenant-http"],
+        "x-operation-name": "list"
+      }
+    },
+    "/tenants/{tenantId}": {
+      "get": {
+        "operationId": "TenantController_read",
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["tenant-http"],
+        "x-operation-name": "read"
+      },
+      "put": {
+        "operationId": "TenantController_update",
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TenantUpdateRequest" } } } },
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["tenant-http"],
+        "x-operation-name": "update"
+      }
+    },
+    "/tenants/{tenantId}/clients": {
+      "post": {
+        "operationId": "ClientController_create",
+        "parameters": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
+        "responses": { "201": { "description": "" } },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "ClientController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Client" } }, "count": { "type": "number" } },
+                  "required": ["items", "count"]
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "list"
+      }
+    },
+    "/tenants/{tenantId}/clients/{uuid}": {
+      "get": {
+        "operationId": "ClientController_read",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "read"
+      },
+      "put": {
+        "operationId": "ClientController_update",
+        "parameters": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "update"
+      },
+      "delete": {
+        "operationId": "ClientController_delete",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "delete"
+      }
+    },
+    "/tenants/{tenantId}/dashboard": {
+      "post": {
+        "operationId": "DashboardController_get",
+        "parameters": [],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DashboardRequest" } } } },
+        "responses": { "201": { "description": "" } },
+        "summary": "",
+        "tags": ["dashboard-http"],
+        "x-operation-name": "get"
+      }
+    }
+  },
+  "info": { "title": "Core", "description": "", "version": "1.0.0", "contact": {} },
+  "tags": [],
+  "servers": [
+    { "url": "/api/core", "description": "Current installation" },
+    { "url": "https://app.trackify.com/api/core/api", "description": "Production" }
+  ],
+  "components": {
+    "securitySchemes": { "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" } },
+    "schemas": {
+      "TenantCreateRequest": { "type": "object", "properties": {} },
+      "TenantUpdateRequest": { "type": "object", "properties": {} },
+      "ClientRequest": { "type": "object", "properties": {} },
+      "Client": { "type": "object", "properties": {} },
+      "PhysicalRiskScenario": { "type": "string", "enum": ["DUMMY"] },
+      "TransitionRiskScenario": { "type": "string", "enum": ["DUMMY"] },
+      "DashboardRequest": {
+        "type": "object",
+        "properties": {
+          "physicalRiskScenario": { "allOf": [{ "$ref": "#/components/schemas/PhysicalRiskScenario" }] },
+          "transitionRiskScenario": { "allOf": [{ "$ref": "#/components/schemas/TransitionRiskScenario" }] }
+        },
+        "required": ["physicalRiskScenario", "transitionRiskScenario"]
+      }
+    }
+  }
+}

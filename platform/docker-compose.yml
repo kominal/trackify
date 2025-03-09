@@ -1,0 +1,42 @@
+version: '3.3'
+
+networks:
+  global:
+    external:
+      name: infrastructure_production_global
+
+services:
+  frontend-app:
+    image: ghcr.io/kominal/trackify/frontend-app:production
+    deploy:
+      replicas: 1
+      labels:
+        - 'traefik.enable=true'
+        - 'traefik.http.routers.${STACK_NAME}_frontend-app.entrypoints=https'
+        - 'traefik.http.routers.${STACK_NAME}_frontend-app.tls=true'
+        - 'traefik.http.routers.${STACK_NAME}_frontend-app.tls.certresolver=https'
+        - 'traefik.http.routers.${STACK_NAME}_frontend-app.rule=Host(`app.${BASE_URL}`) && !PathPrefix(`/api`)'
+        - 'traefik.http.services.${STACK_NAME}_frontend-app.loadbalancer.server.port=8080'
+    networks:
+      - global
+  backend-core:
+    image: ghcr.io/kominal/trackify/backend-core:production
+    deploy:
+      replicas: 1
+      labels:
+        - 'traefik.enable=true'
+        - 'traefik.http.middlewares.${STACK_NAME}_backend-core.stripprefix.prefixes=/api/core'
+        - 'traefik.http.routers.${STACK_NAME}_backend-core.entrypoints=https'
+        - 'traefik.http.routers.${STACK_NAME}_backend-core.tls=true'
+        - 'traefik.http.routers.${STACK_NAME}_backend-core.rule=(Host(`${BASE_URL}`) || Host(`app.${BASE_URL}`)) && PathPrefix(`/api/core`)'
+        - 'traefik.http.routers.${STACK_NAME}_backend-core.middlewares=${STACK_NAME}_backend-core'
+        - 'traefik.http.services.${STACK_NAME}_backend-core.loadbalancer.server.port=3000'
+    networks:
+      - global
+    environment:
+      BASE_URL: '$BASE_URL'
+      S3_ACCESS_KEY: '$S3_ACCESS_KEY'
+      S3_SECRET_KEY: '$S3_SECRET_KEY'
+      S3_BUCKET: '$S3_BUCKET'
+      MONGODB_CONNECTION_STRING: '$MONGODB_CONNECTION_STRING'
+      MAIL_CONNECTION_STRING: '$MAIL_CONNECTION_STRING'
