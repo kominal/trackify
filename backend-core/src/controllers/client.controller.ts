@@ -38,7 +38,7 @@ export class ClientController {
     return this.clientService.update(userContext, params, request);
   }
 
-  @Put(':uuid?')
+  @Put('{:uuid}')
   @CustomOperationName()
   @ApiOkResponse({ schema: { oneOf: [{ $ref: getSchemaPath(Client) }, { type: 'void' }] } })
   public upsert(@UserCtx() userContext: UserContext, @Param() params: OptionalEntityPathParams, @Body() request: ClientRequest): Promise<Client | void> {
