@@ -5,6 +5,7 @@ import { TECHNICAL_KEYS, TenantEntity } from '../models/core/entity.model';
 
 @Schema()
 export class Project extends TenantEntity {
+  @Prop() public clientId: string;
   @Prop() public name: string;
 }
 

@@ -5,7 +5,9 @@ import { TECHNICAL_KEYS, TenantEntity } from '../models/core/entity.model';
 
 @Schema()
 export class Record extends TenantEntity {
+  @Prop() public taskId: string;
   @Prop() public name: string;
+  @Prop() public duration: number;
 }
 
 export type RecordModel = Model<Record>;

@@ -5,6 +5,9 @@ import { ModelDefinition, MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ClientController } from './controllers/client.controller';
 import { DashboardController } from './controllers/dashboard.controller';
+import { ProjectController } from './controllers/project.controller';
+import { RecordController } from './controllers/record.controller';
+import { TaskController } from './controllers/task.controller';
 import { TenantController } from './controllers/tenant.controller';
 import { Client, ClientSchema } from './entities/client.entity';
 import { Membership, MembershipSchema } from './entities/membership.entity';
@@ -19,6 +22,9 @@ import { AuthService } from './services/auth.service';
 import { ClientService } from './services/client.service';
 import { DashboardService } from './services/dashboard.service';
 import { MailService } from './services/mail.service';
+import { ProjectService } from './services/project.service';
+import { RecordService } from './services/record.service';
+import { TaskService } from './services/task.service';
 import { TenantService } from './services/tenant.service';
 
 export const modelDefinitions: ModelDefinition[] = [
@@ -40,8 +46,8 @@ export const moduleDefinition = {
     }),
     ScheduleModule.forRoot(),
   ],
-  controllers: [TenantController, ClientController, DashboardController],
-  providers: [TenantService, AuthService, MailService, ClientService, TenantGuard, UserGuard, DashboardService],
+  controllers: [TenantController, ClientController, DashboardController, ProjectController, RecordController, TaskController],
+  providers: [TenantService, AuthService, MailService, ClientService, TenantGuard, UserGuard, DashboardService, ProjectService, RecordService, TaskService],
 };
 
 @Module(moduleDefinition)

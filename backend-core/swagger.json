@@ -145,6 +145,271 @@
         "tags": ["dashboard-http"],
         "x-operation-name": "get"
       }
+    },
+    "/tenants/{tenantId}/projects": {
+      "post": {
+        "operationId": "ProjectController_create",
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectRequest" } } } },
+        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Project" } } } } },
+        "summary": "",
+        "tags": ["project-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "ProjectController_list",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Project" } }, "count": { "type": "number" } },
+                  "required": ["items", "count"]
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["project-http"],
+        "x-operation-name": "list"
+      }
+    },
+    "/tenants/{tenantId}/projects/{uuid}": {
+      "get": {
+        "operationId": "ProjectController_read",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Project" } } } } },
+        "summary": "",
+        "tags": ["project-http"],
+        "x-operation-name": "read"
+      },
+      "patch": {
+        "operationId": "ProjectController_update",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectRequest" } } } },
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["project-http"],
+        "x-operation-name": "update"
+      },
+      "put": {
+        "operationId": "ProjectController_upsert",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectRequest" } } } },
+        "responses": {
+          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Project" }, { "type": "void" }] } } } }
+        },
+        "summary": "",
+        "tags": ["project-http"],
+        "x-operation-name": "upsert"
+      },
+      "delete": {
+        "operationId": "ProjectController_delete",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["project-http"],
+        "x-operation-name": "delete"
+      }
+    },
+    "/tenants/{tenantId}/records": {
+      "post": {
+        "operationId": "RecordController_create",
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RecordRequest" } } } },
+        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Record" } } } } },
+        "summary": "",
+        "tags": ["record-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "RecordController_list",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Record" } }, "count": { "type": "number" } },
+                  "required": ["items", "count"]
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["record-http"],
+        "x-operation-name": "list"
+      }
+    },
+    "/tenants/{tenantId}/records/{uuid}": {
+      "get": {
+        "operationId": "RecordController_read",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Record" } } } } },
+        "summary": "",
+        "tags": ["record-http"],
+        "x-operation-name": "read"
+      },
+      "patch": {
+        "operationId": "RecordController_update",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RecordRequest" } } } },
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["record-http"],
+        "x-operation-name": "update"
+      },
+      "put": {
+        "operationId": "RecordController_upsert",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RecordRequest" } } } },
+        "responses": {
+          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Record" }, { "type": "void" }] } } } }
+        },
+        "summary": "",
+        "tags": ["record-http"],
+        "x-operation-name": "upsert"
+      },
+      "delete": {
+        "operationId": "RecordController_delete",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["record-http"],
+        "x-operation-name": "delete"
+      }
+    },
+    "/tenants/{tenantId}/tasks": {
+      "post": {
+        "operationId": "TaskController_create",
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskRequest" } } } },
+        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Task" } } } } },
+        "summary": "",
+        "tags": ["task-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "TaskController_list",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
+          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
+          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Task" } }, "count": { "type": "number" } },
+                  "required": ["items", "count"]
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["task-http"],
+        "x-operation-name": "list"
+      }
+    },
+    "/tenants/{tenantId}/tasks/{uuid}": {
+      "get": {
+        "operationId": "TaskController_read",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Task" } } } } },
+        "summary": "",
+        "tags": ["task-http"],
+        "x-operation-name": "read"
+      },
+      "patch": {
+        "operationId": "TaskController_update",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskRequest" } } } },
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["task-http"],
+        "x-operation-name": "update"
+      },
+      "put": {
+        "operationId": "TaskController_upsert",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskRequest" } } } },
+        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Task" }, { "type": "void" }] } } } } },
+        "summary": "",
+        "tags": ["task-http"],
+        "x-operation-name": "upsert"
+      },
+      "delete": {
+        "operationId": "TaskController_delete",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["task-http"],
+        "x-operation-name": "delete"
+      }
     }
   },
   "info": { "title": "Core", "description": "", "version": "1.0.0", "contact": {} },
@@ -205,6 +470,62 @@
           "period": { "type": "array", "items": { "format": "date-time", "type": "string" } }
         },
         "required": ["physicalRiskScenario", "transitionRiskScenario", "assetId", "period"]
+      },
+      "ProjectRequest": { "type": "object", "properties": { "clientId": { "type": "string" }, "name": { "type": "string" } }, "required": ["clientId", "name"] },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "clientId": { "type": "string" },
+          "name": { "type": "string" },
+          "tenantId": { "type": "string" },
+          "_id": { "type": "string" },
+          "uuid": { "type": "string" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "createdBy": { "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" },
+          "updatedBy": { "type": "string" },
+          "version": { "type": "number" }
+        },
+        "required": ["clientId", "name", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+      },
+      "RecordRequest": {
+        "type": "object",
+        "properties": { "taskId": { "type": "string" }, "name": { "type": "string" }, "duration": { "type": "number" } },
+        "required": ["taskId", "name", "duration"]
+      },
+      "Record": {
+        "type": "object",
+        "properties": {
+          "taskId": { "type": "string" },
+          "name": { "type": "string" },
+          "duration": { "type": "number" },
+          "tenantId": { "type": "string" },
+          "_id": { "type": "string" },
+          "uuid": { "type": "string" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "createdBy": { "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" },
+          "updatedBy": { "type": "string" },
+          "version": { "type": "number" }
+        },
+        "required": ["taskId", "name", "duration", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+      },
+      "TaskRequest": { "type": "object", "properties": { "projectId": { "type": "string" }, "name": { "type": "string" } }, "required": ["projectId", "name"] },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "projectId": { "type": "string" },
+          "name": { "type": "string" },
+          "tenantId": { "type": "string" },
+          "_id": { "type": "string" },
+          "uuid": { "type": "string" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "createdBy": { "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" },
+          "updatedBy": { "type": "string" },
+          "version": { "type": "number" }
+        },
+        "required": ["projectId", "name", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
       }
     }
   }
