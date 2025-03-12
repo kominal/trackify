@@ -7,6 +7,7 @@ import { TECHNICAL_KEYS, TenantEntity } from '../models/core/entity.model';
 export class Task extends TenantEntity {
   @Prop() public projectId: string;
   @Prop() public name: string;
+  @Prop() public color: string;
 }
 
 export type TaskModel = Model<Task>;

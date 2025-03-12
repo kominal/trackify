@@ -17,7 +17,7 @@ export interface Update$Params {
 }
 
 export function update(http: HttpClient, rootUrl: string, params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, update.PATH, 'put');
+  const rb = new RequestBuilder(rootUrl, update.PATH, 'patch');
   if (params) {
     rb.path('tenantId', params.tenantId, {});
     rb.path('uuid', params.uuid, {});

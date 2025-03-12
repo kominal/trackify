@@ -1,0 +1,11 @@
+<app-label [label]="label()" [formElement]="formElement()" />
+<div class="flex gap-2">
+  @for (color of COLORS; track $index) {
+    <div
+      [ngClass]="'bg-' + color + '-300'"
+      class="rounded cursor-pointer h-8 w-8 border-2 border-gray-200 hover:border-gray-500"
+      [class.border-gray-800]="formElement().value === color"
+      (click)="formElement().setValue(color)"
+    ></div>
+  }
+</div>

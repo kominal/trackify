@@ -7,11 +7,12 @@ import { MenuModule } from 'primeng/menu';
 import { MenubarModule } from 'primeng/menubar';
 import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { TenantService } from '../../services/tenant.service';
+import { TrackerComponent } from '../tracker/tracker.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [AsyncPipe, MenubarModule, MenuModule],
+  imports: [AsyncPipe, MenubarModule, MenuModule, TrackerComponent],
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
@@ -26,17 +27,11 @@ export class HeaderComponent {
       }
 
       return [
-        {
-          label: this.translateService.instant('simple.dashboard'),
-          items: [
-            { label: this.translateService.instant('simple.assets'), routerLink: 'dashboard/assets' },
-            { label: this.translateService.instant('simple.analysis'), routerLink: 'dashboard/analysis' },
-          ],
-        },
-        { label: this.translateService.instant('simple.assets'), routerLink: 'assets' },
-        { label: this.translateService.instant('simple.learningHub'), routerLink: 'learning-hub' },
-        { label: this.translateService.instant('simple.connectivityHub'), routerLink: 'connectivity-hub' },
-        { label: this.translateService.instant('simple.wiki'), routerLink: 'wiki' },
+        { label: this.translateService.instant('simple.dashboard'), routerLink: 'dashboard' },
+        { label: this.translateService.instant('simple.records'), routerLink: 'records' },
+        { label: this.translateService.instant('simple.tasks'), routerLink: 'tasks' },
+        { label: this.translateService.instant('simple.projects'), routerLink: 'projects' },
+        { label: this.translateService.instant('simple.clients'), routerLink: 'clients' },
       ];
     }),
   );

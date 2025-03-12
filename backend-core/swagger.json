@@ -510,12 +510,17 @@
         },
         "required": ["taskId", "name", "duration", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
       },
-      "TaskRequest": { "type": "object", "properties": { "projectId": { "type": "string" }, "name": { "type": "string" } }, "required": ["projectId", "name"] },
+      "TaskRequest": {
+        "type": "object",
+        "properties": { "projectId": { "type": "string" }, "name": { "type": "string" }, "color": { "type": "string" } },
+        "required": ["projectId", "name", "color"]
+      },
       "Task": {
         "type": "object",
         "properties": {
           "projectId": { "type": "string" },
           "name": { "type": "string" },
+          "color": { "type": "string" },
           "tenantId": { "type": "string" },
           "_id": { "type": "string" },
           "uuid": { "type": "string" },
@@ -525,7 +530,7 @@
           "updatedBy": { "type": "string" },
           "version": { "type": "number" }
         },
-        "required": ["projectId", "name", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["projectId", "name", "color", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
       }
     }
   }

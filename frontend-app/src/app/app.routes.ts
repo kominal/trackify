@@ -8,6 +8,7 @@ import { ErrorComponent } from './pages/error/error.component';
 import { HomeComponent } from './pages/home/home.component';
 import { MembersComponent } from './pages/members/members.component';
 import { ProjectsComponent } from './pages/projects/projects.component';
+import { RecordsComponent } from './pages/records/records.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
 import { TenantService } from './services/tenant.service';
 import { ShellComponent } from './shell/shell.component';
@@ -37,10 +38,11 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'clients', component: ClientsComponent },
-      { path: 'members', component: MembersComponent },
       { path: 'projects', component: ProjectsComponent },
       { path: 'tasks', component: TasksComponent },
-      { path: '**', redirectTo: 'dashboard/assets' },
+      { path: 'records', component: RecordsComponent },
+      { path: 'members', component: MembersComponent },
+      { path: '**', redirectTo: 'dashboard' },
     ],
   },
   { path: 'error', component: ErrorComponent, resolve: { tenantId: (): void => inject(TenantService).setTenantId(undefined) } },

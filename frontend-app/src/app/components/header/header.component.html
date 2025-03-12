@@ -8,12 +8,17 @@
     }
   </ng-template>
   <ng-template #end>
-    @if (authService.user$ | async; as user) {
-      <div pRipple class="flex cursor-pointer select-none items-center gap-2 rounded p-2 hover:bg-gray-100" (click)="userMenu.toggle($event)">
-        <span class="hidden md:block">{{ user.name }}</span>
-        <img [src]="user.picture" class="rounded" height="30" width="30" />
-      </div>
-    }
+    <div class="flex items-center gap-4">
+      @if (tenantService.tenant$ | async; as tenant) {
+        <app-tracker></app-tracker>
+      }
+      @if (authService.user$ | async; as user) {
+        <div pRipple class="flex cursor-pointer select-none items-center gap-2 rounded p-2 hover:bg-gray-100" (click)="userMenu.toggle($event)">
+          <span class="hidden md:block">{{ user.name }}</span>
+          <img [src]="user.picture" class="rounded" height="30" width="30" />
+        </div>
+      }
+    </div>
   </ng-template>
 </p-menubar>
 

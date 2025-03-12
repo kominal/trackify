@@ -1,0 +1,8 @@
+<div class="flex flex-col gap-1" [formGroup]="formElement">
+  <app-input-text [formElement]="formElement.controls.name" label="forms.client.name" />
+</div>
+
+<div class="flex justify-end gap-2">
+  <p-button variant="outlined" severity="secondary" [label]="'simple.cancel' | translate" icon="pi pi-times" (click)="dynamicDialogRef.close()" />
+  <p-button [label]="'simple.save' | translate" icon="pi pi-save" (click)="submit()" [disabled]="formElement.disabled || !formElement.valid" />
+</div>

@@ -9,6 +9,9 @@ import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 import { TenantHttpService } from './services/tenant-http.service';
 import { ClientHttpService } from './services/client-http.service';
 import { DashboardHttpService } from './services/dashboard-http.service';
+import { ProjectHttpService } from './services/project-http.service';
+import { RecordHttpService } from './services/record-http.service';
+import { TaskHttpService } from './services/task-http.service';
 
 /**
  * Module that provides all services and configuration.
@@ -21,6 +24,9 @@ import { DashboardHttpService } from './services/dashboard-http.service';
     TenantHttpService,
     ClientHttpService,
     DashboardHttpService,
+    ProjectHttpService,
+    RecordHttpService,
+    TaskHttpService,
     ApiConfiguration
   ],
 })

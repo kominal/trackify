@@ -1,1 +1,8 @@
-<p>dashboard works!</p>
+dddd
+@if (trackers$ | async; as trackers) {
+  @for (tracker of trackers; track $index) {
+    <div class="col-md-4" (click)="trackingService.startTracking(tracker.task)">
+      {{ tracker.task.name }}
+    </div>
+  }
+}

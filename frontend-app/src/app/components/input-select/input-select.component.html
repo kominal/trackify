@@ -1,0 +1,12 @@
+<app-label [label]="label()" [formElement]="formElement()" />
+<p-dropdown
+  [filter]="true"
+  class="w-full"
+  styleClass="w-full"
+  appendTo="body"
+  [formControl]="formElement()"
+  [options]="options() || []"
+  optionLabel="label"
+  optionValue="value"
+  [showClear]="true"
+></p-dropdown>

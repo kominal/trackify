@@ -22,6 +22,8 @@ import { read } from '../fn/client-http/read';
 import { Read$Params } from '../fn/client-http/read';
 import { update } from '../fn/client-http/update';
 import { Update$Params } from '../fn/client-http/update';
+import { upsert } from '../fn/client-http/upsert';
+import { Upsert$Params } from '../fn/client-http/upsert';
 
 @Injectable({ providedIn: 'root' })
 export class ClientHttpService extends BaseService {
@@ -116,28 +118,28 @@ export class ClientHttpService extends BaseService {
     );
   }
 
-  /** Path part for operation `clientControllerUpdate()` */
-  static readonly ClientControllerUpdatePath = '/tenants/{tenantId}/clients/{uuid}';
+  /** Path part for operation `clientControllerUpsert()` */
+  static readonly ClientControllerUpsertPath = '/tenants/{tenantId}/clients/{uuid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `update()` instead.
+   * To access only the response body, use `upsert()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update$Response(params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return update(this.http, this.rootUrl, params, context);
+  upsert$Response(params: Upsert$Params, context?: HttpContext): Observable<StrictHttpResponse<(Client | void)>> {
+    return upsert(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `update$Response()` instead.
+   * To access the full response (for headers, for example), `upsert$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update(params: Update$Params, context?: HttpContext): Observable<void> {
-    return this.update$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+  upsert(params: Upsert$Params, context?: HttpContext): Observable<(Client | void)> {
+    return this.upsert$Response(params, context).pipe(
+      map((r: StrictHttpResponse<(Client | void)>): (Client | void) => r.body)
     );
   }
 
@@ -162,6 +164,31 @@ export class ClientHttpService extends BaseService {
    */
   delete(params: Delete$Params, context?: HttpContext): Observable<void> {
     return this.delete$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `clientControllerUpdate()` */
+  static readonly ClientControllerUpdatePath = '/tenants/{tenantId}/clients/{uuid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `update()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  update$Response(params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return update(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `update$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  update(params: Update$Params, context?: HttpContext): Observable<void> {
+    return this.update$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
