@@ -27,6 +27,7 @@ export class HeaderComponent {
       }
 
       return [
+        { label: this.translateService.instant('simple.tracking'), routerLink: 'tracking' },
         { label: this.translateService.instant('simple.dashboard'), routerLink: 'dashboard' },
         { label: this.translateService.instant('simple.records'), routerLink: 'records' },
         { label: this.translateService.instant('simple.tasks'), routerLink: 'tasks' },

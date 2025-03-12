@@ -10,6 +10,7 @@ import { MembersComponent } from './pages/members/members.component';
 import { ProjectsComponent } from './pages/projects/projects.component';
 import { RecordsComponent } from './pages/records/records.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
+import { TrackingComponent } from './pages/tracking/tracking.component';
 import { TenantService } from './services/tenant.service';
 import { ShellComponent } from './shell/shell.component';
 
@@ -36,6 +37,7 @@ export const routes: Routes = [
     canActivate: [authGuardFn, tenantGuard],
     resolve: { tenantId: (route: ActivatedRouteSnapshot): void => inject(TenantService).setTenantId(route.params['tenantId']) },
     children: [
+      { path: 'tracking', component: TrackingComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'clients', component: ClientsComponent },
       { path: 'projects', component: ProjectsComponent },

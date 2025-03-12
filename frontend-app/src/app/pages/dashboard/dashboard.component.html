@@ -1,7 +1,7 @@
 dddd
 @if (trackers$ | async; as trackers) {
   @for (tracker of trackers; track $index) {
-    <div class="col-md-4" (click)="trackingService.startTracking(tracker.task)">
+    <div class="col-md-4" (click)="trackingService.startTracking(tracker.task)" [class.bg-red-500]="trackingService.trackingState?.taskId === tracker.task.uuid">
       {{ tracker.task.name }}
     </div>
   }

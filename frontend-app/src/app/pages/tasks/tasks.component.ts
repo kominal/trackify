@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService } from 'primeng/api';
@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
 import { BehaviorSubject, combineLatest, filter, Subject, switchMap } from 'rxjs';
-import { Client } from '../../api/backend-core/models/client';
+import { Task } from '../../api/backend-core/models/task';
 import { TaskHttpService } from '../../api/backend-core/services';
 import { TaskDialogComponent } from '../../dialogs/task-dialog/task-dialog.component';
 import { shareReplayOne, toListRequest } from '../../helpers/util';
@@ -15,7 +15,7 @@ import { UtilService } from '../../services/util.service';
 
 @Component({
   selector: 'app-tasks',
-  imports: [AsyncPipe, DatePipe, TableModule, ButtonModule, TranslatePipe],
+  imports: [AsyncPipe, NgClass, DatePipe, TableModule, ButtonModule, TranslatePipe],
   templateUrl: './tasks.component.html',
   host: { class: 'flex flex-col h-full overflow-auto' },
 })
@@ -31,7 +31,7 @@ export class TasksComponent {
   public refresh$ = new BehaviorSubject<void>(undefined);
 
   public data$ = combineLatest([this.conditions$, this.refresh$]).pipe(
-    switchMap(([conditions]) => this.taskHttpService.list({ tenantId: TenantService.tenantId, ...toListRequest<Client>(conditions, undefined, ['uuid', 'name']) })),
+    switchMap(([conditions]) => this.taskHttpService.list({ tenantId: TenantService.tenantId, ...toListRequest<Task>(conditions, undefined, ['uuid', 'name', 'color']) })),
     shareReplayOne(),
   );
 

@@ -19,8 +19,8 @@ export class DashboardComponent {
 
   public trackers$ = combineLatest([
     this.clientHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name' }).pipe(map((r) => r.items)),
-    this.projectHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name' }).pipe(map((r) => r.items)),
-    this.taskHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name' }).pipe(map((r) => r.items)),
+    this.projectHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name clientId' }).pipe(map((r) => r.items)),
+    this.taskHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name projectId' }).pipe(map((r) => r.items)),
   ]).pipe(
     map(([clients, projects, tasks]) =>
       tasks

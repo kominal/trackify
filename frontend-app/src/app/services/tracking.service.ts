@@ -13,7 +13,7 @@ export class TrackingService {
 
   public tracking = false;
 
-  private trackingState: TrackingState | undefined;
+  public trackingState: TrackingState | undefined;
 
   public constructor() {
     this.loadTrackingState();
@@ -67,6 +67,9 @@ export class TrackingService {
     const state = localStorage.getItem('TRACKING_STATE');
     if (state) {
       this.trackingState = JSON.parse(state);
+      if (this.trackingState) {
+        this.trackingState.start = new Date(this.trackingState.start);
+      }
     }
   }
 
@@ -86,21 +89,27 @@ export class TrackingService {
   public stopTracking() {
     if (this.trackingState) {
       const duration = new Date().getTime() - this.trackingState.start.getTime();
+      console.log('Duration', duration);
       if (duration > 60000) {
-        this.recordHttpService.create({
-          tenantId: TenantService.tenantId,
-          body: {
-            taskId: this.trackingState.taskId,
-            duration,
-            name: 'Tracking',
-          },
-        });
-        this.updateTrackingState(undefined);
+        this.recordHttpService
+          .create({
+            tenantId: TenantService.tenantId,
+            body: {
+              taskId: this.trackingState.taskId,
+              duration,
+              name: 'Tracking',
+            },
+          })
+          .subscribe();
       }
+      this.updateTrackingState(undefined);
     }
   }
 
   public startTracking(task: Task) {
+    if (this.trackingState && this.trackingState.taskId === task.uuid) {
+      return;
+    }
     this.stopTracking();
     this.updateTrackingState({ taskId: task.uuid, start: new Date() });
   }

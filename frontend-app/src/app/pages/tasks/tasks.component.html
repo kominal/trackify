@@ -22,13 +22,17 @@
   >
     <ng-template #header>
       <tr>
-        <th>{{ 'simple.name' | translate }}</th>
-        <th>{{ 'simple.lastActivity' | translate }}</th>
+        <th></th>
+        <th>{{ 'forms.task.name' | translate }}</th>
+        <th>{{ 'forms.task.lastActivity' | translate }}</th>
         <th>{{ 'simple.actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template #body let-entity>
       <tr>
+        <td style="width: 0">
+          <div [ngClass]="'bg-' + entity.color + '-300'" class="border-1 h-8 w-8 cursor-pointer overflow-hidden rounded border-gray-800"></div>
+        </td>
         <td>{{ entity.name }}</td>
         <td>{{ entity.lastActivity | date: 'dd.MM.yyyy hh:mm:ss' }}</td>
         <td style="width: 0">
