@@ -38,8 +38,8 @@ export class FormService {
   public createRecordRequestForm(): FormGroup<RecordRequestForm> {
     return this.formBuilder.group<RecordRequestForm>({
       taskId: this.formBuilder.control('', Validators.required),
-      duration: this.formBuilder.control(0, Validators.required),
-      name: this.formBuilder.control('', Validators.required),
+      start: this.formBuilder.control(new Date(), Validators.required),
+      end: this.formBuilder.control(new Date(), Validators.required),
     });
   }
 }

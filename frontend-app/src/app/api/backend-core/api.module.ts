@@ -12,6 +12,7 @@ import { DashboardHttpService } from './services/dashboard-http.service';
 import { ProjectHttpService } from './services/project-http.service';
 import { RecordHttpService } from './services/record-http.service';
 import { TaskHttpService } from './services/task-http.service';
+import { TrackingSessionHttpService } from './services/tracking-session-http.service';
 
 /**
  * Module that provides all services and configuration.
@@ -27,6 +28,7 @@ import { TaskHttpService } from './services/task-http.service';
     ProjectHttpService,
     RecordHttpService,
     TaskHttpService,
+    TrackingSessionHttpService,
     ApiConfiguration
   ],
 })

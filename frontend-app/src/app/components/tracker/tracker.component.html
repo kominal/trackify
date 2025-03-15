@@ -1,4 +1,4 @@
-@if (trackingService.trackingState) {
-  <app-clock [since]="trackingService.trackingState.start"></app-clock>
-  <p-button routerLink="../.." [icon]="trackingService.trackingState ? 'pi pi-pause' : 'pi pi-play'" [rounded]="true" [text]="true" (click)="trackingService.stopTracking()" />
+@if (trackingService.trackingState$ | async; as trackingState) {
+  <app-clock [since]="trackingState.start"></app-clock>
+  <p-button routerLink="../.." [icon]="trackingState ? 'pi pi-pause' : 'pi pi-play'" [rounded]="true" [text]="true" (click)="trackingService.stopTracking()" />
 }

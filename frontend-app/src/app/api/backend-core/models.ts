@@ -16,4 +16,6 @@ export { TaskRequest } from './models/task-request';
 export { Tenant } from './models/tenant';
 export { TenantCreateRequest } from './models/tenant-create-request';
 export { TenantUpdateRequest } from './models/tenant-update-request';
+export { TrackingSession } from './models/tracking-session';
+export { TrackingSessionRequest } from './models/tracking-session-request';
 export { TransitionRiskScenario } from './models/transition-risk-scenario';

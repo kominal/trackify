@@ -31,7 +31,7 @@
     <ng-template #body let-entity>
       <tr>
         <td style="width: 0">
-          <div [ngClass]="'bg-' + entity.color + '-300'" class="border-1 h-8 w-8 cursor-pointer overflow-hidden rounded border-gray-800"></div>
+          <div [ngClass]="'bg-' + entity.color + '-300'" class="border-1 h-8 w-8 overflow-hidden rounded border-gray-800"></div>
         </td>
         <td>{{ entity.name }}</td>
         <td>{{ entity.lastActivity | date: 'dd.MM.yyyy hh:mm:ss' }}</td>

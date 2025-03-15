@@ -8,3 +8,4 @@ export { DashboardHttpService } from './services/dashboard-http.service';
 export { ProjectHttpService } from './services/project-http.service';
 export { RecordHttpService } from './services/record-http.service';
 export { TaskHttpService } from './services/task-http.service';
+export { TrackingSessionHttpService } from './services/tracking-session-http.service';
