@@ -32,6 +32,7 @@ export class TrackingSessionService {
         await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start: trackingSession.start, end: end });
       }
     }
+    await this.trackingSessionModel.deleteOne({ ...params, userId: userContext.userId }).lean();
   }
 
   public async upsert(userContext: UserContext, params: EntitiesPathParams, createRequest: TrackingSessionRequest): Promise<void> {
