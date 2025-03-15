@@ -410,6 +410,44 @@
         "tags": ["task-http"],
         "x-operation-name": "delete"
       }
+    },
+    "/tenants/{tenantId}/tracking-sessions/active": {
+      "get": {
+        "operationId": "TrackingSessionController_read",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Client" }, { "type": "null" }] } } } }
+        },
+        "summary": "",
+        "tags": ["tracking-session-http"],
+        "x-operation-name": "read"
+      },
+      "put": {
+        "operationId": "TrackingSessionController_upsert",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
+        ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TrackingSessionRequest" } } } },
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["tracking-session-http"],
+        "x-operation-name": "upsert"
+      },
+      "delete": {
+        "operationId": "TrackingSessionController_delete",
+        "parameters": [
+          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
+          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "" } },
+        "summary": "",
+        "tags": ["tracking-session-http"],
+        "x-operation-name": "delete"
+      }
     }
   },
   "info": { "title": "Core", "description": "", "version": "1.0.0", "contact": {} },
@@ -490,15 +528,15 @@
       },
       "RecordRequest": {
         "type": "object",
-        "properties": { "taskId": { "type": "string" }, "name": { "type": "string" }, "duration": { "type": "number" } },
-        "required": ["taskId", "name", "duration"]
+        "properties": { "taskId": { "type": "string" }, "start": { "format": "date-time", "type": "string" }, "end": { "format": "date-time", "type": "string" } },
+        "required": ["taskId", "start", "end"]
       },
       "Record": {
         "type": "object",
         "properties": {
           "taskId": { "type": "string" },
-          "name": { "type": "string" },
-          "duration": { "type": "number" },
+          "start": { "format": "date-time", "type": "string" },
+          "end": { "format": "date-time", "type": "string" },
           "tenantId": { "type": "string" },
           "_id": { "type": "string" },
           "uuid": { "type": "string" },
@@ -508,7 +546,7 @@
           "updatedBy": { "type": "string" },
           "version": { "type": "number" }
         },
-        "required": ["taskId", "name", "duration", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["taskId", "start", "end", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
       },
       "TaskRequest": {
         "type": "object",
@@ -531,6 +569,11 @@
           "version": { "type": "number" }
         },
         "required": ["projectId", "name", "color", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+      },
+      "TrackingSessionRequest": {
+        "type": "object",
+        "properties": { "userId": { "type": "string" }, "taskId": { "type": "string" }, "start": { "format": "date-time", "type": "string" } },
+        "required": ["userId", "taskId", "start"]
       }
     }
   }

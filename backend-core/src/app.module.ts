@@ -9,12 +9,14 @@ import { ProjectController } from './controllers/project.controller';
 import { RecordController } from './controllers/record.controller';
 import { TaskController } from './controllers/task.controller';
 import { TenantController } from './controllers/tenant.controller';
+import { TrackingSessionController } from './controllers/tracking-session.controller';
 import { Client, ClientSchema } from './entities/client.entity';
 import { Membership, MembershipSchema } from './entities/membership.entity';
 import { Project, ProjectSchema } from './entities/project.entity';
 import { Record, RecordSchema } from './entities/record.entity';
 import { Task, TaskSchema } from './entities/task.entity';
 import { Tenant, TenantSchema } from './entities/tenant.entity';
+import { TrackingSession, TrackingSessionSchema } from './entities/tracking-session.entity';
 import { TenantGuard } from './guards/tenant.guard';
 import { UserGuard } from './guards/user.guard';
 import { RequestLoggingMiddleware } from './middlewares/request-logging.middleware';
@@ -26,6 +28,7 @@ import { ProjectService } from './services/project.service';
 import { RecordService } from './services/record.service';
 import { TaskService } from './services/task.service';
 import { TenantService } from './services/tenant.service';
+import { TrackingSessionService } from './services/tracking-session.service';
 
 export const modelDefinitions: ModelDefinition[] = [
   { name: Client.name, schema: ClientSchema },
@@ -34,6 +37,7 @@ export const modelDefinitions: ModelDefinition[] = [
   { name: Record.name, schema: RecordSchema },
   { name: Task.name, schema: TaskSchema },
   { name: Tenant.name, schema: TenantSchema },
+  { name: TrackingSession.name, schema: TrackingSessionSchema },
 ];
 
 export const moduleDefinition = {
@@ -46,8 +50,8 @@ export const moduleDefinition = {
     }),
     ScheduleModule.forRoot(),
   ],
-  controllers: [TenantController, ClientController, DashboardController, ProjectController, RecordController, TaskController],
-  providers: [TenantService, AuthService, MailService, ClientService, TenantGuard, UserGuard, DashboardService, ProjectService, RecordService, TaskService],
+  controllers: [TenantController, ClientController, DashboardController, ProjectController, RecordController, TaskController, TrackingSessionController],
+  providers: [TenantService, AuthService, MailService, ClientService, TenantGuard, UserGuard, DashboardService, ProjectService, RecordService, TaskService, TrackingSessionService],
 };
 
 @Module(moduleDefinition)
