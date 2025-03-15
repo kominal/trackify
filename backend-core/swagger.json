@@ -414,10 +414,7 @@
     "/tenants/{tenantId}/tracking-sessions/active": {
       "get": {
         "operationId": "TrackingSessionController_read",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "responses": {
           "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Client" }, { "type": "null" }] } } } }
         },
@@ -427,10 +424,7 @@
       },
       "put": {
         "operationId": "TrackingSessionController_upsert",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
-        ],
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TrackingSessionRequest" } } } },
         "responses": { "200": { "description": "" } },
         "summary": "",
@@ -439,10 +433,7 @@
       },
       "delete": {
         "operationId": "TrackingSessionController_delete",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
+        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "responses": { "200": { "description": "" } },
         "summary": "",
         "tags": ["tracking-session-http"],

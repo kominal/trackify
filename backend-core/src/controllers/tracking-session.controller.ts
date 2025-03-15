@@ -5,7 +5,7 @@ import { TrackingSession, TrackingSessionRequest } from '../entities/tracking-se
 import { TenantGuard } from '../guards/tenant.guard';
 import { UserContext, UserCtx } from '../helpers/context.decorator';
 import { CustomOperationName } from '../helpers/custom-operation-name.decorator';
-import { EntityPathParams, OptionalEntityPathParams } from '../helpers/entity-service.helper';
+import { EntitiesPathParams } from '../helpers/entity-service.helper';
 import { TrackingSessionService } from '../services/tracking-session.service';
 
 @UseGuards(TenantGuard)
@@ -17,19 +17,19 @@ export class TrackingSessionController {
   @Get('active')
   @CustomOperationName()
   @ApiOkResponse({ schema: { oneOf: [{ $ref: getSchemaPath(Client) }, { type: 'null' }] } })
-  public read(@UserCtx() userContext: UserContext, @Param() params: EntityPathParams): Promise<TrackingSession | null> {
+  public read(@UserCtx() userContext: UserContext, @Param() params: EntitiesPathParams): Promise<TrackingSession | null> {
     return this.trackingSessionService.read(userContext, params);
   }
 
   @Put('active')
   @CustomOperationName()
-  public upsert(@UserCtx() userContext: UserContext, @Param() params: OptionalEntityPathParams, @Body() request: TrackingSessionRequest): Promise<void> {
+  public upsert(@UserCtx() userContext: UserContext, @Param() params: EntitiesPathParams, @Body() request: TrackingSessionRequest): Promise<void> {
     return this.trackingSessionService.upsert(userContext, params, request);
   }
 
   @Delete('active')
   @CustomOperationName()
-  public delete(@UserCtx() userContext: UserContext, @Param() params: EntityPathParams): Promise<void> {
+  public delete(@UserCtx() userContext: UserContext, @Param() params: EntitiesPathParams): Promise<void> {
     return this.trackingSessionService.delete(userContext, params);
   }
 }
