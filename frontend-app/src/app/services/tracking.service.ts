@@ -13,6 +13,18 @@ export class TrackingService {
 
   private refresh$ = new BehaviorSubject<void>(undefined);
 
+  public constructor() {
+    if ((window as any).electronAPI) {
+      console.log('Electron API available');
+      (window as any).electronAPI.onTrackingPrevious((value: number) => {
+        console.log('Down:', value);
+      });
+      (window as any).electronAPI.onTrackingNext((value: number) => {
+        console.log('Next:', value);
+      });
+    }
+  }
+
   public trackingState$ = this.refresh$.pipe(
     switchMap(() => this.trackingSessionHttpService.readActive({ tenantId: TenantService.tenantId })),
     shareReplayOne(),

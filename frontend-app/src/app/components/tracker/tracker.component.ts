@@ -11,7 +11,5 @@ import { ClockComponent } from '../clock/clock.component';
   host: { class: 'flex items-center gap-2' },
 })
 export class TrackerComponent {
-  public isTracking = false;
-
   public trackingService = inject(TrackingService);
 }

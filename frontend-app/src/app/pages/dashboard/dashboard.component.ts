@@ -85,8 +85,8 @@ export class DashboardComponent {
           const recordDayStart = record.start < startOfDay ? startOfDay : record.start;
           const recordDayEnd = record.end > endOfDay ? endOfDay : record.end;
 
-          const start = recordDayStart.getHours() * 60 + recordDayStart.getMinutes();
-          const end = recordDayEnd.getHours() * 60 + recordDayEnd.getMinutes();
+          const start = recordDayStart.getUTCHours() * 60 + recordDayStart.getUTCMinutes();
+          const end = recordDayEnd.getUTCHours() * 60 + recordDayEnd.getUTCMinutes();
           const duration = `${Math.floor((end - start) / 60)
             .toString()
             .padStart(2, '0')}:${((end - start) % 60).toString().padStart(2, '0')} h`;

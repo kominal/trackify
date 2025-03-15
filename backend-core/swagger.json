@@ -541,8 +541,8 @@
       },
       "TaskRequest": {
         "type": "object",
-        "properties": { "projectId": { "type": "string" }, "name": { "type": "string" }, "color": { "type": "string" } },
-        "required": ["projectId", "name", "color"]
+        "properties": { "projectId": { "type": "string" }, "name": { "type": "string" }, "color": { "type": "string" }, "priority": { "type": "number" } },
+        "required": ["projectId", "name", "color", "priority"]
       },
       "Task": {
         "type": "object",
@@ -550,6 +550,7 @@
           "projectId": { "type": "string" },
           "name": { "type": "string" },
           "color": { "type": "string" },
+          "priority": { "type": "number" },
           "tenantId": { "type": "string" },
           "_id": { "type": "string" },
           "uuid": { "type": "string" },
@@ -559,7 +560,7 @@
           "updatedBy": { "type": "string" },
           "version": { "type": "number" }
         },
-        "required": ["projectId", "name", "color", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["projectId", "name", "color", "priority", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
       },
       "TrackingSession": {
         "type": "object",

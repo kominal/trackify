@@ -2,6 +2,7 @@
   <app-input-select [formElement]="formElement.controls.projectId" label="forms.task.projectId" [options]="(projects$ | async) || []" />
   <app-input-text [formElement]="formElement.controls.name" label="forms.task.name" />
   <app-input-color [formElement]="formElement.controls.color" label="forms.task.color" />
+  <app-input-number [formElement]="formElement.controls.priority" label="forms.task.priority" />
 </div>
 
 <div class="flex justify-end gap-2">

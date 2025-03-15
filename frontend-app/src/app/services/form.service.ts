@@ -32,6 +32,7 @@ export class FormService {
       projectId: this.formBuilder.control('', Validators.required),
       name: this.formBuilder.control('', Validators.required),
       color: this.formBuilder.control('', Validators.required),
+      priority: this.formBuilder.control(0, Validators.required),
     });
   }
 

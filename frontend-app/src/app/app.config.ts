@@ -51,7 +51,8 @@ const loadingInterceptorFn: HttpInterceptorFn = (req: HttpRequest<unknown>, next
   return next(req);
 };
 
-const BASE_URL = window.location.host === 'localhost:4200' ? 'app.trackify.kominal.cloud' : window.location.host;
+const BASE_URL = ['localhost:4200', ''].includes(window.location.host) ? 'app.trackify.kominal.cloud' : window.location.host;
+const CALLBACK_URL = window.location.host === '' ? 'http://localhost/callback' : window.location.origin;
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -88,7 +89,7 @@ export const appConfig: ApplicationConfig = {
       domain: 'kominal.eu.auth0.com',
       clientId: '2keyZpo1IPv08F3nzmpoyCow10NUmaBh',
       authorizationParams: {
-        redirect_uri: window.location.origin,
+        redirect_uri: CALLBACK_URL,
         scope: 'openid profile email',
         audience: 'trackify/api',
       },

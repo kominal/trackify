@@ -5,5 +5,6 @@
 export interface TaskRequest {
   color: string;
   name: string;
+  priority: number;
   projectId: string;
 }

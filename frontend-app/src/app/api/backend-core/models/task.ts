@@ -8,6 +8,7 @@ export interface Task {
   createdAt: Date;
   createdBy: string;
   name: string;
+  priority: number;
   projectId: string;
   tenantId: string;
   updatedAt: Date;

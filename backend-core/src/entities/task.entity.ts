@@ -8,6 +8,7 @@ export class Task extends TenantEntity {
   @Prop() public projectId: string;
   @Prop() public name: string;
   @Prop() public color: string;
+  @Prop() public priority: number;
 }
 
 export type TaskModel = Model<Task>;

@@ -7,6 +7,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { map } from 'rxjs';
 import { ProjectHttpService, TaskHttpService } from '../../api/backend-core/services';
 import { InputColorComponent } from '../../components/input-color/input-color.component';
+import { InputNumberComponent } from '../../components/input-number/input-number.component';
 import { InputSelectComponent } from '../../components/input-select/input-select.component';
 import { InputTextComponent } from '../../components/input-text/input-text.component';
 import { shareReplayOne } from '../../helpers/util';
@@ -16,7 +17,7 @@ import { UtilService } from '../../services/util.service';
 
 @Component({
   selector: 'app-task-dialog',
-  imports: [AsyncPipe, ReactiveFormsModule, InputTextComponent, InputSelectComponent, ButtonModule, TranslateModule, InputColorComponent],
+  imports: [AsyncPipe, ReactiveFormsModule, InputTextComponent, InputSelectComponent, ButtonModule, TranslateModule, InputColorComponent, InputNumberComponent],
   templateUrl: './task-dialog.component.html',
   host: { class: 'flex flex-col gap-2 pt-1' },
 })
