@@ -26,10 +26,14 @@ export class TrackingSessionService {
   private async stopTracking(userContext: UserContext, params: EntitiesPathParams): Promise<void> {
     const trackingSession = await this.read(userContext, params);
     if (trackingSession) {
+      const start = trackingSession.start;
+      start.setSeconds(0);
+      start.setMilliseconds(0);
+      start.setMinutes(start.getMinutes() + 1);
       const end = this.getCurrentMinute();
-      const duration = end.getTime() - trackingSession.start.getTime();
+      const duration = end.getTime() - start.getTime();
       if (duration > 5 * 60 * 1000) {
-        await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start: trackingSession.start, end: end });
+        await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start, end });
       }
     }
     await this.trackingSessionModel.deleteOne({ ...params, userId: userContext.userId }).lean();
@@ -44,7 +48,7 @@ export class TrackingSessionService {
 
     await this.stopTracking(userContext, params);
     await this.trackingSessionModel
-      .updateOne({ ...params, userId: userContext.userId }, { ...createRequest, userId: userContext.userId, start: this.getCurrentMinute() }, { upsert: true, new: true })
+      .updateOne({ ...params, userId: userContext.userId }, { ...createRequest, userId: userContext.userId, start: new Date() }, { upsert: true, new: true })
       .lean();
   }
 
