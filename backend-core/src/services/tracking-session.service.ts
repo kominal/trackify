@@ -35,6 +35,12 @@ export class TrackingSessionService {
   }
 
   public async upsert(userContext: UserContext, params: EntitiesPathParams, createRequest: TrackingSessionRequest): Promise<void> {
+    const trackingSession = await this.read(userContext, params);
+
+    if (trackingSession && trackingSession.taskId === createRequest.taskId) {
+      return;
+    }
+
     await this.stopTracking(userContext, params);
     await this.trackingSessionModel
       .updateOne({ ...params, userId: userContext.userId }, { ...createRequest, userId: userContext.userId, start: this.getCurrentMinute() }, { upsert: true, new: true })
