@@ -14,4 +14,4 @@ export type TrackingSessionModel = Model<TrackingSession>;
 
 export const TrackingSessionSchema = SchemaFactory.createForClass(TrackingSession).index({ tenantId: 1 }).index({ tenantId: 1, uuid: 1 }, { unique: true });
 
-export class TrackingSessionRequest extends OmitType(TrackingSession, TECHNICAL_KEYS) {}
+export class TrackingSessionRequest extends OmitType(TrackingSession, [...TECHNICAL_KEYS, 'start', 'userId']) {}

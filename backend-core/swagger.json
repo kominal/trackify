@@ -413,31 +413,31 @@
     },
     "/tenants/{tenantId}/tracking-sessions/active": {
       "get": {
-        "operationId": "TrackingSessionController_read",
+        "operationId": "TrackingSessionController_readActive",
         "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "responses": {
-          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Client" }, { "type": "null" }] } } } }
+          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/TrackingSession" }, { "type": "null" }] } } } }
         },
         "summary": "",
         "tags": ["tracking-session-http"],
-        "x-operation-name": "read"
+        "x-operation-name": "readActive"
       },
       "put": {
-        "operationId": "TrackingSessionController_upsert",
+        "operationId": "TrackingSessionController_updateActive",
         "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TrackingSessionRequest" } } } },
         "responses": { "200": { "description": "" } },
         "summary": "",
         "tags": ["tracking-session-http"],
-        "x-operation-name": "upsert"
+        "x-operation-name": "updateActive"
       },
       "delete": {
-        "operationId": "TrackingSessionController_delete",
+        "operationId": "TrackingSessionController_stopActive",
         "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
         "responses": { "200": { "description": "" } },
         "summary": "",
         "tags": ["tracking-session-http"],
-        "x-operation-name": "delete"
+        "x-operation-name": "stopActive"
       }
     }
   },
@@ -561,11 +561,24 @@
         },
         "required": ["projectId", "name", "color", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
       },
-      "TrackingSessionRequest": {
+      "TrackingSession": {
         "type": "object",
-        "properties": { "userId": { "type": "string" }, "taskId": { "type": "string" }, "start": { "format": "date-time", "type": "string" } },
-        "required": ["userId", "taskId", "start"]
-      }
+        "properties": {
+          "userId": { "type": "string" },
+          "taskId": { "type": "string" },
+          "start": { "format": "date-time", "type": "string" },
+          "tenantId": { "type": "string" },
+          "_id": { "type": "string" },
+          "uuid": { "type": "string" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "createdBy": { "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" },
+          "updatedBy": { "type": "string" },
+          "version": { "type": "number" }
+        },
+        "required": ["userId", "taskId", "start", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+      },
+      "TrackingSessionRequest": { "type": "object", "properties": { "taskId": { "type": "string" } }, "required": ["taskId"] }
     }
   }
 }
