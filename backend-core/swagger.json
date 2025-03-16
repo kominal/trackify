@@ -519,13 +519,19 @@
       },
       "RecordRequest": {
         "type": "object",
-        "properties": { "taskId": { "type": "string" }, "start": { "format": "date-time", "type": "string" }, "end": { "format": "date-time", "type": "string" } },
-        "required": ["taskId", "start", "end"]
+        "properties": {
+          "taskId": { "type": "string" },
+          "userId": { "type": "string" },
+          "start": { "format": "date-time", "type": "string" },
+          "end": { "format": "date-time", "type": "string" }
+        },
+        "required": ["taskId", "userId", "start", "end"]
       },
       "Record": {
         "type": "object",
         "properties": {
           "taskId": { "type": "string" },
+          "userId": { "type": "string" },
           "start": { "format": "date-time", "type": "string" },
           "end": { "format": "date-time", "type": "string" },
           "tenantId": { "type": "string" },
@@ -537,7 +543,7 @@
           "updatedBy": { "type": "string" },
           "version": { "type": "number" }
         },
-        "required": ["taskId", "start", "end", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["taskId", "userId", "start", "end", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
       },
       "TaskRequest": {
         "type": "object",

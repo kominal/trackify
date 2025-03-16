@@ -12,6 +12,7 @@ export interface Record {
   tenantId: string;
   updatedAt: Date;
   updatedBy: string;
+  userId: string;
   uuid: string;
   version: number;
 }
