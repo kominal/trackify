@@ -22,14 +22,14 @@ export class FormService {
 
   public createProjectRequestForm(): FormGroup<ProjectRequestForm> {
     return this.formBuilder.group<ProjectRequestForm>({
-      clientId: this.formBuilder.control('', Validators.required),
+      clientId: this.formBuilder.control(''),
       name: this.formBuilder.control('', Validators.required),
     });
   }
 
   public createTaskRequestForm(): FormGroup<TaskRequestForm> {
     return this.formBuilder.group<TaskRequestForm>({
-      projectId: this.formBuilder.control('', Validators.required),
+      projectId: this.formBuilder.control(''),
       name: this.formBuilder.control('', Validators.required),
       color: this.formBuilder.control('', Validators.required),
       priority: this.formBuilder.control(0, Validators.required),

@@ -4,6 +4,6 @@ import { Task } from '../api/backend-core/models/task';
 
 export interface TaskWrapper {
   task: Task;
-  project: Project;
-  client: Client;
+  project?: Project;
+  client?: Client;
 }

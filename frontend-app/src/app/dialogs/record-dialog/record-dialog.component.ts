@@ -33,7 +33,7 @@ export class RecordDialogComponent {
   public formElement = this.formService.createRecordRequestForm();
 
   public tasks$ = this.taskService.tasks$.pipe(
-    map((r) => r.map((i) => ({ label: `${i.task.name} (${i.project.name})`, value: i.task.uuid }))),
+    map((r) => r.map((i) => ({ label: `${i.task.name} (${i.project?.name})`, value: i.task.uuid }))),
     shareReplayOne(),
   );
 

@@ -8,7 +8,7 @@
     @if (trackingService.trackingState$ | async; as trackingState) {
       @if (tasks$ | task: trackingState.taskId | async; as wrapper) {
         <span>{{ wrapper.task.name }}</span>
-        <span>{{ wrapper.project.name }}</span>
+        <span>{{ wrapper.project?.name }}</span>
       }
     } @else {
       <span>-</span>
@@ -28,7 +28,7 @@
           [class]="(trackingService.trackingState$ | async)?.taskId === task.task.uuid ? 'border-indigo-500' : 'border-white'"
         >
           <div [ngClass]="'bg-' + task.task.color + '-300'" class="border-1 h-8 w-8 overflow-hidden rounded border-gray-800"></div>
-          <span>{{ task.task.name }} ({{ task.project.name }})</span>
+          <span>{{ task.task.name }} ({{ task.project?.name }})</span>
         </div>
       }
     }
