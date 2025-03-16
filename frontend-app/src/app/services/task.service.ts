@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, map, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, map, Observable, switchMap } from 'rxjs';
 import { ClientHttpService, ProjectHttpService, TaskHttpService } from '../api/backend-core/services';
 import { shareReplayOne } from '../helpers/util';
 import { TaskWrapper } from '../models/task-wrapper.model';
@@ -12,15 +12,16 @@ export class TaskService {
   private clientHttpService = inject(ClientHttpService);
   private projectHttpService = inject(ProjectHttpService);
   private taskHttpService = inject(TaskHttpService);
+  private tenantService = inject(TenantService);
 
   private refresh$ = new BehaviorSubject<void>(undefined);
 
-  public tasks$: Observable<TaskWrapper[]> = this.refresh$.pipe(
-    switchMap(() =>
+  public tasks$: Observable<TaskWrapper[]> = combineLatest([this.tenantService.saveTenant$, this.refresh$]).pipe(
+    switchMap(([tenant]) =>
       forkJoin([
-        this.clientHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name' }).pipe(map((r) => r.items)),
-        this.projectHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name clientId' }).pipe(map((r) => r.items)),
-        this.taskHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid name projectId priority color' }).pipe(map((r) => r.items)),
+        this.clientHttpService.list({ tenantId: tenant.uuid, pageIndex: -1, pageSize: 0, select: 'uuid name' }).pipe(map((r) => r.items)),
+        this.projectHttpService.list({ tenantId: tenant.uuid, pageIndex: -1, pageSize: 0, select: 'uuid name clientId' }).pipe(map((r) => r.items)),
+        this.taskHttpService.list({ tenantId: tenant.uuid, pageIndex: -1, pageSize: 0, select: 'uuid name projectId priority color' }).pipe(map((r) => r.items)),
       ]),
     ),
     map(([clients, projects, tasks]) =>
@@ -41,4 +42,8 @@ export class TaskService {
     ),
     shareReplayOne(),
   );
+
+  public constructor() {
+    this.tasks$.subscribe();
+  }
 }

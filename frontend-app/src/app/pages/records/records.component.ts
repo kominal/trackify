@@ -1,6 +1,5 @@
 import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -42,10 +41,6 @@ export class RecordsComponent {
     ),
     shareReplayOne(),
   );
-
-  public constructor() {
-    this.tasks$.pipe(takeUntilDestroyed()).subscribe();
-  }
 
   public openRecordDialog(uuid?: string): void {
     this.dialogService
