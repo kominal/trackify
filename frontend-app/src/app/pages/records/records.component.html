@@ -22,9 +22,10 @@
   >
     <ng-template #header>
       <tr>
-        <th>{{ 'simple.start' | translate }}</th>
-        <th>{{ 'simple.end' | translate }}</th>
+        <th>{{ 'forms.record.start' | translate }}</th>
+        <th>{{ 'forms.record.end' | translate }}</th>
         <th>{{ 'simple.task' | translate }}</th>
+        <th>{{ 'simple.actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template #body let-entity>
@@ -34,8 +35,8 @@
         <td>
           @if (tasks$ | task: entity.taskId | async; as task) {
             <div class="flex items-center gap-2">
-              <div [ngClass]="'bg-' + task.color + '-300'" class="border-1 h-8 w-8 overflow-hidden rounded border-gray-800"></div>
-              <span>{{ task.name }}</span>
+              <div [ngClass]="'bg-' + task.task.color + '-300'" class="border-1 h-8 w-8 overflow-hidden rounded border-gray-800"></div>
+              <span>{{ task.task.name }}</span>
             </div>
           }
         </td>

@@ -1,28 +1,21 @@
-@if (trackers$ | async; as trackers) {
-  @for (tracker of trackers; track $index) {
-    <div class="col-md-4" (click)="trackingService.startTracking(tracker.task)" [class.bg-red-500]="(trackingService.trackingState$ | async)?.taskId === tracker.task.uuid">
-      {{ tracker.task.name }}
-    </div>
-  }
-}
-
-<h2>Tasks</h2>
-
 <div class="content">
   @if (data$ | async; as data) {
     <div class="flex flex-col gap-2">
       @for (day of data; track $index) {
-        <div class="realative h-8 whitespace-nowrap rounded bg-gray-200">
-          @for (section of day.sections; track $index) {
-            <div
-              class="absolute h-8 cursor-pointer"
-              [pTooltip]="section.duration + '\n' + section.task.name + '\n' + (section.record.start | date: 'HH:mm') + ' - ' + (section.record.end | date: 'HH:mm')"
-              tooltipPosition="top"
-              [style.left]="(100 / 1440) * section.start + '%'"
-              [style.width]="(100 / 1440) * (section.end - section.start) + '%'"
-              [ngClass]="'bg-' + section.task.color + '-300'"
-            ></div>
-          }
+        <div class="flex flex-col">
+          <span>{{ day.date | date: 'dd.MM.yyy' }}</span>
+          <div class="relative h-8 overflow-hidden whitespace-nowrap rounded bg-gray-200">
+            @for (section of day.sections; track $index) {
+              <div
+                class="border-x-1 absolute h-8 cursor-pointer border-solid border-gray-400"
+                [pTooltip]="section.duration + '\n' + section.task.name + '\n' + (section.start | date: 'HH:mm') + ' - ' + (section.end | date: 'HH:mm')"
+                tooltipPosition="top"
+                [style.left]="(100 / 1440) * section.startMinute + '%'"
+                [style.width]="(100 / 1440) * (section.endMinute - section.startMinute) + '%'"
+                [ngClass]="'bg-' + section.task.color + '-300'"
+              ></div>
+            }
+          </div>
         </div>
       }
     </div>

@@ -4,11 +4,15 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: './dist/browser/logo.png',
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@rabbitholesyndrome/electron-forge-maker-portable',
+      config: {
+        appId: 'cloud.kominal.trackify.app',
+      },
     },
   ],
   plugins: [

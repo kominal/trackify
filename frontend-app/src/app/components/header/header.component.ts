@@ -41,9 +41,8 @@ export class HeaderComponent {
     startWith(undefined),
     map(() => [
       { label: this.translateService.instant('simple.home'), routerLink: '/', queryParams: { preventRedirect: true } },
-      { label: this.translateService.instant('simple.settings'), routerLink: 'settings' },
-      { label: this.translateService.instant('simple.access-tokens'), routerLink: 'access-tokens' },
-      { label: this.translateService.instant('simple.members'), routerLink: 'members' },
+      // { label: this.translateService.instant('simple.settings'), routerLink: 'settings' },
+      // { label: this.translateService.instant('simple.members'), routerLink: 'members' },
     ]),
   );
 
@@ -58,7 +57,6 @@ export class HeaderComponent {
           this.translateService.use(newLang);
         },
       },
-      { label: this.translateService.instant('simple.profile'), routerLink: 'profile' },
       { label: this.translateService.instant('simple.logout'), command: (): Observable<void> => this.authService.logout() },
     ]),
   );

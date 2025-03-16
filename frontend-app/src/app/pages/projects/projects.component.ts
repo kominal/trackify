@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService } from 'primeng/api';
@@ -15,7 +15,7 @@ import { UtilService } from '../../services/util.service';
 
 @Component({
   selector: 'app-projects',
-  imports: [AsyncPipe, DatePipe, TableModule, ButtonModule, TranslatePipe],
+  imports: [AsyncPipe, TableModule, ButtonModule, TranslatePipe],
   templateUrl: './projects.component.html',
   host: { class: 'flex flex-col h-full overflow-auto' },
 })

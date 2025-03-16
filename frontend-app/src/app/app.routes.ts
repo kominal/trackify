@@ -44,7 +44,7 @@ export const routes: Routes = [
       { path: 'tasks', component: TasksComponent },
       { path: 'records', component: RecordsComponent },
       { path: 'members', component: MembersComponent },
-      { path: '**', redirectTo: 'dashboard' },
+      { path: '**', redirectTo: 'tracking' },
     ],
   },
   { path: 'error', component: ErrorComponent, resolve: { tenantId: (): void => inject(TenantService).setTenantId(undefined) } },

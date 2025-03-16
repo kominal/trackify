@@ -71,3 +71,11 @@ p-selectbutton {
     }
   }
 }
+
+.p-paginator {
+  background: transparent !important;
+}
+
+.p-datatable-table-container {
+  @apply rounded;
+}

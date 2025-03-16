@@ -1,1 +1,36 @@
-<p>tracking works!</p>
+<div class="content">
+  <div class="flex flex-col gap-2 rounded bg-white p-4 shadow-sm">
+    @if (trackingService.trackingState$ | async; as trackingState) {
+      <app-clock class="text-7xl font-bold" [since]="trackingState.start"></app-clock>
+    } @else {
+      <span class="text-7xl font-bold tabular-nums">00:00:00</span>
+    }
+    @if (trackingService.trackingState$ | async; as trackingState) {
+      @if (tasks$ | task: trackingState.taskId | async; as wrapper) {
+        <span>{{ wrapper.task.name }}</span>
+        <span>{{ wrapper.project.name }}</span>
+      }
+    } @else {
+      <span>-</span>
+      <span>-</span>
+    }
+    <div class="flex items-center justify-end gap-2">
+      <p-button [label]="'simple.stopTracking' | translate" icon="pi pi-stop" [disabled]="!(trackingService.trackingState$ | async)" (click)="trackingService.stopTracking()" />
+    </div>
+  </div>
+  <span class="text-3xl">{{ 'simple.tasks' | translate }}</span>
+  <div class="grid grid-cols-3 gap-2">
+    @if (tasks$ | async; as tasks) {
+      @for (task of tasks; track $index) {
+        <div
+          class="flex-column flex w-full cursor-pointer items-center gap-2 rounded border-2 border-solid bg-white p-4 shadow-sm"
+          (click)="trackingService.startTracking(task.task)"
+          [class]="(trackingService.trackingState$ | async)?.taskId === task.task.uuid ? 'border-indigo-500' : 'border-white'"
+        >
+          <div [ngClass]="'bg-' + task.task.color + '-300'" class="border-1 h-8 w-8 overflow-hidden rounded border-gray-800"></div>
+          <span>{{ task.task.name }} ({{ task.project.name }})</span>
+        </div>
+      }
+    }
+  </div>
+</div>

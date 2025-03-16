@@ -1,16 +1,18 @@
 import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
-import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, Subject, switchMap } from 'rxjs';
 import { Record } from '../../api/backend-core/models/record';
-import { RecordHttpService, TaskHttpService } from '../../api/backend-core/services';
+import { RecordHttpService } from '../../api/backend-core/services';
 import { RecordDialogComponent } from '../../dialogs/record-dialog/record-dialog.component';
 import { shareReplayOne, toListRequest } from '../../helpers/util';
 import { TaskPipe } from '../../pipes/task.pipe';
+import { TaskService } from '../../services/task.service';
 import { TenantService } from '../../services/tenant.service';
 import { UtilService } from '../../services/util.service';
 
@@ -26,12 +28,9 @@ export class RecordsComponent {
   private translateService = inject(TranslateService);
   private confirmationService = inject(ConfirmationService);
   private utilService = inject(UtilService);
-  private taskHttpService = inject(TaskHttpService);
+  private taskService = inject(TaskService);
 
-  public tasks$ = this.taskHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid color name' }).pipe(
-    map((r) => r.items),
-    shareReplayOne(),
-  );
+  public tasks$ = this.taskService.tasks$;
 
   public conditions$ = new Subject();
 
@@ -43,6 +42,10 @@ export class RecordsComponent {
     ),
     shareReplayOne(),
   );
+
+  public constructor() {
+    this.tasks$.pipe(takeUntilDestroyed()).subscribe();
+  }
 
   public openRecordDialog(uuid?: string): void {
     this.dialogService

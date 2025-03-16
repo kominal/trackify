@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService } from 'primeng/api';
@@ -15,7 +15,7 @@ import { UtilService } from '../../services/util.service';
 
 @Component({
   selector: 'app-tasks',
-  imports: [AsyncPipe, NgClass, DatePipe, TableModule, ButtonModule, TranslatePipe],
+  imports: [AsyncPipe, NgClass, TableModule, ButtonModule, TranslatePipe],
   templateUrl: './tasks.component.html',
   host: { class: 'flex flex-col h-full overflow-auto' },
 })

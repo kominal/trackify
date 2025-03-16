@@ -15,6 +15,13 @@ export class ClockComponent {
       return new Date().getTime() - this.since().getTime();
     }),
     map((diff) => {
+      if (diff < 0) {
+        return {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        };
+      }
       return {
         hours: Math.floor(diff / 1000 / 60 / 60),
         minutes: Math.floor((diff / 1000 / 60) % 60),

@@ -22,15 +22,13 @@
   >
     <ng-template #header>
       <tr>
-        <th>{{ 'simple.name' | translate }}</th>
-        <th>{{ 'simple.lastActivity' | translate }}</th>
+        <th>{{ 'forms.project.name' | translate }}</th>
         <th>{{ 'simple.actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template #body let-entity>
       <tr>
         <td>{{ entity.name }}</td>
-        <td>{{ entity.lastActivity | date: 'dd.MM.yyyy hh:mm:ss' }}</td>
         <td style="width: 0">
           <div class="flex items-center justify-end gap-2">
             <p-button [rounded]="true" [text]="true" icon="pi pi-pencil" (click)="openClientDialog(entity.uuid)" />

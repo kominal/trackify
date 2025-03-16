@@ -15,9 +15,10 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: true,
       enableRemoteModule: true,
-      autoHideMenuBar: true,
       preload: path.join(__dirname, 'preload.js'),
     },
+    icon: path.join(__dirname, '/dist/browser/logo.png'),
+    autoHideMenuBar: true,
   });
 
   mainWindow.webContents.session.webRequest.onBeforeRequest({ urls: ['http://localhost/callback*'] }, (request) => {
@@ -26,8 +27,6 @@ function createWindow() {
       protocol: 'file:',
       slashes: true,
     });
-
-    console.log(request.url);
 
     const urlSearchParams = new URLSearchParams(request.url.split('?')[1]);
 

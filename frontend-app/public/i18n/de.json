@@ -1,1 +1,48 @@
-{}
+{
+  "forms": {
+    "client": {
+      "name": "Name"
+    },
+    "project": {
+      "clientId": "Kunde",
+      "name": "Name"
+    },
+    "record": {
+      "end": "Ende",
+      "start": "Start"
+    },
+    "task": {
+      "color": "Farbe",
+      "name": "Name",
+      "priority": "Priorität",
+      "projectId": "Projekt"
+    }
+  },
+  "simple": {
+    "actions": "Aktionen",
+    "cancel": "Abbrechen",
+    "client": "Kunde",
+    "clients": "Kunden",
+    "dashboard": "Dashboard",
+    "home": "Startseite",
+    "logout": "Abmelden",
+    "member": "Mitglied",
+    "members": "Mitglieder",
+    "project": "Projekt",
+    "projects": "Projekte",
+    "record": "Zeiteintrag",
+    "records": "Zeiteinträge",
+    "save": "Speichern",
+    "settings": "Einstellungen",
+    "stopTracking": "Tracking stoppen",
+    "task": "Aufgabe",
+    "tasks": "Aufgaben",
+    "tenant": "Mandant",
+    "tenants": "Mandanten",
+    "toggleLanguage": "Sprache wechseln",
+    "tracking": "Tracking"
+  },
+  "home": {
+    "welcome": "Willkommen bei Trackify. Wähle einen Mandanten aus, um fortzufahren."
+  }
+}
