@@ -34,13 +34,11 @@ export class TrackingSessionService {
       start.setMinutes(start.getMinutes() + 1);
       const end = this.getCurrentMinute();
       const duration = end.getTime() - start.getTime();
-      if (duration > 5 * 60 * 1000) {
-        const latestRecord = await this.recordModel.findOne({ ...params, taskId: trackingSession.taskId, userId: userContext.userId });
-        if (latestRecord && latestRecord.start.getTime() === start.getTime()) {
-          await latestRecord.updateOne({ end });
-        } else {
-          await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start, end, userId: userContext.userId });
-        }
+      const latestRecord = await this.recordModel.findOne({ ...params, taskId: trackingSession.taskId, userId: userContext.userId });
+      if (latestRecord && latestRecord.start.getTime() === start.getTime()) {
+        await latestRecord.updateOne({ end });
+      } else if (duration > 5 * 60 * 1000) {
+        await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start, end, userId: userContext.userId });
       }
     }
     await this.trackingSessionModel.deleteOne({ ...params, userId: userContext.userId }).lean();
