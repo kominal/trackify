@@ -16,7 +16,7 @@ export class RecordController {
   @Post()
   @CustomOperationName()
   public create(@UserCtx() userContext: UserContext, @Param() params: EntitiesPathParams, @Body() request: RecordRequest): Promise<Record> {
-    return this.recordService.create(userContext, params, request);
+    return this.recordService.create(userContext, params, { ...request, userId: userContext.userId });
   }
 
   @Get()
@@ -35,14 +35,14 @@ export class RecordController {
   @Patch(':uuid')
   @CustomOperationName()
   public update(@UserCtx() userContext: UserContext, @Param() params: EntityPathParams, @Body() request: RecordRequest): Promise<void> {
-    return this.recordService.update(userContext, params, request);
+    return this.recordService.update(userContext, params, { ...request, userId: userContext.userId });
   }
 
   @Put('{:uuid}')
   @CustomOperationName()
   @ApiOkResponse({ schema: { oneOf: [{ $ref: getSchemaPath(Record) }, { type: 'void' }] } })
   public upsert(@UserCtx() userContext: UserContext, @Param() params: OptionalEntityPathParams, @Body() request: RecordRequest): Promise<Record | void> {
-    return this.recordService.upsert(userContext, params, request);
+    return this.recordService.upsert(userContext, params, { ...request, userId: userContext.userId });
   }
 
   @Delete(':uuid')
