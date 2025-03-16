@@ -37,9 +37,7 @@ export class TrackingSessionService {
       if (duration > 5 * 60 * 1000) {
         const latestRecord = await this.recordModel.findOne({ ...params, taskId: trackingSession.taskId, userId: userContext.userId });
         if (latestRecord && latestRecord.start.getTime() === start.getTime()) {
-          await latestRecord.updateOne({
-            end,
-          });
+          await latestRecord.updateOne({ end });
         } else {
           await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start, end, userId: userContext.userId });
         }
@@ -57,21 +55,14 @@ export class TrackingSessionService {
 
     await this.stopTracking(userContext, params);
 
-    const latestRecord = await this.recordModel.findOne({ ...params, taskId: createRequest.taskId, userId: userContext.userId });
+    let start = new Date();
 
+    const latestRecord = await this.recordModel.findOne({ ...params, taskId: createRequest.taskId, userId: userContext.userId });
     if (latestRecord && new Date().getTime() - latestRecord.end.getTime() < 5 * 60 * 1000) {
-      await this.trackingSessionModel.updateOne(
-        { ...params, userId: userContext.userId },
-        { ...createRequest, userId: userContext.userId, start: latestRecord.start },
-        { upsert: true, new: true },
-      );
-    } else {
-      await this.trackingSessionModel.updateOne(
-        { ...params, userId: userContext.userId },
-        { ...createRequest, userId: userContext.userId, start: new Date() },
-        { upsert: true, new: true },
-      );
+      start = latestRecord.start;
     }
+
+    await this.trackingSessionModel.updateOne({ ...params, userId: userContext.userId }, { ...createRequest, userId: userContext.userId, start }, { upsert: true, new: true });
   }
 
   public async delete(userContext: UserContext, params: EntitiesPathParams): Promise<void> {
