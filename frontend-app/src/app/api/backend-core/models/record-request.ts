@@ -6,5 +6,4 @@ export interface RecordRequest {
   end: Date;
   start: Date;
   taskId: string;
-  userId: string;
 }
