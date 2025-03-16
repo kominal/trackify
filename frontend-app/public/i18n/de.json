@@ -1,4 +1,10 @@
 {
+  "dialogs": {
+    "delete": {
+      "message": "Möchtest du diesen Eintrag wirklich löschen?",
+      "title": "Löschen"
+    }
+  },
   "forms": {
     "client": {
       "name": "Name"
@@ -17,6 +23,9 @@
       "priority": "Priorität",
       "projectId": "Projekt"
     }
+  },
+  "home": {
+    "welcome": "Willkommen bei Trackify. Wähle einen Mandanten aus, um fortzufahren."
   },
   "simple": {
     "actions": "Aktionen",
@@ -41,8 +50,5 @@
     "tenants": "Mandanten",
     "toggleLanguage": "Sprache wechseln",
     "tracking": "Tracking"
-  },
-  "home": {
-    "welcome": "Willkommen bei Trackify. Wähle einen Mandanten aus, um fortzufahren."
   }
 }

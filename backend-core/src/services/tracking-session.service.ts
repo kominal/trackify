@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Record, RecordModel } from '../entities/record.entity';
 import { TrackingSession, TrackingSessionModel, TrackingSessionRequest } from '../entities/tracking-session.entity';
 import { UserContext } from '../helpers/context.decorator';
 import { EntitiesPathParams } from '../helpers/entity-service.helper';
@@ -9,6 +10,7 @@ import { RecordService } from './record.service';
 export class TrackingSessionService {
   public constructor(
     @InjectModel(TrackingSession.name) private trackingSessionModel: TrackingSessionModel,
+    @InjectModel(Record.name) private recordModel: RecordModel,
     private recordService: RecordService,
   ) {}
 
@@ -33,7 +35,14 @@ export class TrackingSessionService {
       const end = this.getCurrentMinute();
       const duration = end.getTime() - start.getTime();
       if (duration > 5 * 60 * 1000) {
-        await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start, end });
+        const latestRecord = await this.recordModel.findOne({ ...params, taskId: trackingSession.taskId, userId: userContext.userId });
+        if (latestRecord && latestRecord.start.getTime() === start.getTime()) {
+          await latestRecord.updateOne({
+            end,
+          });
+        } else {
+          await this.recordService.create(userContext, params, { taskId: trackingSession.taskId, start, end, userId: userContext.userId });
+        }
       }
     }
     await this.trackingSessionModel.deleteOne({ ...params, userId: userContext.userId }).lean();
@@ -47,9 +56,22 @@ export class TrackingSessionService {
     }
 
     await this.stopTracking(userContext, params);
-    await this.trackingSessionModel
-      .updateOne({ ...params, userId: userContext.userId }, { ...createRequest, userId: userContext.userId, start: new Date() }, { upsert: true, new: true })
-      .lean();
+
+    const latestRecord = await this.recordModel.findOne({ ...params, taskId: createRequest.taskId, userId: userContext.userId });
+
+    if (latestRecord && new Date().getTime() - latestRecord.end.getTime() < 5 * 60 * 1000) {
+      await this.trackingSessionModel.updateOne(
+        { ...params, userId: userContext.userId },
+        { ...createRequest, userId: userContext.userId, start: latestRecord.start },
+        { upsert: true, new: true },
+      );
+    } else {
+      await this.trackingSessionModel.updateOne(
+        { ...params, userId: userContext.userId },
+        { ...createRequest, userId: userContext.userId, start: new Date() },
+        { upsert: true, new: true },
+      );
+    }
   }
 
   public async delete(userContext: UserContext, params: EntitiesPathParams): Promise<void> {

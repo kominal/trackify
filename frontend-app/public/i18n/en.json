@@ -1,1 +1,54 @@
-{}
+{
+  "dialogs": {
+    "delete": {
+      "message": "Are you sure you want to delete this entry?",
+      "title": "Delete"
+    }
+  },
+  "forms": {
+    "client": {
+      "name": "Name"
+    },
+    "project": {
+      "clientId": "Client",
+      "name": "Name"
+    },
+    "record": {
+      "end": "End",
+      "start": "Start"
+    },
+    "task": {
+      "color": "Color",
+      "name": "Name",
+      "priority": "Priority",
+      "projectId": "Project"
+    }
+  },
+  "home": {
+    "welcome": "Welcome to Trackify. Select a tenant to continue."
+  },
+  "simple": {
+    "actions": "Actions",
+    "cancel": "Cancel",
+    "client": "Client",
+    "clients": "Clients",
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "logout": "Logout",
+    "member": "Member",
+    "members": "Members",
+    "project": "Project",
+    "projects": "Projects",
+    "record": "Time Entry",
+    "records": "Time Entries",
+    "save": "Save",
+    "settings": "Settings",
+    "stopTracking": "Stop Tracking",
+    "task": "Task",
+    "tasks": "Tasks",
+    "tenant": "Tenant",
+    "tenants": "Tenants",
+    "toggleLanguage": "Toggle Language",
+    "tracking": "Tracking"
+  }
+}
