@@ -34,7 +34,7 @@ export class TrackingSessionService {
       start.setMinutes(start.getMinutes() + 1);
       const end = this.getCurrentMinute();
       const duration = end.getTime() - start.getTime();
-      const latestRecord = await this.recordModel.findOne({ ...params, taskId: trackingSession.taskId, userId: userContext.userId });
+      const latestRecord = await this.recordModel.findOne({ ...params, taskId: trackingSession.taskId, userId: userContext.userId }).sort({ end: -1 });
       if (latestRecord && latestRecord.start.getTime() === start.getTime()) {
         await latestRecord.updateOne({ end });
       } else if (duration > 5 * 60 * 1000) {
@@ -55,7 +55,7 @@ export class TrackingSessionService {
 
     let start = new Date();
 
-    const latestRecord = await this.recordModel.findOne({ ...params, taskId: createRequest.taskId, userId: userContext.userId });
+    const latestRecord = await this.recordModel.findOne({ ...params, taskId: createRequest.taskId, userId: userContext.userId }).sort({ end: -1 });
     if (latestRecord && new Date().getTime() - latestRecord.end.getTime() < 5 * 60 * 1000) {
       start = latestRecord.start;
     }
