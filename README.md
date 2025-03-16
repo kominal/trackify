@@ -2,7 +2,7 @@
 
 [![GitHub License](https://img.shields.io/github/license/kominal/trackify?style=flat-square)](https://github.com/kominal/trackify/blob/production/LICENSE.md)
 ![Deployment](https://img.shields.io/github/actions/workflow/status/kominal/trackify/deployment.yml?style=flat-square)
-![Technologie TypeScript](https://img.shields.io/badge/TypeScript-blue)
+![Technologie TypeScript](https://img.shields.io/badge/TypeScript-blue?style=flat-square)
 
 ![Screenshot of Trackify](docs/images/banner.png 'Trackify Banner')
 
