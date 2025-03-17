@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
+import { AsyncPipe, DatePipe, NgClass, NgStyle } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { combineLatest, map } from 'rxjs';
@@ -17,6 +17,7 @@ interface Section {
   startMinute: number;
   endMinute: number;
   duration: string;
+  active: boolean;
 }
 
 interface Day {
@@ -26,7 +27,7 @@ interface Day {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [AsyncPipe, NgClass, TooltipModule, DatePipe],
+  imports: [AsyncPipe, NgClass, NgStyle, TooltipModule, DatePipe],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent {
@@ -39,15 +40,22 @@ export class DashboardComponent {
   public data$ = combineLatest([
     this.tasks$,
     this.recordHttpService.list({ tenantId: TenantService.tenantId, pageIndex: -1, pageSize: 0, select: 'uuid taskId start end' }).pipe(map((r) => r.items)),
+    this.trackingService.trackingState$,
   ]).pipe(
-    map(([tasks, records]) => {
-      if (records.length === 0) {
+    map(([tasks, records, trackingState]) => {
+      let displayableRecords: (Record & { active?: boolean })[] = records;
+      if (trackingState) {
+        displayableRecords = displayableRecords.filter((record) => record.start.getTime() !== trackingState.start.getTime());
+        displayableRecords = [...displayableRecords, { start: trackingState.start, end: new Date(), taskId: trackingState.taskId, active: true } as Record & { active?: boolean }];
+      }
+
+      if (displayableRecords.length === 0) {
         return [];
       }
 
-      const globalStart = new Date(records.reduce((acc, record) => (record.start < acc ? record.start : acc), records[0].start));
+      const globalStart = new Date(displayableRecords.reduce((acc, record) => (record.start < acc ? record.start : acc), displayableRecords[0].start));
       globalStart.setHours(0, 0, 0, 0);
-      const endOfLastDay = new Date(records.reduce((acc, record) => (record.end > acc ? record.end : acc), records[0].end));
+      const endOfLastDay = new Date(displayableRecords.reduce((acc, record) => (record.end > acc ? record.end : acc), displayableRecords[0].end));
       endOfLastDay.setHours(0, 0, 0, 0);
       endOfLastDay.setDate(endOfLastDay.getDate() + 1);
 
@@ -58,7 +66,7 @@ export class DashboardComponent {
 
         const day: Day = { date: new Date(startOfDay), sections: [] };
 
-        const relevantRecords = records.filter((record) => record.start < endOfDay && record.end > startOfDay);
+        const relevantRecords = displayableRecords.filter((record) => record.start < endOfDay && record.end > startOfDay);
 
         const sorted = relevantRecords.sort((a, b) => a.end.getTime() - b.end.getTime());
 
@@ -74,7 +82,7 @@ export class DashboardComponent {
 
           const task = tasks.find((t) => t.task.uuid === record.taskId);
           if (task) {
-            day.sections.push({ record, task: task.task, start, end, startMinute, endMinute, duration });
+            day.sections.push({ record, task: task.task, start, end, startMinute, endMinute, duration, active: record.active || false });
           }
         }
 

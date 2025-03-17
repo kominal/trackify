@@ -12,7 +12,21 @@
                 tooltipPosition="top"
                 [style.left]="(100 / 1440) * section.startMinute + '%'"
                 [style.width]="(100 / 1440) * (section.endMinute - section.startMinute) + '%'"
-                [ngClass]="'bg-' + section.task.color + '-300'"
+                [ngClass]="section.active ? '' : 'bg-' + section.task.color + '-300'"
+                [ngStyle]="
+                  section.active
+                    ? {
+                        background:
+                          'repeating-linear-gradient( 135deg, var(--p-gray-300), var(--p-gray-300) 2px, var(--p-' +
+                          section.task.color +
+                          '-300' +
+                          ') 2px, var(--p-' +
+                          section.task.color +
+                          '-300' +
+                          ') 10px )',
+                      }
+                    : {}
+                "
               ></div>
             }
           </div>
