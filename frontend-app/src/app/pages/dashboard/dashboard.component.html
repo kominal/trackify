@@ -11,7 +11,17 @@
                 @for (section of day.sections; track $index) {
                   <div
                     class="border-x-1 absolute h-full cursor-pointer border-solid border-gray-400"
-                    [pTooltip]="section.duration + '\n' + section.task.name + '\n' + (section.start | date: 'HH:mm') + ' - ' + (section.end | date: 'HH:mm')"
+                    [pTooltip]="
+                      section.duration +
+                      '\n' +
+                      (section.project?.name || '-') +
+                      '\n' +
+                      section.task.name +
+                      '\n' +
+                      (section.start | date: 'HH:mm') +
+                      ' - ' +
+                      (section.end | date: 'HH:mm')
+                    "
                     tooltipPosition="top"
                     [style.left]="(100 / 1440) * section.startMinute + '%'"
                     [style.width]="(100 / 1440) * (section.endMinute - section.startMinute) + '%'"
