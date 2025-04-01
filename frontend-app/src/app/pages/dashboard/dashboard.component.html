@@ -3,32 +3,49 @@
     <div class="flex flex-col gap-2">
       @for (day of data; track $index) {
         <div class="flex flex-col">
-          <span>{{ day.date | date: 'dd.MM.yyy' }}</span>
-          <div class="relative h-8 overflow-hidden whitespace-nowrap rounded bg-gray-200">
-            @for (section of day.sections; track $index) {
-              <div
-                class="border-x-1 absolute h-8 cursor-pointer border-solid border-gray-400"
-                [pTooltip]="section.duration + '\n' + section.task.name + '\n' + (section.start | date: 'HH:mm') + ' - ' + (section.end | date: 'HH:mm')"
-                tooltipPosition="top"
-                [style.left]="(100 / 1440) * section.startMinute + '%'"
-                [style.width]="(100 / 1440) * (section.endMinute - section.startMinute) + '%'"
-                [ngClass]="section.active ? '' : 'bg-' + section.task.color + '-300'"
-                [ngStyle]="
-                  section.active
-                    ? {
-                        background:
-                          'repeating-linear-gradient( 135deg, var(--p-gray-300), var(--p-gray-300) 2px, var(--p-' +
-                          section.task.color +
-                          '-300' +
-                          ') 2px, var(--p-' +
-                          section.task.color +
-                          '-300' +
-                          ') 10px )',
-                      }
-                    : {}
-                "
-              ></div>
-            }
+          <span class="pl-13">{{ day.date | date: 'dd.MM.yyy' }}</span>
+          <div class="flex gap-2">
+            <p-button [icon]="day.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" [rounded]="true" [text]="true" (click)="day.expanded = !day.expanded" />
+            <div class="flex w-full flex-col gap-2">
+              <div class="relative h-9 overflow-hidden whitespace-nowrap rounded bg-gray-200">
+                @for (section of day.sections; track $index) {
+                  <div
+                    class="border-x-1 absolute h-full cursor-pointer border-solid border-gray-400"
+                    [pTooltip]="section.duration + '\n' + section.task.name + '\n' + (section.start | date: 'HH:mm') + ' - ' + (section.end | date: 'HH:mm')"
+                    tooltipPosition="top"
+                    [style.left]="(100 / 1440) * section.startMinute + '%'"
+                    [style.width]="(100 / 1440) * (section.endMinute - section.startMinute) + '%'"
+                    [ngClass]="section.active ? '' : 'bg-' + section.task.color + '-300'"
+                    [ngStyle]="
+                      section.active
+                        ? {
+                            background:
+                              'repeating-linear-gradient( 135deg, var(--p-gray-300), var(--p-gray-300) 2px, var(--p-' +
+                              section.task.color +
+                              '-300' +
+                              ') 2px, var(--p-' +
+                              section.task.color +
+                              '-300' +
+                              ') 10px )',
+                          }
+                        : {}
+                    "
+                  ></div>
+                }
+              </div>
+              @if (day.expanded) {
+                <div class="flex flex-col gap-2">
+                  @for (summary of day.summaries; track $index) {
+                    <div class="flex gap-2">
+                      <span>{{ summary.project.name }}</span>
+                      <span>{{ summary.duration }}</span>
+                      <span>{{ summary.totalBreak }}</span>
+                      <span>{{ summary.active }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
           </div>
         </div>
       }
