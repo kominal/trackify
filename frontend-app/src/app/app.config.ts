@@ -90,9 +90,12 @@ export const appConfig: ApplicationConfig = {
       clientId: '2keyZpo1IPv08F3nzmpoyCow10NUmaBh',
       authorizationParams: {
         redirect_uri: CALLBACK_URL,
-        scope: 'openid profile email',
+        scope: 'openid profile email offline_access',
         audience: 'trackify/api',
       },
+      useRefreshTokens: true,
+      useRefreshTokensFallback: false,
+      cacheLocation: 'localstorage',
       errorPath: '/error',
       httpInterceptor: {
         allowedList: [{ uri: `https://${BASE_URL}/api/core/*` }],

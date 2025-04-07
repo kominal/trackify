@@ -57,7 +57,7 @@ export class HeaderComponent {
           this.translateService.use(newLang);
         },
       },
-      { label: this.translateService.instant('simple.logout'), command: (): Observable<void> => this.authService.logout() },
+      { label: this.translateService.instant('simple.logout'), command: (): Observable<void> => this.authService.logout({ logoutParams: { returnTo: window.origin } }) },
     ]),
   );
 }

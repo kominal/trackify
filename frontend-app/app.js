@@ -22,12 +22,6 @@ function createWindow() {
   });
 
   mainWindow.webContents.session.webRequest.onBeforeRequest({ urls: ['http://localhost/callback*'] }, (request) => {
-    url.format({
-      pathname: path.join(__dirname, `/dist/browser/index.html`),
-      protocol: 'file:',
-      slashes: true,
-    });
-
     const urlSearchParams = new URLSearchParams(request.url.split('?')[1]);
 
     return mainWindow.loadURL(
