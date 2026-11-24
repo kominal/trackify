@@ -4,4 +4,5 @@
 
 export interface ClientRequest {
   name: string;
+  version?: number;
 }

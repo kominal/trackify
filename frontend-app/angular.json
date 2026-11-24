@@ -38,8 +38,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
+            "preserveSymlinks": true,
+            "define": {
+              "SENTRY_KEY": "''",
+              "SENTRY_ENVIRONMENT": "''"
+            },
             "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -52,7 +57,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["node_modules/@fortawesome/fontawesome-free/css/all.min.css", "src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -61,12 +66,12 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "2MB"
+                  "maximumError": "4MB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumError": "40kB"
                 }
               ],
               "outputHashing": "all"
@@ -80,26 +85,34 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "prebundle": {
+              "exclude": ["@kominal/common-angular"]
+            }
+          },
           "configurations": {
             "production": {
               "buildTarget": "frontend-app:build:production"
             },
             "development": {
               "buildTarget": "frontend-app:build:development"
+            },
+            "local-backend": {
+              "buildTarget": "frontend-app:build:development",
+              "proxyConfig": "proxy.conf.local.json"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
+          "builder": "@angular/build:extract-i18n"
         }
       }
     }
   },
   "cli": {
-    "cache": {
-      "enabled": false
-    }
+    "analytics": false
   }
 }

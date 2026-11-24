@@ -1,9 +1,8 @@
-@if (layoutService.isLoading$ | async) {
-  <div style="position: fixed; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.3); z-index: 9999">
-    <p-progressSpinner></p-progressSpinner>
+<router-outlet></router-outlet>
+@if (layoutService.isLoading()) {
+  <div class="progress-spinner flex h-full items-center justify-center">
+    <p-progress-spinner></p-progress-spinner>
   </div>
 }
-
-<p-confirmDialog />
 <p-toast position="bottom-right" />
-<router-outlet />
+<p-confirm-dialog [style]="{ 'max-width': '600px' }" />

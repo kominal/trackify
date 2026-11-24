@@ -7,12 +7,16 @@ import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { TenantHttpService } from './services/tenant-http.service';
+import { MembershipHttpService } from './services/membership-http.service';
 import { ClientHttpService } from './services/client-http.service';
-import { DashboardHttpService } from './services/dashboard-http.service';
 import { ProjectHttpService } from './services/project-http.service';
-import { RecordHttpService } from './services/record-http.service';
 import { TaskHttpService } from './services/task-http.service';
-import { TrackingSessionHttpService } from './services/tracking-session-http.service';
+import { TimeEntryHttpService } from './services/time-entry-http.service';
+import { TrackingHttpService } from './services/tracking-http.service';
+import { DashboardHttpService } from './services/dashboard-http.service';
+import { MeHttpService } from './services/me-http.service';
+import { FrontendHttpService } from './services/frontend-http.service';
+import { HealthHttpService } from './services/health-http.service';
 
 /**
  * Module that provides all services and configuration.
@@ -21,16 +25,7 @@ import { TrackingSessionHttpService } from './services/tracking-session-http.ser
   imports: [],
   exports: [],
   declarations: [],
-  providers: [
-    TenantHttpService,
-    ClientHttpService,
-    DashboardHttpService,
-    ProjectHttpService,
-    RecordHttpService,
-    TaskHttpService,
-    TrackingSessionHttpService,
-    ApiConfiguration
-  ],
+  providers: [TenantHttpService, MembershipHttpService, ClientHttpService, ProjectHttpService, TaskHttpService, TimeEntryHttpService, TrackingHttpService, DashboardHttpService, MeHttpService, FrontendHttpService, HealthHttpService, ApiConfiguration],
 })
 export class ApiModule {
   static forRoot(params: ApiConfigurationParams): ModuleWithProviders<ApiModule> {
@@ -39,22 +34,18 @@ export class ApiModule {
       providers: [
         {
           provide: ApiConfiguration,
-          useValue: params
-        }
-      ]
-    }
+          useValue: params,
+        },
+      ],
+    };
   }
 
-  constructor( 
-    @Optional() @SkipSelf() parentModule: ApiModule,
-    @Optional() http: HttpClient
-  ) {
+  constructor(@Optional() @SkipSelf() parentModule: ApiModule, @Optional() http: HttpClient) {
     if (parentModule) {
       throw new Error('ApiModule is already loaded. Import in your base AppModule only.');
     }
     if (!http) {
-      throw new Error('You need to import the HttpClientModule in your AppModule! \n' +
-      'See also https://github.com/angular/angular/issues/20575');
+      throw new Error('You need to import the HttpClientModule in your AppModule! \n' + 'See also https://github.com/angular/angular/issues/20575');
     }
   }
 }

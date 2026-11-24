@@ -8,28 +8,26 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Task } from '../../models/task';
+import { TaskEntity } from '../../models/task-entity';
 import { TaskRequest } from '../../models/task-request';
 
 export interface Create$Params {
   tenantId: string;
-      body: TaskRequest
+  body: TaskRequest;
 }
 
-export function create(http: HttpClient, rootUrl: string, params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Task>> {
+export function create(http: HttpClient, rootUrl: string, params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<TaskEntity>> {
   const rb = new RequestBuilder(rootUrl, create.PATH, 'post');
   if (params) {
     rb.path('tenantId', params.tenantId, {});
     rb.body(params.body, 'application/json');
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
+  return http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Task>;
-    })
+      return r as StrictHttpResponse<TaskEntity>;
+    }),
   );
 }
 

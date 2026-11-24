@@ -1,0 +1,60 @@
+<div class="card min-h-16 shrink-0 flex-row! items-center justify-between gap-4">
+  <h1 class="text-2xl font-semibold">{{ 'simple.clients' | translate }}</h1>
+  <div class="flex items-center gap-2">
+    <p-button severity="secondary" [outlined]="true" size="small" icon="fas fa-filter-circle-xmark" [label]="'simple.resetFilter' | translate" (click)="resetFilter(table)" />
+    <p-button [attr.data-testid]="'clients-add-button'" size="small" icon="fa fa-add" [label]="'simple.add' | translate" (click)="edit()" />
+  </div>
+</div>
+@if (applicationStateService.showHelp()) {
+  <p-message severity="info">{{ 'help.clients' | translate }}</p-message>
+}
+<div class="card h-full p-0!">
+  <p-table
+    #table
+    class="overflow-auto"
+    [value]="data()?.items || []"
+    [lazy]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    stateStorage="local"
+    [stateKey]="tenantId + '_CLIENTS_FILTER'"
+    (onStateRestore)="onStateRestore(table, $event)"
+    dataKey="uuid"
+    sortField="name"
+    [sortOrder]="1"
+    [scrollable]="true"
+    scrollHeight="flex"
+    [paginator]="true"
+    [totalRecords]="data()?.count || 0"
+    paginatorDropdownAppendTo="body"
+    [rows]="50"
+    [rowsPerPageOptions]="[50, 100, 200]"
+  >
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="name">{{ 'simple.name' | translate }} <p-sort-icon field="name" /></th>
+        <th class="w-0 text-end!">{{ 'simple.actions' | translate }}</th>
+      </tr>
+      <tr>
+        <th><p-column-filter class="w-full" type="text" field="name" filterOn="input" /></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-entity>
+      <tr>
+        <td>{{ entity.name }}</td>
+        <td>
+          <div class="flex justify-end gap-2">
+            <p-button icon="fas fa-trash" [rounded]="true" [text]="true" severity="danger" [pTooltip]="'simple.delete' | translate" (click)="remove(entity)" />
+            <p-button icon="fas fa-edit" [rounded]="true" [text]="true" severity="secondary" [pTooltip]="'simple.edit' | translate" tooltipPosition="left" (click)="edit(entity)" />
+            <app-entity-info [entity]="entity" />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td class="text-center" colspan="100">{{ 'simple.noResults' | translate }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

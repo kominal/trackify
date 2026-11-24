@@ -1,54 +1,370 @@
 {
-  "dialogs": {
-    "delete": {
-      "message": "Are you sure you want to delete this entry?",
-      "title": "Delete"
-    }
-  },
-  "forms": {
-    "client": {
-      "name": "Name"
-    },
-    "project": {
-      "clientId": "Client",
-      "name": "Name"
-    },
-    "record": {
-      "end": "End",
-      "start": "Start"
-    },
-    "task": {
-      "color": "Color",
-      "name": "Name",
-      "priority": "Priority",
-      "projectId": "Project"
-    }
-  },
-  "home": {
-    "welcome": "Welcome to Trackify. Select a tenant to continue."
-  },
   "simple": {
+    "tenants": "Organisations",
+    "tenant": "Organisation",
+    "name": "Name",
     "actions": "Actions",
-    "cancel": "Cancel",
-    "client": "Client",
-    "clients": "Clients",
-    "dashboard": "Dashboard",
-    "home": "Home",
-    "logout": "Logout",
-    "member": "Member",
-    "members": "Members",
-    "project": "Project",
-    "projects": "Projects",
-    "record": "Time Entry",
-    "records": "Time Entries",
+    "add": "Add",
     "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "noResults": "Nothing here",
+    "resetFilter": "Reset filter",
+    "search": "Search",
+    "error": "Error",
+    "success": "Success",
+    "created": "Created",
+    "changed": "Changed",
+    "email": "Email",
+    "status": "Status",
+    "permissions": "Permissions",
+    "memberships": "Members",
     "settings": "Settings",
-    "stopTracking": "Stop Tracking",
-    "task": "Task",
+    "preferences": "My preferences",
+    "logout": "Sign out",
+    "toggleLanguage": "Deutsch",
+    "toggleTheme": "Light/dark",
+    "toggleHelp": "Toggle help",
+    "deleteTenant": "Delete organisation",
+    "dangerZone": "Danger zone",
+    "tracking": "Tracking",
+    "dashboard": "Dashboard",
+    "entries": "Entries",
+    "catalog": "Catalog",
+    "clients": "Clients",
+    "client": "Client",
+    "projects": "Projects",
+    "project": "Project",
     "tasks": "Tasks",
-    "tenant": "Tenant",
-    "tenants": "Tenants",
-    "toggleLanguage": "Toggle Language",
-    "tracking": "Tracking"
+    "task": "Task",
+    "addTask": "Add task",
+    "color": "Colour",
+    "priority": "Order",
+    "archived": "Archived",
+    "showArchived": "Show archived",
+    "inherit": "Inherit",
+    "projectColor": "Project colour",
+    "today": "Today",
+    "date": "Date",
+    "time": "Time",
+    "duration": "Duration",
+    "note": "Note",
+    "start": "Start",
+    "end": "End"
+  },
+  "form": {
+    "formSaved": "Saved."
+  },
+  "error": {
+    "errorOnRequest": "The request failed. Please try again."
+  },
+  "exception": {
+    "notFound": "Not found.",
+    "forbidden": "You lack the permission for this.",
+    "conflict": "Someone changed this in the meantime. Please reload.",
+    "inUse": "Still in use and cannot be deleted. Archive it instead.",
+    "invalidRange": "The end must be after the start (24 hours at most).",
+    "invalidFilter": "Invalid filter.",
+    "invalidTimeZone": "Unknown time zone."
+  },
+  "confirm": {
+    "delete": {
+      "header": "Delete",
+      "message": "Really delete?"
+    },
+    "deleteTask": {
+      "header": "Delete task",
+      "message": "Tasks with tracked time cannot be deleted – archive them instead. Try anyway?"
+    },
+    "deleteTenant": {
+      "header": "Delete organisation",
+      "message": "The organisation is deleted with all clients, projects, tasks and times. Really?"
+    },
+    "deleteActivity": {
+      "header": "Delete activity",
+      "message": "The recorded window activity in the selected range is deleted for good."
+    }
+  },
+  "dialogs": {
+    "tenantAdd": {
+      "header": "New organisation"
+    },
+    "membershipAdd": {
+      "header": "Invite member"
+    },
+    "membershipEdit": {
+      "header": "Edit member"
+    },
+    "clientAdd": {
+      "header": "New client"
+    },
+    "clientEdit": {
+      "header": "Edit client"
+    },
+    "projectAdd": {
+      "header": "New project"
+    },
+    "projectEdit": {
+      "header": "Edit project"
+    },
+    "taskAdd": {
+      "header": "New task"
+    },
+    "taskEdit": {
+      "header": "Edit task"
+    },
+    "timeEntryAdd": {
+      "header": "Add time"
+    },
+    "timeEntryEdit": {
+      "header": "Edit entry"
+    }
+  },
+  "help": {
+    "tenants": "An organisation groups clients, projects and tasks. Tracked time is only ever visible to the person who tracked it.",
+    "memberships": "Every member can track time. Only members with the permission maintain the catalog (clients, projects, tasks).",
+    "settings": "Name of the organisation.",
+    "tracking": "Click a task to start it, click again to stop. Times under 5 minutes are dropped; returning to the same task within 5 minutes continues its last entry.",
+    "clients": "Clients are optional and group projects.",
+    "projects": "Projects give tasks their colour. Archived projects disappear from tracking; their time stays.",
+    "tasks": "Time is tracked on tasks. The order also decides where Ctrl+Alt+↑/↓ switches to in the desktop app.",
+    "projectFirst": "Create a project first.",
+    "entries": "Your tracked time. Click an entry to change it; add forgotten time with \"Add\".",
+    "dashboardNoActivity": "With the Trackify desktop app for Windows you also see when your PC was in use here – and which time is not tracked yet.",
+    "dashboardNoActivityDesktop": "There is no window activity for this range. Recording can be switched on under \"My preferences\"."
+  },
+  "enums": {
+    "MembershipStatus": {
+      "INVITED": "Invited",
+      "ACTIVE": "Active",
+      "DISABLED": "Disabled"
+    },
+    "MembershipPermission": {
+      "MANAGE_TENANT": "Manage organisation",
+      "MANAGE_MEMBERSHIPS": "Manage members",
+      "MANAGE_CATALOG": "Maintain catalog"
+    },
+    "Color": {
+      "BLUE": "Blue",
+      "ORANGE": "Orange",
+      "GREEN": "Green",
+      "YELLOW": "Yellow",
+      "PINK": "Pink",
+      "TEAL": "Dark green",
+      "PURPLE": "Purple",
+      "RED": "Red",
+      "GRAY": "Gray"
+    }
+  },
+  "tracking": {
+    "runningSince": "Running since {{time}}",
+    "stop": "Stop",
+    "now": "now",
+    "nothingRunning": "Nothing is running",
+    "nothingRunningHint": "Pick a task below to start.",
+    "search": "Search tasks – Enter starts the first match",
+    "noProject": "No project",
+    "noTasks": "No tasks yet",
+    "createTasks": "Create tasks",
+    "nothingToday": "Nothing tracked today yet."
+  },
+  "dashboard": {
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "previous": "Previous",
+    "next": "Next",
+    "tracked": "Tracked",
+    "workingDays": "on {{count}} days",
+    "averagePerDay": "Average",
+    "perWorkingDay": "per working day",
+    "activeTime": "PC active",
+    "activeTimeHint": "according to the desktop app",
+    "coverage": "Coverage",
+    "coverageHint": "needs the desktop app",
+    "untrackedMinutes": "{{time}} not tracked",
+    "longestGap": "Longest gap",
+    "offlineTracked": "{{time}} tracked away from the PC",
+    "timeline": "Timeline",
+    "hoursPerDay": "Hours per day",
+    "byProject": "By project",
+    "topApps": "Applications",
+    "topAppsHint": "dark: share tracked",
+    "appCoverage": "Share that fell into tracked time",
+    "entryCount": "{{count}}×",
+    "noData": "No data in this range.",
+    "noActivity": "The desktop app records which applications you use.",
+    "noActivityYet": "No activity in this range yet.",
+    "untracked": "Not tracked:",
+    "clickToBook": "Click to book this time",
+    "legendTracked": "Tracked",
+    "legendActivity": "PC activity",
+    "legendUntracked": "PC used, not tracked"
+  },
+  "preferences": {
+    "general": "General",
+    "timeZone": "Time zone",
+    "reminderMinutes": "Remind after (minutes)",
+    "reminderHint": "The desktop app reminds you when the tracked task has not changed for this long – or when nothing is tracked although you are working at the PC.",
+    "desktop": "Desktop app",
+    "autostart": "Start with Windows",
+    "startHidden": "Start in the tray",
+    "activityTracking": "Record window activity",
+    "idleThreshold": "Away after (seconds without input)",
+    "excludedApps": "Never record (application names, comma separated)",
+    "activityHint": "The application name and window title of the active window are recorded. Only you can see this data; it is deleted after 180 days.",
+    "desktopMissing": "These settings live in the Trackify desktop app for Windows: it starts with Windows, reminds you to track and records which window is active.",
+    "download": "Download for Windows",
+    "activityData": "My activity data",
+    "activityDataHint": "Delete the recorded window activity of a range, e.g. a private hour.",
+    "deleteActivity": "Delete activity",
+    "activityDeleted": "Activity deleted."
+  },
+  "reminder": {
+    "stillWorking": {
+      "title": "Still on \"{{task}}\"?",
+      "body": "Unchanged for {{minutes}} minutes · {{project}}"
+    },
+    "nothingTracked": {
+      "title": "Nothing is being tracked",
+      "body": "You have been at the PC for {{minutes}} minutes. Click to start a task."
+    }
+  },
+  "primeng": {
+    "accept": "Yes",
+    "addRule": "Add Rule",
+    "am": "AM",
+    "apply": "Apply",
+    "aria": {
+      "cancelEdit": "Cancel Edit",
+      "close": "Close",
+      "collapseLabel": "Collapse",
+      "collapseRow": "Row Collapsed",
+      "editRow": "Edit Row",
+      "expandLabel": "Expand",
+      "expandRow": "Row Expanded",
+      "falseLabel": "False",
+      "filterConstraint": "Filter Constraint",
+      "filterOperator": "Filter Operator",
+      "firstPageLabel": "First Page",
+      "gridView": "Grid View",
+      "hideFilterMenu": "Hide Filter Menu",
+      "jumpToPageDropdownLabel": "Jump to Page Dropdown",
+      "jumpToPageInputLabel": "Jump to Page Input",
+      "lastPageLabel": "Last Page",
+      "listLabel": "Option List",
+      "listView": "List View",
+      "maximizeLabel": "Maximize",
+      "minimizeLabel": "Minimize",
+      "moveAllToSource": "Move All to Source",
+      "moveAllToTarget": "Move All to Target",
+      "moveBottom": "Move Bottom",
+      "moveDown": "Move Down",
+      "moveTop": "Move Top",
+      "moveToSource": "Move to Source",
+      "moveToTarget": "Move to Target",
+      "moveUp": "Move Up",
+      "navigation": "Navigation",
+      "next": "Next",
+      "nextPageLabel": "Next Page",
+      "nullLabel": "Not Selected",
+      "otpLabel": "Please enter one time password character {0}",
+      "pageLabel": "Page {page}",
+      "passwordHide": "Hide Password",
+      "passwordShow": "Show Password",
+      "previous": "Previous",
+      "prevPageLabel": "Previous Page",
+      "removeLabel": "Remove",
+      "rotateLeft": "Rotate Left",
+      "rotateRight": "Rotate Right",
+      "rowsPerPageLabel": "Rows per page",
+      "saveEdit": "Save Edit",
+      "scrollTop": "Scroll Top",
+      "selectAll": "All items selected",
+      "selectColor": "Select a color",
+      "selectLabel": "Select",
+      "selectRow": "Row Selected",
+      "showFilterMenu": "Show Filter Menu",
+      "slide": "Slide",
+      "slideNumber": "{slideNumber}",
+      "star": "1 star",
+      "stars": "{star} stars",
+      "trueLabel": "True",
+      "unselectAll": "All items unselected",
+      "unselectLabel": "Unselect",
+      "unselectRow": "Row Unselected",
+      "zoomImage": "Zoom Image",
+      "zoomIn": "Zoom In",
+      "zoomOut": "Zoom Out"
+    },
+    "cancel": "Cancel",
+    "choose": "Choose",
+    "chooseDate": "Choose Date",
+    "chooseMonth": "Choose Month",
+    "chooseYear": "Choose Year",
+    "clear": "Clear",
+    "collapseAll": "Collapse all",
+    "completed": "Completed",
+    "contains": "Contains",
+    "custom": "Custom",
+    "dateAfter": "Date is after",
+    "dateBefore": "Date is before",
+    "dateFormat": "mm/dd/yy",
+    "dateIs": "Date is",
+    "dateIsNot": "Date is not",
+    "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "emptyFilterMessage": "No results found",
+    "emptyMessage": "No available options",
+    "emptySearchMessage": "No results found",
+    "emptySelectionMessage": "No selected item",
+    "endsWith": "Ends with",
+    "equals": "Equals",
+    "fileChosenMessage": "{0} files",
+    "fileSizeTypes": ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+    "filter": "Filter",
+    "firstDayOfWeek": 0,
+    "gt": "Greater than",
+    "gte": "Greater than or equal to",
+    "lt": "Less than",
+    "lte": "Less than or equal to",
+    "matchAll": "Match All",
+    "matchAny": "Match Any",
+    "medium": "Medium",
+    "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "nextDecade": "Next Decade",
+    "nextHour": "Next Hour",
+    "nextMinute": "Next Minute",
+    "nextMonth": "Next Month",
+    "nextSecond": "Next Second",
+    "nextYear": "Next Year",
+    "noFileChosenMessage": "No file chosen",
+    "noFilter": "No Filter",
+    "notContains": "Not contains",
+    "notEquals": "Not equals",
+    "now": "Now",
+    "passwordPrompt": "Enter a password",
+    "pending": "Pending",
+    "pm": "PM",
+    "prevDecade": "Previous Decade",
+    "prevHour": "Previous Hour",
+    "prevMinute": "Previous Minute",
+    "prevMonth": "Previous Month",
+    "prevSecond": "Previous Second",
+    "prevYear": "Previous Year",
+    "reject": "No",
+    "removeRule": "Remove Rule",
+    "searchMessage": "{0} results are available",
+    "selectionMessage": "{0} items selected",
+    "showMonthAfterYear": false,
+    "startsWith": "Starts with",
+    "strong": "Strong",
+    "today": "Today",
+    "upload": "Upload",
+    "weak": "Weak",
+    "weekHeader": "Wk"
   }
 }

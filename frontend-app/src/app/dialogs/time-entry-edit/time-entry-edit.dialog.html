@@ -1,0 +1,24 @@
+<form class="flex flex-col gap-4" [formGroup]="formElement" (ngSubmit)="submit()">
+  <app-input-select label="simple.task" [formElement]="$any(formElement.controls.taskId)" [options]="taskOptions()" [allowEmpty]="false" />
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-1">
+      <app-label label="simple.start" [formElement]="formElement.controls.start" />
+      <p-datepicker formControlName="start" [showTime]="true" hourFormat="24" dateFormat="dd.mm.yy" appendTo="body" [attr.data-testid]="'time-entry-start'" />
+    </div>
+    <div class="flex flex-col gap-1">
+      <app-label label="simple.end" [formElement]="formElement.controls.end" />
+      <p-datepicker formControlName="end" [showTime]="true" hourFormat="24" dateFormat="dd.mm.yy" appendTo="body" [attr.data-testid]="'time-entry-end'" />
+    </div>
+  </div>
+  <app-input-text label="simple.note" [formElement]="formElement.controls.note" />
+  <div class="flex items-center justify-between gap-2">
+    <span class="text-muted-color tabular-nums">{{ duration() ?? '' }}</span>
+    <div class="flex gap-2">
+      @if (data.entry) {
+        <p-button severity="danger" [text]="true" icon="fas fa-trash" [label]="'simple.delete' | translate" (click)="remove()" />
+      }
+      <p-button severity="secondary" [outlined]="true" [label]="'simple.cancel' | translate" (click)="close()" />
+      <p-button type="submit" [attr.data-testid]="'time-entry-save-button'" [label]="'simple.save' | translate" [disabled]="formElement.invalid" />
+    </div>
+  </div>
+</form>

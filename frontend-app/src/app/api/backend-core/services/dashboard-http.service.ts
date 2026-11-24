@@ -11,8 +11,9 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { get } from '../fn/dashboard-http/get';
-import { Get$Params } from '../fn/dashboard-http/get';
+import { Dashboard } from '../models/dashboard';
+import { read } from '../fn/dashboard-http/read';
+import { Read$Params } from '../fn/dashboard-http/read';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardHttpService extends BaseService {
@@ -20,29 +21,26 @@ export class DashboardHttpService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `dashboardControllerGet()` */
-  static readonly DashboardControllerGetPath = '/tenants/{tenantId}/dashboard';
+  /** Path part for operation `dashboardControllerRead()` */
+  static readonly DashboardControllerReadPath = '/tenants/{tenantId}/dashboard';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `get()` instead.
+   * To access only the response body, use `read()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method doesn't expect any request body.
    */
-  get$Response(params: Get$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return get(this.http, this.rootUrl, params, context);
+  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<Dashboard>> {
+    return read(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `get$Response()` instead.
+   * To access the full response (for headers, for example), `read$Response()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method doesn't expect any request body.
    */
-  get(params: Get$Params, context?: HttpContext): Observable<void> {
-    return this.get$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
+  read(params: Read$Params, context?: HttpContext): Observable<Dashboard> {
+    return this.read$Response(params, context).pipe(map((r: StrictHttpResponse<Dashboard>): Dashboard => r.body));
   }
-
 }

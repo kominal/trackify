@@ -8,28 +8,26 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Project } from '../../models/project';
+import { ProjectEntity } from '../../models/project-entity';
 import { ProjectRequest } from '../../models/project-request';
 
 export interface Create$Params {
   tenantId: string;
-      body: ProjectRequest
+  body: ProjectRequest;
 }
 
-export function create(http: HttpClient, rootUrl: string, params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Project>> {
+export function create(http: HttpClient, rootUrl: string, params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<ProjectEntity>> {
   const rb = new RequestBuilder(rootUrl, create.PATH, 'post');
   if (params) {
     rb.path('tenantId', params.tenantId, {});
     rb.body(params.body, 'application/json');
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
+  return http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Project>;
-    })
+      return r as StrictHttpResponse<ProjectEntity>;
+    }),
   );
 }
 

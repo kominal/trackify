@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-4">
+  <app-input-multi-select label="simple.permissions" [formElement]="$any(formElement.controls.permissions)" [options]="(MEMBERSHIP_PERMISSION_OPTIONS | translateSelectItems | async) || []" />
+  <div class="flex justify-end gap-2">
+    <p-button [attr.data-testid]="'membership-edit-cancel-button'" severity="secondary" [outlined]="true" [label]="'simple.cancel' | translate" (click)="close()" />
+    <p-button [attr.data-testid]="'membership-edit-save-button'" [label]="'simple.save' | translate" [disabled]="formElement.invalid" (click)="submit()" />
+  </div>
+</div>

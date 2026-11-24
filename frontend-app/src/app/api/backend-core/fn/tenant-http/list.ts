@@ -8,18 +8,28 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Tenant } from '../../models/tenant';
+import { TenantEntity } from '../../models/tenant-entity';
 
 export interface List$Params {
   active?: string;
-  direction?: string;
+  direction?: 'asc' | 'desc';
   pageIndex?: number;
   pageSize?: number;
   filter?: string;
   select?: string;
 }
 
-export function list(http: HttpClient, rootUrl: string, params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
+export function list(
+  http: HttpClient,
+  rootUrl: string,
+  params?: List$Params,
+  context?: HttpContext,
+): Observable<
+  StrictHttpResponse<{
+    items: Array<TenantEntity>;
+    count: number;
+  }>
+> {
   const rb = new RequestBuilder(rootUrl, list.PATH, 'get');
   if (params) {
     rb.query('active', params.active, {});
@@ -30,13 +40,14 @@ export function list(http: HttpClient, rootUrl: string, params?: List$Params, co
     rb.query('select', params.select, {});
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
+  return http.request(rb.build({ responseType: 'json', accept: 'application/json', context })).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Tenant>>;
-    })
+      return r as StrictHttpResponse<{
+        items: Array<TenantEntity>;
+        count: number;
+      }>;
+    }),
   );
 }
 

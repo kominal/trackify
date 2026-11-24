@@ -1,33 +1,52 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, filter, of, switchMap } from 'rxjs';
-import { TenantHttpService } from '../api/backend-core/services';
-import { shareReplayOne } from '../helpers/util';
+import { inject, Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TenantHttpService } from '@api/services';
+import { shareReplayOne } from '@helpers/util';
+import { BehaviorSubject, catchError, distinctUntilChanged, filter, map, of, switchMap } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class TenantService {
-  public static tenantId: string = undefined as any;
+  private readonly tenantHttpService = inject(TenantHttpService);
 
-  public tenantId$ = new BehaviorSubject<string>(undefined as any);
+  private readonly tenantIdSubject$ = new BehaviorSubject<string | undefined>(undefined);
+  public readonly tenantId$ = this.tenantIdSubject$.asObservable();
+
+  private readonly reloadTenant$ = new BehaviorSubject<void>(undefined);
+
+  public saveTenantId$ = this.tenantId$.pipe(
+    filter((tenantId): tenantId is string => !!tenantId),
+    distinctUntilChanged(),
+    shareReplayOne(),
+  );
 
   public tenant$ = this.tenantId$.pipe(
+    distinctUntilChanged(),
+    switchMap((tenantId) => this.reloadTenant$.pipe(map(() => tenantId))),
     switchMap((tenantId) => (tenantId ? this.tenantHttpService.read({ tenantId }) : of(undefined))),
     catchError(() => of(undefined)),
     shareReplayOne(),
   );
+
+  public tenant = toSignal(this.tenant$);
 
   public saveTenant$ = this.tenant$.pipe(
     filter((tenant) => !!tenant),
     shareReplayOne(),
   );
 
-  public constructor(private tenantHttpService: TenantHttpService) {}
+  public constructor() {
+    this.tenant$.subscribe();
+  }
 
-  public setTenantId(tenantId: string | undefined): void {
-    if (tenantId) {
-      TenantService.tenantId = tenantId;
-    }
-    this.tenantId$.next(tenantId as any);
+  public setTenantId(tenantId: string): void {
+    this.tenantIdSubject$.next(tenantId);
+  }
+
+  public refreshTenantId(): void {
+    this.reloadTenant$.next();
+  }
+
+  public resetTenantId(): void {
+    this.tenantIdSubject$.next(undefined);
   }
 }

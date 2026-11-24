@@ -1,0 +1,144 @@
+@let range_ = range();
+<div class="card min-h-16 shrink-0 flex-row! flex-wrap items-center justify-between gap-3">
+  <div class="flex items-center gap-2">
+    <p-button icon="fas fa-chevron-left" [text]="true" [rounded]="true" severity="secondary" [attr.aria-label]="'dashboard.previous' | translate" [attr.data-testid]="'dashboard-previous'" (click)="shift(-1)" />
+    <h1 class="min-w-56 text-center text-lg font-semibold">
+      @switch (range_.preset) {
+        @case ('day') {
+          {{ range_.from | date: 'EEEE, dd.MM.yyyy' }}
+        }
+        @case ('month') {
+          {{ range_.from | date: 'MMMM yyyy' }}
+        }
+        @default {
+          {{ range_.from | date: 'dd.MM.' }} – {{ customRange()[1] | date: 'dd.MM.yyyy' }}
+        }
+      }
+    </h1>
+    <p-button icon="fas fa-chevron-right" [text]="true" [rounded]="true" severity="secondary" [attr.aria-label]="'dashboard.next' | translate" [attr.data-testid]="'dashboard-next'" (click)="shift(1)" />
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <div class="border-surface-200 dark:border-surface-700 flex overflow-hidden rounded-md border">
+      @for (preset of presets; track preset.value) {
+        <button
+          type="button"
+          class="cursor-pointer border-0 px-3 py-1.5 text-sm"
+          [class]="range_.preset === preset.value ? 'bg-primary text-primary-contrast' : 'text-color hover:bg-surface-100 dark:hover:bg-surface-800 bg-transparent'"
+          [attr.data-testid]="'dashboard-preset-' + preset.value"
+          (click)="selectPreset(preset.value)"
+        >
+          {{ preset.label | translate }}
+        </button>
+      }
+    </div>
+    <p-datepicker selectionMode="range" [ngModel]="customRange()" (ngModelChange)="selectCustom($event)" dateFormat="dd.mm.yy" [readonlyInput]="true" [showIcon]="true" iconDisplay="input" inputStyleClass="w-56" appendTo="body" />
+  </div>
+</div>
+
+@if (data(); as data) {
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-5" [class.opacity-60]="loading()">
+    <div class="card gap-1!" [attr.data-testid]="'kpi-tracked'">
+      <span class="text-muted-color text-sm">{{ 'dashboard.tracked' | translate }}</span>
+      <span class="text-3xl font-semibold tabular-nums">{{ formatMinutes(data.totals.trackedMinutes) }}</span>
+      <span class="text-muted-color text-xs">{{ 'dashboard.workingDays' | translate: { count: data.totals.workingDays } }}</span>
+    </div>
+    <div class="card gap-1!">
+      <span class="text-muted-color text-sm">{{ 'dashboard.averagePerDay' | translate }}</span>
+      <span class="text-3xl font-semibold tabular-nums">{{ formatMinutes(averagePerDay()) }}</span>
+      <span class="text-muted-color text-xs">{{ 'dashboard.perWorkingDay' | translate }}</span>
+    </div>
+    <div class="card gap-1!" [attr.data-testid]="'kpi-active'">
+      <span class="text-muted-color text-sm">{{ 'dashboard.activeTime' | translate }}</span>
+      <span class="text-3xl font-semibold tabular-nums">{{ data.totals.hasActivity ? formatMinutes(data.totals.activeMinutes) : '–' }}</span>
+      <span class="text-muted-color text-xs">{{ 'dashboard.activeTimeHint' | translate }}</span>
+    </div>
+    <div class="card gap-1!" [attr.data-testid]="'kpi-coverage'">
+      <span class="text-muted-color text-sm">{{ 'dashboard.coverage' | translate }}</span>
+      <span class="text-3xl font-semibold tabular-nums" [class.text-red-500]="(coverage() ?? 100) < 80">{{ coverage() !== undefined ? (coverage() | number: '1.0-0') + ' %' : '–' }}</span>
+      <span class="text-muted-color text-xs">{{ data.totals.hasActivity ? ('dashboard.untrackedMinutes' | translate: { time: formatMinutes(data.totals.untrackedMinutes) }) : ('dashboard.coverageHint' | translate) }}</span>
+    </div>
+    <div class="card col-span-2 gap-1! lg:col-span-1">
+      <span class="text-muted-color text-sm">{{ 'dashboard.longestGap' | translate }}</span>
+      <span class="text-3xl font-semibold tabular-nums">{{ data.totals.hasActivity ? formatMinutes(data.totals.longestUntrackedMinutes) : '–' }}</span>
+      <span class="text-muted-color text-xs">{{ 'dashboard.offlineTracked' | translate: { time: formatMinutes(data.totals.offlineTrackedMinutes) } }}</span>
+    </div>
+  </div>
+
+  @if (!data.totals.hasActivity && applicationStateService.showHelp()) {
+    <p-message severity="info">{{ (nativeService.available ? 'help.dashboardNoActivityDesktop' : 'help.dashboardNoActivity') | translate }}</p-message>
+  }
+
+  <section class="card gap-3!" [class.opacity-60]="loading()">
+    <h2 class="text-base font-semibold">{{ 'dashboard.timeline' | translate }}</h2>
+    <app-timeline [dashboard]="data" [catalog]="catalogService.catalog()" [dark]="!!applicationStateService.darkMode()" (gapClick)="bookGap($event)" />
+  </section>
+
+  @if (data.days.length > 1) {
+    <section class="card gap-3!" [class.opacity-60]="loading()">
+      <h2 class="text-base font-semibold">{{ 'dashboard.hoursPerDay' | translate }}</h2>
+      <app-days-chart [dashboard]="data" [catalog]="catalogService.catalog()" />
+    </section>
+  }
+
+  <div class="grid grid-cols-1 gap-4 xl:grid-cols-2" [class.opacity-60]="loading()">
+    <section class="card gap-3!" [attr.data-testid]="'dashboard-projects'">
+      <h2 class="text-base font-semibold">{{ 'dashboard.byProject' | translate }}</h2>
+      @for (project of projects(); track project.projectId) {
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 shrink-0 rounded-sm" [style.background]="project.color"></span>
+            <span class="min-w-0 grow truncate font-medium">
+              {{ project.name ?? ('tracking.noProject' | translate) }}
+              @if (project.client) {
+                <span class="text-muted-color font-normal">· {{ project.client }}</span>
+              }
+            </span>
+            <span class="text-muted-color w-14 text-right tabular-nums">{{ project.share | number: '1.0-0' }} %</span>
+            <span class="w-20 text-right font-semibold tabular-nums">{{ formatMinutes(project.minutes) }}</span>
+          </div>
+          <div class="bg-surface-100 dark:bg-surface-800 h-1.5 overflow-hidden rounded-full">
+            <div class="h-full rounded-full" [style.width.%]="project.share" [style.background]="project.color"></div>
+          </div>
+          <ul class="m-0 flex list-none flex-col p-0 pl-5 text-sm">
+            @for (task of project.tasks; track task.taskId) {
+              <li class="flex items-center gap-2 py-0.5">
+                <span class="min-w-0 grow truncate">{{ task.name ?? '?' }}</span>
+                <span class="text-muted-color text-xs">{{ 'dashboard.entryCount' | translate: { count: task.entryCount } }}</span>
+                <span class="w-20 text-right tabular-nums">{{ formatMinutes(task.minutes) }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      } @empty {
+        <span class="text-muted-color py-4 text-center">{{ 'dashboard.noData' | translate }}</span>
+      }
+    </section>
+
+    <section class="card gap-3!" [attr.data-testid]="'dashboard-apps'">
+      <div class="flex items-baseline justify-between gap-2">
+        <h2 class="text-base font-semibold">{{ 'dashboard.topApps' | translate }}</h2>
+        <span class="text-muted-color text-xs">{{ 'dashboard.topAppsHint' | translate }}</span>
+      </div>
+      @for (app of apps(); track app.app) {
+        <div class="flex items-center gap-3 text-sm">
+          <span class="w-36 shrink-0 truncate font-medium" [pTooltip]="app.app">{{ app.app }}</span>
+          <div class="bg-surface-100 dark:bg-surface-800 relative h-4 grow overflow-hidden rounded">
+            <div class="bg-surface-300 dark:bg-surface-600 absolute inset-y-0 left-0" [style.width.%]="app.share"></div>
+            <div class="bg-primary absolute inset-y-0 left-0" [style.width.%]="(app.share * app.coverage) / 100"></div>
+          </div>
+          <span class="text-muted-color w-12 text-right text-xs tabular-nums" [pTooltip]="'dashboard.appCoverage' | translate">{{ app.coverage | number: '1.0-0' }} %</span>
+          <span class="w-16 text-right tabular-nums">{{ formatMinutes(app.minutes) }}</span>
+        </div>
+      } @empty {
+        <span class="text-muted-color py-4 text-center">{{ (nativeService.available ? 'dashboard.noActivityYet' : 'dashboard.noActivity') | translate }}</span>
+      }
+    </section>
+  </div>
+} @else {
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-5">
+    @for (i of [1, 2, 3, 4, 5]; track i) {
+      <p-skeleton height="96px" />
+    }
+  </div>
+  <p-skeleton height="320px" />
+}

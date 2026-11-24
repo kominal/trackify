@@ -1,11 +1,33 @@
-@use 'primeicons/primeicons.css';
 @use 'tailwindcss';
+@plugin 'tailwindcss-primeui';
+@source '../node_modules/@kominal/common-angular/src';
+@custom-variant dark (&:where(.dark, .dark *));
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --p-overlaybadge-outline-color: #d1d5db !important;
+  --p-inputtext-focus-ring-shadow: 0 !important;
+}
 
 html,
-body,
-app-root {
+body {
   margin: 0;
   height: 100%;
 }
@@ -13,69 +35,127 @@ app-root {
 html {
   font-size: 12px;
   font-family: 'Inter', sans-serif;
-}
 
-:root {
-  --p-tree-padding: 0 !important;
-}
-
-app-root {
-  display: flex;
-  flex-direction: column;
+  --p-breadcrumb-padding: 0 !important;
+  --p-breadcrumb-background: transparent !important;
+  --p-paginator-background: transparent !important;
+  --p-tree-background: transparent !important;
 }
 
 * {
   outline: none;
 }
 
-.header {
-  @apply flex items-center justify-between;
-  min-height: 32px;
+.p-dialog-close-button {
+  height: 38px;
 }
 
-.content {
-  @apply flex flex-col gap-2;
-
-  width: 1080px;
-  max-width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  padding: 8px;
+.w-0 {
+  width: 0 !important;
 }
 
-.p-menubar {
-  border: 0 !important;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--p-gray-800) transparent;
 }
 
-.p-datatable-tbody > tr:hover {
-  background-color: var(--color-gray-100) !important;
+.p-popover:before,
+.p-popover:after {
+  display: none;
 }
 
-.rounded {
-  border-radius: var(--p-content-border-radius);
+p-menubar {
+  border: 0;
+  border-radius: 0;
 }
 
-.p-select-overlay {
+.p-menu-item-label {
+  white-space: nowrap;
+}
+
+.p-message,
+.p-messages {
+  transition: none !important;
+  animation: none !important;
+}
+
+// PrimeNG 22: the column filter container is already stretched by the theme, only the input inside
+// it keeps its intrinsic width.
+.p-datatable-filter-element-container {
   width: 100%;
-}
 
-p-selectbutton {
-  display: flex;
-
-  p-togglebutton {
-    flex-grow: 1;
+  .p-inputtext {
     width: 100%;
-
-    button {
-      width: 100%;
-    }
   }
 }
 
-.p-paginator {
-  background: transparent !important;
+.card {
+  @apply bg-surface-50 dark:bg-surface-900 flex w-full flex-col gap-2 overflow-auto rounded-lg p-4 shadow-sm;
 }
 
-.p-datatable-table-container {
-  @apply rounded;
+.p-datatable-thead > tr > th.p-datatable-column-sorted {
+  background: var(--p-datatable-header-cell-background) !important;
+  color: var(--p-datatable-header-cell-color) !important;
+
+  .p-datatable-sort-icon {
+    color: var(--p-datatable-header-cell-color) !important;
+  }
+}
+
+.list-page {
+  @apply m-auto flex h-full w-full flex-col gap-4 p-4;
+
+  max-width: 1680px;
+}
+
+.p-image-mask .p-image-original {
+  max-width: 80vw;
+  max-height: 80vh;
+}
+
+// Buttons inside an input group sit flush against the input, only the outer corners stay rounded (copied from flow;
+// widened to both tag spellings — PrimeNG registers the component under `p-inputgroup` and `p-input-group`).
+p-inputgroup,
+p-input-group {
+  p-button button {
+    height: 100%;
+    border-radius: 0 !important;
+  }
+
+  p-button:last-child button {
+    border-top-right-radius: var(--p-inputgroup-addon-border-radius) !important;
+    border-bottom-right-radius: var(--p-inputgroup-addon-border-radius) !important;
+  }
+}
+
+.p-menubar-start {
+  flex-shrink: 0;
+}
+
+// Number columns are right-aligned; the values (not the column titles) line up digit by digit.
+.numeric {
+  text-align: end !important;
+  white-space: nowrap;
+}
+
+td.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+// A page that is taller than the window and scrolls as a whole (the shell's section scrolls).
+.scroll-page {
+  // mx-auto only: inside the shell's flex column a vertical auto margin would centre short pages.
+  @apply mx-auto flex w-full flex-col gap-4 p-4;
+
+  max-width: 1680px;
+}
+
+// Untracked PC use on the dashboard timeline: hatched, so missing time stands out.
+.gap-hatch {
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--p-red-500) 55%, transparent) 0 3px, transparent 3px 7px);
+}
+
+.running-bar {
+  background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.35) 0 4px, transparent 4px 10px) !important;
+  background-blend-mode: overlay;
 }

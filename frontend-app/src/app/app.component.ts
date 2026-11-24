@@ -1,29 +1,32 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { PrimeNG } from 'primeng/config';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
+import { startWith, switchMap } from 'rxjs';
 import { LayoutService } from './services/layout.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [AsyncPipe, RouterOutlet, ConfirmDialogModule, ToastModule, ProgressSpinnerModule],
+  imports: [RouterOutlet, ConfirmDialogModule, ProgressSpinnerModule, ToastModule],
   templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  host: { class: 'flex flex-col h-full' },
 })
 export class AppComponent {
-  public layoutService = inject(LayoutService);
-  private translateService = inject(TranslateService);
+  protected readonly layoutService = inject(LayoutService);
+  private readonly translateService = inject(TranslateService);
+  private readonly primeng = inject(PrimeNG);
 
   public constructor() {
-    const browserLang = this.translateService.getBrowserLang();
-    const storedLang = localStorage.getItem('lang');
-    let lang = storedLang || browserLang || 'en';
-    if (!['en', 'de'].includes(lang)) {
-      lang = 'en';
-    }
-    this.translateService.use(lang);
+    this.translateService.onLangChange
+      .pipe(
+        startWith(undefined),
+        switchMap(() => this.translateService.get('primeng')),
+      )
+      .subscribe((res) => this.primeng.setTranslation(res));
   }
 }

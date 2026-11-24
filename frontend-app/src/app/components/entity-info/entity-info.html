@@ -1,0 +1,11 @@
+@if (entity(); as entity) {
+  <p-popover #op>
+    <div class="grid auto-rows-min gap-x-3" style="grid-template-columns: min-content max-content">
+      <span>{{ 'simple.created' | translate }}:</span>
+      <span>{{ entity.createdBy }} ({{ entity.createdAt | date }})</span>
+      <span>{{ 'simple.changed' | translate }}:</span>
+      <span>{{ entity.changedBy }} ({{ entity.changedAt | date }})</span>
+    </div>
+  </p-popover>
+  <p-button [attr.data-testid]="'entity-info-info-button'" icon="fas fa-info-circle" [rounded]="true" [text]="true" severity="secondary" (mouseenter)="op.show($event)" (mouseleave)="op.hide()" (click)="$event.stopPropagation()" />
+}

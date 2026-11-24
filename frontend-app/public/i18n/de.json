@@ -1,54 +1,370 @@
 {
-  "dialogs": {
-    "delete": {
-      "message": "Möchtest du diesen Eintrag wirklich löschen?",
-      "title": "Löschen"
-    }
-  },
-  "forms": {
-    "client": {
-      "name": "Name"
-    },
-    "project": {
-      "clientId": "Kunde",
-      "name": "Name"
-    },
-    "record": {
-      "end": "Ende",
-      "start": "Start"
-    },
-    "task": {
-      "color": "Farbe",
-      "name": "Name",
-      "priority": "Priorität",
-      "projectId": "Projekt"
-    }
-  },
-  "home": {
-    "welcome": "Willkommen bei Trackify. Wähle einen Mandanten aus, um fortzufahren."
-  },
   "simple": {
+    "tenants": "Organisationen",
+    "tenant": "Organisation",
+    "name": "Name",
     "actions": "Aktionen",
-    "cancel": "Abbrechen",
-    "client": "Kunde",
-    "clients": "Kunden",
-    "dashboard": "Dashboard",
-    "home": "Startseite",
-    "logout": "Abmelden",
-    "member": "Mitglied",
-    "members": "Mitglieder",
-    "project": "Projekt",
-    "projects": "Projekte",
-    "record": "Zeiteintrag",
-    "records": "Zeiteinträge",
+    "add": "Hinzufügen",
     "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "noResults": "Keine Einträge",
+    "resetFilter": "Filter zurücksetzen",
+    "search": "Suchen",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "created": "Erstellt",
+    "changed": "Geändert",
+    "email": "E-Mail",
+    "status": "Status",
+    "permissions": "Berechtigungen",
+    "memberships": "Mitglieder",
     "settings": "Einstellungen",
-    "stopTracking": "Tracking stoppen",
-    "task": "Aufgabe",
+    "preferences": "Meine Einstellungen",
+    "logout": "Abmelden",
+    "toggleLanguage": "English",
+    "toggleTheme": "Hell/Dunkel",
+    "toggleHelp": "Hilfe ein/aus",
+    "deleteTenant": "Organisation löschen",
+    "dangerZone": "Gefahrenbereich",
+    "tracking": "Zeiterfassung",
+    "dashboard": "Auswertung",
+    "entries": "Einträge",
+    "catalog": "Katalog",
+    "clients": "Kunden",
+    "client": "Kunde",
+    "projects": "Projekte",
+    "project": "Projekt",
     "tasks": "Aufgaben",
-    "tenant": "Mandant",
-    "tenants": "Mandanten",
-    "toggleLanguage": "Sprache wechseln",
-    "tracking": "Tracking"
+    "task": "Aufgabe",
+    "addTask": "Aufgabe hinzufügen",
+    "color": "Farbe",
+    "priority": "Reihenfolge",
+    "archived": "Archiviert",
+    "showArchived": "Archivierte zeigen",
+    "inherit": "Erben",
+    "projectColor": "Projektfarbe",
+    "today": "Heute",
+    "date": "Datum",
+    "time": "Zeit",
+    "duration": "Dauer",
+    "note": "Notiz",
+    "start": "Start",
+    "end": "Ende"
+  },
+  "form": {
+    "formSaved": "Gespeichert."
+  },
+  "error": {
+    "errorOnRequest": "Die Anfrage ist fehlgeschlagen. Bitte versuche es erneut."
+  },
+  "exception": {
+    "notFound": "Nicht gefunden.",
+    "forbidden": "Dafür fehlt dir die Berechtigung.",
+    "conflict": "Jemand hat das inzwischen geändert. Bitte neu laden.",
+    "inUse": "Wird noch verwendet und kann nicht gelöscht werden. Archiviere es stattdessen.",
+    "invalidRange": "Das Ende muss nach dem Start liegen (höchstens 24 Stunden).",
+    "invalidFilter": "Ungültiger Filter.",
+    "invalidTimeZone": "Unbekannte Zeitzone."
+  },
+  "confirm": {
+    "delete": {
+      "header": "Löschen",
+      "message": "Wirklich löschen?"
+    },
+    "deleteTask": {
+      "header": "Aufgabe löschen",
+      "message": "Aufgaben mit erfasster Zeit können nicht gelöscht werden – archiviere sie stattdessen. Trotzdem versuchen?"
+    },
+    "deleteTenant": {
+      "header": "Organisation löschen",
+      "message": "Die Organisation wird mit allen Kunden, Projekten, Aufgaben und Zeiten gelöscht. Wirklich?"
+    },
+    "deleteActivity": {
+      "header": "Aktivität löschen",
+      "message": "Die aufgezeichnete Fensteraktivität im gewählten Zeitraum wird endgültig gelöscht."
+    }
+  },
+  "dialogs": {
+    "tenantAdd": {
+      "header": "Neue Organisation"
+    },
+    "membershipAdd": {
+      "header": "Mitglied einladen"
+    },
+    "membershipEdit": {
+      "header": "Mitglied bearbeiten"
+    },
+    "clientAdd": {
+      "header": "Neuer Kunde"
+    },
+    "clientEdit": {
+      "header": "Kunde bearbeiten"
+    },
+    "projectAdd": {
+      "header": "Neues Projekt"
+    },
+    "projectEdit": {
+      "header": "Projekt bearbeiten"
+    },
+    "taskAdd": {
+      "header": "Neue Aufgabe"
+    },
+    "taskEdit": {
+      "header": "Aufgabe bearbeiten"
+    },
+    "timeEntryAdd": {
+      "header": "Zeit nachtragen"
+    },
+    "timeEntryEdit": {
+      "header": "Eintrag bearbeiten"
+    }
+  },
+  "help": {
+    "tenants": "Eine Organisation bündelt Kunden, Projekte und Aufgaben. Erfasste Zeiten sieht immer nur, wer sie erfasst hat.",
+    "memberships": "Jedes Mitglied kann Zeit erfassen. Den Katalog (Kunden, Projekte, Aufgaben) pflegen nur Mitglieder mit der Berechtigung dazu.",
+    "settings": "Name der Organisation.",
+    "tracking": "Klick auf eine Aufgabe startet sie, ein weiterer Klick stoppt sie. Zeiten unter 5 Minuten werden verworfen; wer innerhalb von 5 Minuten zur selben Aufgabe zurückkehrt, setzt den letzten Eintrag fort.",
+    "clients": "Kunden sind optional und gruppieren Projekte.",
+    "projects": "Projekte geben Aufgaben ihre Farbe. Archivierte Projekte verschwinden von der Zeiterfassung, ihre Zeiten bleiben.",
+    "tasks": "Auf Aufgaben wird Zeit erfasst. Die Reihenfolge bestimmt auch, wohin Strg+Alt+↑/↓ in der Desktop-App wechselt.",
+    "projectFirst": "Lege zuerst ein Projekt an.",
+    "entries": "Deine erfassten Zeiten. Klick auf einen Eintrag, um ihn zu ändern; vergessene Zeiten trägst du über „Hinzufügen“ nach.",
+    "dashboardNoActivity": "Mit der Trackify-Desktop-App für Windows siehst du hier zusätzlich, wann dein PC benutzt wurde – und welche Zeit noch nicht erfasst ist.",
+    "dashboardNoActivityDesktop": "Für diesen Zeitraum liegt keine Fensteraktivität vor. Die Aufzeichnung lässt sich unter „Meine Einstellungen“ einschalten."
+  },
+  "enums": {
+    "MembershipStatus": {
+      "INVITED": "Eingeladen",
+      "ACTIVE": "Aktiv",
+      "DISABLED": "Deaktiviert"
+    },
+    "MembershipPermission": {
+      "MANAGE_TENANT": "Organisation verwalten",
+      "MANAGE_MEMBERSHIPS": "Mitglieder verwalten",
+      "MANAGE_CATALOG": "Katalog pflegen"
+    },
+    "Color": {
+      "BLUE": "Blau",
+      "ORANGE": "Orange",
+      "GREEN": "Grün",
+      "YELLOW": "Gelb",
+      "PINK": "Rosa",
+      "TEAL": "Dunkelgrün",
+      "PURPLE": "Lila",
+      "RED": "Rot",
+      "GRAY": "Grau"
+    }
+  },
+  "tracking": {
+    "runningSince": "Läuft seit {{time}}",
+    "stop": "Stop",
+    "now": "jetzt",
+    "nothingRunning": "Gerade läuft nichts",
+    "nothingRunningHint": "Wähle unten eine Aufgabe, um zu starten.",
+    "search": "Aufgabe suchen – Enter startet den ersten Treffer",
+    "noProject": "Ohne Projekt",
+    "noTasks": "Noch keine Aufgaben",
+    "createTasks": "Aufgaben anlegen",
+    "nothingToday": "Heute noch nichts erfasst."
+  },
+  "dashboard": {
+    "day": "Tag",
+    "week": "Woche",
+    "month": "Monat",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "tracked": "Erfasst",
+    "workingDays": "an {{count}} Tagen",
+    "averagePerDay": "Durchschnitt",
+    "perWorkingDay": "pro Arbeitstag",
+    "activeTime": "PC aktiv",
+    "activeTimeHint": "laut Desktop-App",
+    "coverage": "Abdeckung",
+    "coverageHint": "braucht die Desktop-App",
+    "untrackedMinutes": "{{time}} nicht erfasst",
+    "longestGap": "Längste Lücke",
+    "offlineTracked": "{{time}} erfasst ohne PC",
+    "timeline": "Zeitstrahl",
+    "hoursPerDay": "Stunden pro Tag",
+    "byProject": "Nach Projekt",
+    "topApps": "Programme",
+    "topAppsHint": "dunkel: davon erfasst",
+    "appCoverage": "Anteil, der in erfasste Zeit fiel",
+    "entryCount": "{{count}}×",
+    "noData": "Keine Daten in diesem Zeitraum.",
+    "noActivity": "Die Desktop-App zeichnet auf, welche Programme du nutzt.",
+    "noActivityYet": "Noch keine Aktivität in diesem Zeitraum.",
+    "untracked": "Nicht erfasst:",
+    "clickToBook": "Klicken, um diese Zeit nachzutragen",
+    "legendTracked": "Erfasst",
+    "legendActivity": "PC-Aktivität",
+    "legendUntracked": "PC benutzt, nicht erfasst"
+  },
+  "preferences": {
+    "general": "Allgemein",
+    "timeZone": "Zeitzone",
+    "reminderMinutes": "Erinnerung nach (Minuten)",
+    "reminderHint": "Die Desktop-App erinnert dich, wenn sich die erfasste Aufgabe so lange nicht geändert hat – oder wenn nichts erfasst wird, obwohl du am PC arbeitest.",
+    "desktop": "Desktop-App",
+    "autostart": "Mit Windows starten",
+    "startHidden": "Im Infobereich starten",
+    "activityTracking": "Fensteraktivität aufzeichnen",
+    "idleThreshold": "Abwesend nach (Sekunden ohne Eingabe)",
+    "excludedApps": "Nie aufzeichnen (Programmnamen, durch Komma getrennt)",
+    "activityHint": "Aufgezeichnet werden Programmname und Fenstertitel des aktiven Fensters. Nur du siehst diese Daten; sie werden nach 180 Tagen gelöscht.",
+    "desktopMissing": "Diese Einstellungen gibt es in der Trackify-Desktop-App für Windows: Sie startet mit Windows, erinnert an die Zeiterfassung und zeichnet auf, welches Fenster aktiv ist.",
+    "download": "Für Windows herunterladen",
+    "activityData": "Meine Aktivitätsdaten",
+    "activityDataHint": "Lösche die aufgezeichnete Fensteraktivität eines Zeitraums, z. B. eine private Stunde.",
+    "deleteActivity": "Aktivität löschen",
+    "activityDeleted": "Aktivität gelöscht."
+  },
+  "reminder": {
+    "stillWorking": {
+      "title": "Noch an „{{task}}“?",
+      "body": "Seit {{minutes}} Minuten unverändert · {{project}}"
+    },
+    "nothingTracked": {
+      "title": "Es wird nichts erfasst",
+      "body": "Du arbeitest seit {{minutes}} Minuten am PC. Klicke, um eine Aufgabe zu starten."
+    }
+  },
+  "primeng": {
+    "accept": "Ja",
+    "addRule": "Regel hinzufügen",
+    "am": "am",
+    "apply": "Übernehmen",
+    "aria": {
+      "cancelEdit": "Änderungen abbrechen",
+      "close": "Schließen",
+      "collapseLabel": "Einklappen",
+      "collapseRow": "Zeile reduziert",
+      "editRow": "Zeile bearbeiten",
+      "expandLabel": "Ausklappen",
+      "expandRow": "Zeile erweitert",
+      "falseLabel": "Falsch",
+      "filterConstraint": "Filterbeschränkung",
+      "filterOperator": "Filteroperator",
+      "firstPageLabel": "Erste Seite",
+      "gridView": "Rasteransicht",
+      "hideFilterMenu": "Filtermenü ausblenden",
+      "jumpToPageDropdownLabel": "Zum Dropdown-Menü springen",
+      "jumpToPageInputLabel": "Zum Eingabefeld springen",
+      "lastPageLabel": "Letzte Seite",
+      "listLabel": "Optionsliste",
+      "listView": "Listenansicht",
+      "maximizeLabel": "Maximieren",
+      "minimizeLabel": "Minimieren",
+      "moveAllToSource": "Alle zur Quelle bewegen",
+      "moveAllToTarget": "Alle zum Ziel bewegen",
+      "moveBottom": "Zum Ende bewegen",
+      "moveDown": "Nach unten bewegen",
+      "moveTop": "Zum Anfang bewegen",
+      "moveToSource": "Zur Quelle bewegen",
+      "moveToTarget": "Zum Ziel bewegen",
+      "moveUp": "Nach oben bewegen",
+      "navigation": "Navigation",
+      "next": "Nächste",
+      "nextPageLabel": "Nächste Seite",
+      "nullLabel": "Nicht ausgewählt",
+      "otpLabel": "Bitte geben Sie das Einmalkennwortzeichen {0} ein.",
+      "pageLabel": "Seite {page}",
+      "passwordHide": "Passwort verbergen",
+      "passwordShow": "Passwort anzeigen",
+      "previous": "Vorherige",
+      "prevPageLabel": "Vorherige Seite",
+      "removeLabel": "Entfernen",
+      "rotateLeft": "Nach links drehen",
+      "rotateRight": "Nach rechts drehen",
+      "rowsPerPageLabel": "Zeilen pro Seite",
+      "saveEdit": "Änderungen speichern",
+      "scrollTop": "Nach oben scrollen",
+      "selectAll": "Alle Elemente ausgewählt",
+      "selectColor": "Wählen Sie eine Farbe",
+      "selectLabel": "Auswählen",
+      "selectRow": "Zeile ausgewählt",
+      "showFilterMenu": "Filtermenü anzeigen",
+      "slide": "Folie",
+      "slideNumber": "{slideNumber}",
+      "star": "1 Stern",
+      "stars": "{star} Sterne",
+      "trueLabel": "Wahr",
+      "unselectAll": "Alle Elemente abgewählt",
+      "unselectLabel": "Auswahl aufheben",
+      "unselectRow": "Zeile abgewählt",
+      "zoomImage": "Bild vergrößern",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern"
+    },
+    "cancel": "Abbrechen",
+    "choose": "Auswählen",
+    "chooseDate": "Datum wählen",
+    "chooseMonth": "Monat wählen",
+    "chooseYear": "Jahr wählen",
+    "clear": "Löschen",
+    "collapseAll": "Alle einklappen",
+    "completed": "Abgeschlossen",
+    "contains": "Enthält",
+    "custom": "Benutzerdefiniert",
+    "dateAfter": "Datum ist nach",
+    "dateBefore": "Datum ist vor",
+    "dateFormat": "dd.mm.yy",
+    "dateIs": "Datum ist",
+    "dateIsNot": "Datum ist nicht",
+    "dayNames": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+    "dayNamesMin": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    "dayNamesShort": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    "emptyFilterMessage": "Keine Ergebnisse gefunden",
+    "emptyMessage": "Keine Einträge gefunden",
+    "emptySearchMessage": "Keine Ergebnisse gefunden",
+    "emptySelectionMessage": "Kein ausgewähltes Element",
+    "endsWith": "Endet mit",
+    "equals": "Ist gleich",
+    "fileChosenMessage": "{0} Dateien",
+    "fileSizeTypes": ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+    "filter": "Filtern",
+    "firstDayOfWeek": 1,
+    "gt": "Größer als",
+    "gte": "Größer oder gleich",
+    "lt": "Kleiner als",
+    "lte": "Kleiner oder gleich",
+    "matchAll": "Trifft auf alle zu",
+    "matchAny": "Trifft auf einige zu",
+    "medium": "Mittel",
+    "monthNames": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    "monthNamesShort": ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+    "nextDecade": "Nächstes Jahrzehnt",
+    "nextHour": "Nächste Stunde",
+    "nextMinute": "Nächste Minute",
+    "nextMonth": "Nächster Monat",
+    "nextSecond": "Nächste Sekunde",
+    "nextYear": "Nächstes Jahr",
+    "noFileChosenMessage": "Keine Datei ausgewählt",
+    "noFilter": "Kein Filter",
+    "notContains": "Enthält nicht",
+    "notEquals": "Ist ungleich",
+    "now": "Jetzt",
+    "passwordPrompt": "Passwort eingeben",
+    "pending": "Ausstehend",
+    "pm": "pm",
+    "prevDecade": "Vorheriges Jahrzehnt",
+    "prevHour": "Vorherige Stunde",
+    "prevMinute": "Vorherige Minute",
+    "prevMonth": "Vorheriger Monat",
+    "prevSecond": "Vorherige Sekunde",
+    "prevYear": "Vorheriges Jahr",
+    "reject": "Nein",
+    "removeRule": "Regel entfernen",
+    "searchMessage": "{0} Ergebnisse verfügbar",
+    "selectionMessage": "{0} Elemente ausgewählt",
+    "showMonthAfterYear": false,
+    "startsWith": "Beginnt mit",
+    "strong": "Stark",
+    "today": "Heute",
+    "upload": "Hochladen",
+    "weak": "Schwach",
+    "weekHeader": "KW"
   }
 }

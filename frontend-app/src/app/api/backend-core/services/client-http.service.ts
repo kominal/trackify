@@ -11,7 +11,7 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { Client } from '../models/client';
+import { ClientEntity } from '../models/client-entity';
 import { create } from '../fn/client-http/create';
 import { Create$Params } from '../fn/client-http/create';
 import { delete$ } from '../fn/client-http/delete';
@@ -22,8 +22,6 @@ import { read } from '../fn/client-http/read';
 import { Read$Params } from '../fn/client-http/read';
 import { update } from '../fn/client-http/update';
 import { Update$Params } from '../fn/client-http/update';
-import { upsert } from '../fn/client-http/upsert';
-import { Upsert$Params } from '../fn/client-http/upsert';
 
 @Injectable({ providedIn: 'root' })
 export class ClientHttpService extends BaseService {
@@ -40,10 +38,15 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list$Response(params: List$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-'items': Array<Client>;
-'count': number;
-}>> {
+  list$Response(
+    params: List$Params,
+    context?: HttpContext,
+  ): Observable<
+    StrictHttpResponse<{
+      items: Array<ClientEntity>;
+      count: number;
+    }>
+  > {
     return list(this.http, this.rootUrl, params, context);
   }
 
@@ -53,18 +56,25 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list(params: List$Params, context?: HttpContext): Observable<{
-'items': Array<Client>;
-'count': number;
-}> {
+  list(
+    params: List$Params,
+    context?: HttpContext,
+  ): Observable<{
+    items: Array<ClientEntity>;
+    count: number;
+  }> {
     return this.list$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-'items': Array<Client>;
-'count': number;
-}>): {
-'items': Array<Client>;
-'count': number;
-} => r.body)
+      map(
+        (
+          r: StrictHttpResponse<{
+            items: Array<ClientEntity>;
+            count: number;
+          }>,
+        ): {
+          items: Array<ClientEntity>;
+          count: number;
+        } => r.body,
+      ),
     );
   }
 
@@ -77,7 +87,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Client>> {
+  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<ClientEntity>> {
     return create(this.http, this.rootUrl, params, context);
   }
 
@@ -87,10 +97,8 @@ export class ClientHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<Client> {
-    return this.create$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Client>): Client => r.body)
-    );
+  create(params: Create$Params, context?: HttpContext): Observable<ClientEntity> {
+    return this.create$Response(params, context).pipe(map((r: StrictHttpResponse<ClientEntity>): ClientEntity => r.body));
   }
 
   /** Path part for operation `clientControllerRead()` */
@@ -102,7 +110,7 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<Client>> {
+  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<ClientEntity>> {
     return read(this.http, this.rootUrl, params, context);
   }
 
@@ -112,60 +120,8 @@ export class ClientHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read(params: Read$Params, context?: HttpContext): Observable<Client> {
-    return this.read$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Client>): Client => r.body)
-    );
-  }
-
-  /** Path part for operation `clientControllerUpsert()` */
-  static readonly ClientControllerUpsertPath = '/tenants/{tenantId}/clients/{uuid}';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `upsert()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  upsert$Response(params: Upsert$Params, context?: HttpContext): Observable<StrictHttpResponse<(Client | void)>> {
-    return upsert(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `upsert$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  upsert(params: Upsert$Params, context?: HttpContext): Observable<(Client | void)> {
-    return this.upsert$Response(params, context).pipe(
-      map((r: StrictHttpResponse<(Client | void)>): (Client | void) => r.body)
-    );
-  }
-
-  /** Path part for operation `clientControllerDelete()` */
-  static readonly ClientControllerDeletePath = '/tenants/{tenantId}/clients/{uuid}';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete$(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
-    return this.delete$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
+  read(params: Read$Params, context?: HttpContext): Observable<ClientEntity> {
+    return this.read$Response(params, context).pipe(map((r: StrictHttpResponse<ClientEntity>): ClientEntity => r.body));
   }
 
   /** Path part for operation `clientControllerUpdate()` */
@@ -188,9 +144,29 @@ export class ClientHttpService extends BaseService {
    * This method sends `application/json` and handles request body of type `application/json`.
    */
   update(params: Update$Params, context?: HttpContext): Observable<void> {
-    return this.update$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
+    return this.update$Response(params, context).pipe(map((r: StrictHttpResponse<void>): void => r.body));
   }
 
+  /** Path part for operation `clientControllerDelete()` */
+  static readonly ClientControllerDeletePath = '/tenants/{tenantId}/clients/{uuid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `delete()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return delete$(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `delete$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
+    return this.delete$Response(params, context).pipe(map((r: StrictHttpResponse<void>): void => r.body));
+  }
 }

@@ -1,0 +1,109 @@
+<div class="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+  <div class="flex min-w-0 flex-col gap-4">
+    <div class="card relative overflow-hidden p-6!" [attr.data-testid]="'tracking-current'">
+      @if (running(); as running) {
+        <div class="absolute inset-y-0 left-0 w-1.5" [style.background]="running.color"></div>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex min-w-0 flex-col gap-1">
+            <span class="text-muted-color text-sm">{{ 'tracking.runningSince' | translate: { time: (running.session.start | date: 'HH:mm') } }}</span>
+            <span class="truncate text-2xl font-semibold">{{ running.info?.task?.name }}</span>
+            <span class="text-muted-color truncate">
+              {{ running.info?.project?.name }}
+              @if (running.info?.client; as client) {
+                · {{ client.name }}
+              }
+            </span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-5xl font-bold tabular-nums">{{ running.clock }}</span>
+            <p-button [attr.data-testid]="'tracking-stop-button'" severity="danger" icon="fas fa-stop" [label]="'tracking.stop' | translate" (click)="trackingService.stop()" />
+          </div>
+        </div>
+      } @else {
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-col gap-1">
+            <span class="text-2xl font-semibold">{{ 'tracking.nothingRunning' | translate }}</span>
+            <span class="text-muted-color">{{ 'tracking.nothingRunningHint' | translate }}</span>
+          </div>
+          <span class="text-muted-color text-5xl font-bold tabular-nums">0:00:00</span>
+        </div>
+      }
+    </div>
+
+    <div class="flex items-center gap-2">
+      <p-iconfield class="grow">
+        <p-inputicon class="fas fa-search" />
+        <input pInputText class="w-full" [attr.data-testid]="'tracking-search'" [placeholder]="'tracking.search' | translate" [ngModel]="search()" (ngModelChange)="search.set($event)" (keydown.enter)="startFirstMatch()" />
+      </p-iconfield>
+    </div>
+
+    @for (group of groups(); track group.key) {
+      <section class="flex flex-col gap-2">
+        <h2 class="flex items-baseline gap-2 text-base font-semibold">
+          {{ group.name || ('tracking.noProject' | translate) }}
+          @if (group.client) {
+            <span class="text-muted-color text-sm font-normal">{{ group.client }}</span>
+          }
+        </h2>
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 2xl:grid-cols-3">
+          @for (item of group.tasks; track item.task.uuid) {
+            @let active = trackingService.session()?.taskId === item.task.uuid;
+            <button
+              type="button"
+              class="card hover:bg-surface-100 dark:hover:bg-surface-800 relative cursor-pointer flex-row! items-center gap-3 border-2 text-left transition-colors"
+              [class.border-primary]="active"
+              [class.border-transparent]="!active"
+              [attr.data-testid]="'tracking-task-' + item.task.uuid"
+              (click)="active ? trackingService.stop() : trackingService.start(item.task.uuid)"
+            >
+              <span class="h-8 w-1.5 shrink-0 rounded-full" [style.background]="item.color"></span>
+              <span class="min-w-0 grow truncate font-medium">{{ item.task.name }}</span>
+              @if (item.minutesToday > 0) {
+                <span class="text-muted-color shrink-0 text-sm tabular-nums">{{ formatMinutes(item.minutesToday) }}</span>
+              }
+              <i class="shrink-0" [class]="active ? 'fas fa-stop text-primary' : 'fas fa-play text-muted-color'"></i>
+            </button>
+          }
+        </div>
+      </section>
+    } @empty {
+      @if (search()) {
+        <div class="card text-muted-color items-center p-8!">{{ 'simple.noResults' | translate }}</div>
+      } @else {
+        <div class="card items-center gap-3! p-8! text-center">
+          <i class="fas fa-list-check text-muted-color text-3xl"></i>
+          <span class="font-semibold">{{ 'tracking.noTasks' | translate }}</span>
+          @if (userService.membership(); as membership) {
+            @if (userService.hasPermission(membership, ManageCatalog)) {
+              <p-button [routerLink]="['/tenants', tenantService.tenant()?.uuid, 'tasks']" icon="fas fa-plus" [label]="'tracking.createTasks' | translate" />
+            }
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <aside class="card h-fit gap-3!" [attr.data-testid]="'tracking-today'">
+    <div class="flex items-baseline justify-between">
+      <h2 class="text-base font-semibold">{{ 'simple.today' | translate }}</h2>
+      <span class="text-xl font-semibold tabular-nums">{{ formatMinutes(totalToday()) }}</span>
+    </div>
+    @if (applicationStateService.showHelp()) {
+      <p-message severity="secondary" size="small">{{ 'help.tracking' | translate }}</p-message>
+    }
+    <ul class="m-0 flex list-none flex-col gap-1 p-0">
+      @for (entry of entries(); track $index) {
+        <li class="hover:bg-surface-100 dark:hover:bg-surface-800 flex items-center gap-3 rounded px-2 py-1.5">
+          <span class="h-6 w-1 shrink-0 rounded-full" [style.background]="entry.color"></span>
+          <div class="flex min-w-0 grow flex-col">
+            <span class="truncate">{{ entry.info?.task?.name }}</span>
+            <span class="text-muted-color truncate text-xs">{{ entry.start | date: 'HH:mm' }} – {{ entry.running ? ('tracking.now' | translate) : (entry.end | date: 'HH:mm') }} · {{ entry.info?.project?.name }}</span>
+          </div>
+          <span class="shrink-0 tabular-nums" [class.font-semibold]="entry.running">{{ formatMinutes(entry.minutes) }}</span>
+        </li>
+      } @empty {
+        <li class="text-muted-color py-4 text-center">{{ 'tracking.nothingToday' | translate }}</li>
+      }
+    </ul>
+  </aside>
+</div>

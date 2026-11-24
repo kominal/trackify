@@ -1,0 +1,47 @@
+<div class="card min-h-16 shrink-0 flex-row! items-center justify-between gap-4">
+  <h1 class="text-2xl font-semibold">{{ 'simple.preferences' | translate }}</h1>
+</div>
+
+<section class="card gap-4!">
+  <h2 class="text-base font-semibold">{{ 'preferences.general' | translate }}</h2>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <app-input-select label="preferences.timeZone" [formElement]="$any(formElement.controls.timeZone)" [options]="timeZoneOptions" [allowEmpty]="false" />
+    <app-input-number label="preferences.reminderMinutes" [formElement]="$any(formElement.controls.reminderMinutes)" [min]="5" [max]="240" [step]="5" />
+  </div>
+  <span class="text-muted-color text-sm">{{ 'preferences.reminderHint' | translate }}</span>
+  <div class="flex justify-end">
+    <p-button [attr.data-testid]="'preferences-save-button'" icon="fas fa-save" [label]="'simple.save' | translate" [disabled]="formElement.pristine || formElement.invalid" (click)="save()" />
+  </div>
+</section>
+
+<section class="card gap-4!" [attr.data-testid]="'preferences-desktop'">
+  <h2 class="flex items-center gap-2 text-base font-semibold"><i class="fas fa-desktop"></i>{{ 'preferences.desktop' | translate }}</h2>
+  @if (nativeService.available) {
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <app-input-boolean label="preferences.autostart" [formElement]="desktopForm.controls.autostart" />
+      <app-input-boolean label="preferences.startHidden" [formElement]="desktopForm.controls.startHidden" />
+      <app-input-boolean label="preferences.activityTracking" [formElement]="desktopForm.controls.activityTracking" />
+      <app-input-number label="preferences.idleThreshold" [formElement]="$any(desktopForm.controls.idleThresholdSeconds)" [min]="60" [max]="3600" [step]="60" />
+    </div>
+    <app-input-text label="preferences.excludedApps" placeholder="KeePassXC, 1Password" [formElement]="desktopForm.controls.excludedApps" />
+    <span class="text-muted-color text-sm">{{ 'preferences.activityHint' | translate }}</span>
+    <div class="flex items-center justify-between">
+      <span class="text-muted-color text-xs">Trackify Desktop {{ nativeService.api?.version }}</span>
+      <p-button [attr.data-testid]="'preferences-desktop-save-button'" icon="fas fa-save" [label]="'simple.save' | translate" [disabled]="desktopForm.pristine || desktopForm.invalid" (click)="saveDesktop()" />
+    </div>
+  } @else {
+    <p-message severity="info">{{ 'preferences.desktopMissing' | translate }}</p-message>
+    <div>
+      <p-button icon="fab fa-windows" [label]="'preferences.download' | translate" [outlined]="true" (click)="openDownload()" />
+    </div>
+  }
+</section>
+
+<section class="card gap-4!">
+  <h2 class="text-base font-semibold">{{ 'preferences.activityData' | translate }}</h2>
+  <span class="text-muted-color text-sm">{{ 'preferences.activityDataHint' | translate }}</span>
+  <div class="flex flex-wrap items-center gap-2">
+    <p-datepicker selectionMode="range" [ngModel]="deleteRange()" (ngModelChange)="deleteRange.set($event)" dateFormat="dd.mm.yy" [readonlyInput]="true" [showIcon]="true" iconDisplay="input" appendTo="body" />
+    <p-button severity="danger" [outlined]="true" icon="fas fa-trash" [label]="'preferences.deleteActivity' | translate" [disabled]="!deleteRange()[1]" (click)="deleteActivity()" />
+  </div>
+</section>

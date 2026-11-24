@@ -1,52 +1,96 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivateFn, Router, Routes, UrlTree } from '@angular/router';
-import { authGuardFn } from '@auth0/auth0-angular';
-import { catchError, map, Observable, of } from 'rxjs';
-import { ClientsComponent } from './pages/clients/clients.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { ErrorComponent } from './pages/error/error.component';
-import { HomeComponent } from './pages/home/home.component';
-import { MembersComponent } from './pages/members/members.component';
-import { ProjectsComponent } from './pages/projects/projects.component';
-import { RecordsComponent } from './pages/records/records.component';
-import { TasksComponent } from './pages/tasks/tasks.component';
-import { TrackingComponent } from './pages/tracking/tracking.component';
-import { TenantService } from './services/tenant.service';
-import { ShellComponent } from './shell/shell.component';
+import { ActivatedRouteSnapshot, CanActivateFn, ResolveFn, Router, Routes } from '@angular/router';
+import { TenantEntity } from '@api/models';
+import { ClientsPage } from '@pages/clients/clients.page';
+import { DashboardPage } from '@pages/dashboard/dashboard.page';
+import { EntriesPage } from '@pages/entries/entries.page';
+import { MembershipsPage } from '@pages/memberships/memberships.page';
+import { PreferencesPage } from '@pages/preferences/preferences.page';
+import { ProjectsPage } from '@pages/projects/projects.page';
+import { SettingsPage } from '@pages/settings/settings.page';
+import { TasksPage } from '@pages/tasks/tasks.page';
+import { TenantsPage } from '@pages/tenants/tenants.page';
+import { TrackingPage } from '@pages/tracking/tracking.page';
+import { ApplicationStateService } from '@services/application-state.service';
+import { TenantService } from '@services/tenant.service';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { catchError, filter, map, Observable, of } from 'rxjs';
+import { Shell } from './shells/shell/shell';
 
-const tenantGuard: CanActivateFn = (route, state): Observable<boolean | UrlTree> => {
-  inject(TenantService).setTenantId(route.params['tenantId']);
+function param(route: ActivatedRouteSnapshot, key: string): string {
+  return route.paramMap.get(key) ?? '';
+}
+
+const authenticatedGuard: CanActivateFn = (): Observable<boolean> => {
+  const oidcSecurityService = inject(OidcSecurityService);
   const router = inject(Router);
-  return inject(TenantService).saveTenant$.pipe(
-    map(() => true),
-    catchError(() => of(router.createUrlTree(['/']))),
+  return oidcSecurityService.checkAuth().pipe(
+    catchError(() => of({ isAuthenticated: false })),
+    map(({ isAuthenticated }) => {
+      if (!isAuthenticated) {
+        sessionStorage.setItem('postLoginRedirect', window.location.pathname);
+        oidcSecurityService.authorize();
+        return false;
+      }
+      const postLoginRedirect = sessionStorage.getItem('postLoginRedirect');
+      if (postLoginRedirect) {
+        sessionStorage.removeItem('postLoginRedirect');
+        void router.navigateByUrl(postLoginRedirect);
+      }
+      return true;
+    }),
   );
 };
 
+const tenantGuard: CanActivateFn = (route) => {
+  const router = inject(Router);
+  const tenantService = inject(TenantService);
+  const applicationStateService = inject(ApplicationStateService);
+  const tenantId = param(route, 'tenantId');
+  tenantService.setTenantId(tenantId);
+  return tenantService.saveTenant$.pipe(
+    filter((tenant) => tenant.uuid === tenantId),
+    map(() => {
+      applicationStateService.formElement.patchValue({ previousTenantId: tenantId });
+      return true;
+    }),
+    catchError(() => of(router.createUrlTree(['/start']))),
+  );
+};
+
+const resetTenantGuard: CanActivateFn = (): boolean => {
+  inject(TenantService).resetTenantId();
+  return true;
+};
+
+const tenant: ResolveFn<TenantEntity> = () => inject(TenantService).saveTenant$;
+
 export const routes: Routes = [
   {
-    path: 'home',
-    component: ShellComponent,
-    canActivate: [authGuardFn],
-    resolve: { tenantId: (): void => inject(TenantService).setTenantId(undefined) },
-    children: [{ path: '', component: HomeComponent }],
-  },
-  {
-    path: ':tenantId',
-    component: ShellComponent,
-    canActivate: [authGuardFn, tenantGuard],
-    resolve: { tenantId: (route: ActivatedRouteSnapshot): void => inject(TenantService).setTenantId(route.params['tenantId']) },
+    path: 'tenants/:tenantId',
+    component: Shell,
+    canActivate: [authenticatedGuard, tenantGuard],
     children: [
-      { path: 'tracking', component: TrackingComponent },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'clients', component: ClientsComponent },
-      { path: 'projects', component: ProjectsComponent },
-      { path: 'tasks', component: TasksComponent },
-      { path: 'records', component: RecordsComponent },
-      { path: 'members', component: MembersComponent },
+      { path: 'tracking', component: TrackingPage, title: 'simple.tracking' },
+      { path: 'dashboard', component: DashboardPage, title: 'simple.dashboard' },
+      { path: 'entries', component: EntriesPage, title: 'simple.entries' },
+      { path: 'clients', component: ClientsPage, title: 'simple.clients' },
+      { path: 'projects', component: ProjectsPage, title: 'simple.projects' },
+      { path: 'tasks', component: TasksPage, title: 'simple.tasks' },
+      { path: 'memberships', component: MembershipsPage, title: 'simple.memberships' },
+      { path: 'settings', component: SettingsPage, resolve: { entity: tenant }, title: 'simple.settings' },
+      { path: 'preferences', component: PreferencesPage, title: 'simple.preferences' },
       { path: '**', redirectTo: 'tracking' },
     ],
   },
-  { path: 'error', component: ErrorComponent, resolve: { tenantId: (): void => inject(TenantService).setTenantId(undefined) } },
-  { path: '**', redirectTo: 'home' },
+  {
+    path: '',
+    component: Shell,
+    canActivate: [authenticatedGuard, resetTenantGuard],
+    children: [
+      { path: 'start', component: TenantsPage, title: 'simple.tenants' },
+      { path: '**', redirectTo: 'start' },
+    ],
+  },
+  { path: '**', redirectTo: '' },
 ];

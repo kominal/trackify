@@ -1,0 +1,18 @@
+<div class="card min-h-19 shrink-0 flex-row! items-center justify-between gap-4">
+  <h1 class="text-2xl font-semibold">{{ 'simple.settings' | translate }}</h1>
+  <div class="flex items-center gap-2">
+    <p-button [attr.data-testid]="'settings-save-button'" size="small" icon="fas fa-save" [label]="'simple.save' | translate" [disabled]="formElement.pristine || formElement.invalid" (click)="submit()" />
+  </div>
+</div>
+@if (applicationStateService.showHelp()) {
+  <p-message severity="info">{{ 'help.settings' | translate }}</p-message>
+}
+<div class="card h-full">
+  <app-input-text label="simple.name" [formElement]="formElement.controls.name" />
+  @if (userService.isAdmin()) {
+    <app-divider label="simple.dangerZone" />
+    <div>
+      <p-button [attr.data-testid]="'settings-delete-tenant-button'" severity="danger" [outlined]="true" icon="fas fa-trash" [label]="'simple.deleteTenant' | translate" (click)="deleteTenant()" />
+    </div>
+  }
+</div>

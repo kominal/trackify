@@ -13,24 +13,22 @@ import { ProjectRequest } from '../../models/project-request';
 export interface Update$Params {
   tenantId: string;
   uuid: string;
-      body: ProjectRequest
+  body: ProjectRequest;
 }
 
 export function update(http: HttpClient, rootUrl: string, params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, update.PATH, 'patch');
+  const rb = new RequestBuilder(rootUrl, update.PATH, 'put');
   if (params) {
     rb.path('tenantId', params.tenantId, {});
     rb.path('uuid', params.uuid, {});
     rb.body(params.body, 'application/json');
   }
 
-  return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
-  ).pipe(
+  return http.request(rb.build({ responseType: 'text', accept: '*/*', context })).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
       return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
-    })
+    }),
   );
 }
 

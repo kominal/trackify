@@ -1,23 +1,25 @@
-import { DATE_PIPE_DEFAULT_OPTIONS, registerLocaleData } from '@angular/common';
-import { HttpClient, HttpContextToken, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { DATE_PIPE_DEFAULT_OPTIONS, DatePipe, registerLocaleData } from '@angular/common';
+import { HttpContextToken, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse, provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
-import { ApplicationConfig, DEFAULT_CURRENCY_CODE, importProvidersFrom, inject, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter } from '@angular/router';
-import { authHttpInterceptorFn, provideAuth0 } from '@auth0/auth0-angular';
-import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { definePreset } from '@primeng/themes';
-import Aura from '@primeng/themes/aura';
+import { ApplicationConfig, DEFAULT_CURRENCY_CODE, importProvidersFrom, inject, InjectionToken, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import { ActivatedRouteSnapshot, BaseRouteReuseStrategy, Params, provideRouter, RouteReuseStrategy, TitleStrategy, withRouterConfig } from '@angular/router';
+import { TranslateTitleStrategy } from '@helpers/title.strategy';
+import { PRIMENG_LICENSE } from '@kominal/common-angular/license';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { definePreset, palette } from '@primeuix/themes';
+import Preset from '@primeuix/themes/material';
+import { LayoutService } from '@services/layout.service';
+import { AbstractSecurityStorage, authInterceptor, AuthModule, DefaultLocalStorageService } from 'angular-auth-oidc-client';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { DialogService } from 'primeng/dynamicdialog';
 import { finalize, map } from 'rxjs';
 import { v4 } from 'uuid';
 import { ApiModule } from './api/backend-core/api.module';
+import { FrontendConfiguration } from './api/backend-core/models';
 import { routes } from './app.routes';
-import { LayoutService } from './services/layout.service';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -37,12 +39,18 @@ const dateInterceptorFn: HttpInterceptorFn = (req: HttpRequest<unknown>, next: H
     }),
   );
 
+function sameParams(a: Params, b: Params): boolean {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  return aKeys.length === bKeys.length && aKeys.every((key) => a[key] === b[key]);
+}
+
 export const BLOCKING = new HttpContextToken(() => true);
 
 const loadingInterceptorFn: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const layoutService = inject(LayoutService);
 
-  if (req.context.get(BLOCKING)) {
+  if (req.context.get(BLOCKING) && !req.url.includes('/openid-connect/')) {
     const requestId = `HTTP-${v4()}`;
     layoutService.startLoading(requestId);
     return next(req).pipe(finalize(() => layoutService.stopLoading(requestId)));
@@ -51,69 +59,61 @@ const loadingInterceptorFn: HttpInterceptorFn = (req: HttpRequest<unknown>, next
   return next(req);
 };
 
-const BASE_URL = ['localhost:4200', ''].includes(window.location.host) ? 'app.trackify.kominal.cloud' : window.location.host;
-const CALLBACK_URL = window.location.host === '' ? 'http://localhost/callback' : window.location.origin;
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    importProvidersFrom(ApiModule.forRoot({ rootUrl: `https://${BASE_URL}/api/core` })),
-    provideHttpClient(withInterceptors([loadingInterceptorFn, authHttpInterceptorFn, dateInterceptorFn])),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
-    provideAnimationsAsync(),
-    providePrimeNG({
-      theme: {
-        preset: definePreset(Aura, {
-          semantic: {
-            primary: {
-              50: '{indigo.50}',
-              100: '{indigo.100}',
-              200: '{indigo.200}',
-              300: '{indigo.300}',
-              400: '{indigo.400}',
-              500: '{indigo.500}',
-              600: '{indigo.600}',
-              700: '{indigo.700}',
-              800: '{indigo.800}',
-              900: '{indigo.900}',
-              950: '{indigo.950}',
-            },
+export const BASE_URL = new InjectionToken<string>('BASE_URL');
+export const FRONTEND_CONFIGURATION = new InjectionToken<FrontendConfiguration>('FRONTEND_CONFIGURATION');
+export function getAppConfig(baseUrl: string, frontendConfiguration: FrontendConfiguration): ApplicationConfig {
+  const { oidc } = frontendConfiguration;
+  const apiBaseUrl = `${baseUrl}/api`;
+  return {
+    providers: [
+      { provide: BASE_URL, useValue: baseUrl },
+      { provide: FRONTEND_CONFIGURATION, useValue: frontendConfiguration },
+      importProvidersFrom(ApiModule.forRoot({ rootUrl: `${apiBaseUrl}/core` })),
+      provideZoneChangeDetection({ eventCoalescing: true }),
+      provideRouter(routes, withRouterConfig({ paramsInheritanceStrategy: 'always' })),
+      provideHttpClient(withXhr(), withInterceptors([loadingInterceptorFn, authInterceptor(), dateInterceptorFn])),
+      providePrimeNG({
+        license: PRIMENG_LICENSE,
+        ripple: true,
+        theme: {
+          preset: definePreset(Preset, {
+            semantic: { primary: palette('#4f46e5') },
+          }),
+          options: { darkModeSelector: '.dark' },
+        },
+      }),
+      { provide: AbstractSecurityStorage, useClass: DefaultLocalStorageService },
+      importProvidersFrom(
+        AuthModule.forRoot({
+          config: {
+            ...oidc,
+            renewTimeBeforeTokenExpiresInSeconds: 60,
+            redirectUrl: window.location.origin,
+            postLogoutRedirectUri: window.location.origin,
+            scope: 'openid profile email',
+            responseType: 'code',
+            silentRenew: true,
+            useRefreshToken: true,
+            autoUserInfo: true,
+            secureRoutes: [apiBaseUrl],
           },
         }),
-        options: {
-          darkModeSelector: '.dark',
+      ),
+      MessageService,
+      ConfirmationService,
+      DialogService,
+      DatePipe,
+      { provide: TitleStrategy, useClass: TranslateTitleStrategy },
+      { provide: DEFAULT_CURRENCY_CODE, useValue: 'EUR' },
+      { provide: LOCALE_ID, useValue: 'de-DE' },
+      { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { locale: 'de-DE', dateFormat: 'dd.MM.yyyy HH:mm' } },
+      provideTranslateService({ fallbackLang: 'de', loader: provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }) }),
+      {
+        provide: RouteReuseStrategy,
+        useClass: class extends BaseRouteReuseStrategy {
+          public override shouldReuseRoute = (future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean => future.routeConfig === curr.routeConfig && (future.routeConfig?.data?.['reuse'] === true || sameParams(future.params, curr.params));
         },
       },
-    }),
-    provideAuth0({
-      domain: 'kominal.eu.auth0.com',
-      clientId: '2keyZpo1IPv08F3nzmpoyCow10NUmaBh',
-      authorizationParams: {
-        redirect_uri: CALLBACK_URL,
-        scope: 'openid profile email offline_access',
-        audience: 'trackify/api',
-      },
-      useRefreshTokens: true,
-      useRefreshTokensFallback: false,
-      cacheLocation: 'localstorage',
-      errorPath: '/error',
-      httpInterceptor: {
-        allowedList: [{ uri: `https://${BASE_URL}/api/core/*` }],
-      },
-    }),
-    provideTranslateService({
-      defaultLanguage: 'en',
-      loader: {
-        provide: TranslateLoader,
-        useFactory: (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './i18n/', '.json'),
-        deps: [HttpClient],
-      },
-    }),
-    ConfirmationService,
-    MessageService,
-    DialogService,
-    { provide: DEFAULT_CURRENCY_CODE, useValue: 'EUR' },
-    { provide: LOCALE_ID, useValue: 'de-DE' },
-    { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { locale: 'de-DE', dateFormat: 'dd.MM.yyyy HH:mm' } },
-  ],
-};
+    ],
+  };
+}

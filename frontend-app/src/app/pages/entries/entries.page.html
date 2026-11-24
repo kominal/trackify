@@ -1,0 +1,81 @@
+<div class="card min-h-16 shrink-0 flex-row! items-center justify-between gap-4">
+  <h1 class="text-2xl font-semibold">{{ 'simple.entries' | translate }}</h1>
+  <div class="flex items-center gap-2">
+    <p-button severity="secondary" [outlined]="true" size="small" icon="fas fa-filter-circle-xmark" [label]="'simple.resetFilter' | translate" (click)="resetFilter(table)" />
+    <p-button [attr.data-testid]="'entries-add-button'" size="small" icon="fa fa-add" [label]="'simple.add' | translate" (click)="edit()" />
+  </div>
+</div>
+@if (applicationStateService.showHelp()) {
+  <p-message severity="info">{{ 'help.entries' | translate }}</p-message>
+}
+<div class="card h-full p-0!">
+  <p-table
+    #table
+    class="overflow-auto"
+    [value]="data()?.items || []"
+    [lazy]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+    stateStorage="local"
+    [stateKey]="tenantId + '_ENTRIES_FILTER'"
+    (onStateRestore)="onStateRestore(table, $event)"
+    dataKey="uuid"
+    sortField="start"
+    [sortOrder]="-1"
+    [scrollable]="true"
+    scrollHeight="flex"
+    [paginator]="true"
+    [totalRecords]="data()?.count || 0"
+    paginatorDropdownAppendTo="body"
+    [rows]="50"
+    [rowsPerPageOptions]="[50, 100, 200]"
+  >
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="start">{{ 'simple.date' | translate }} <p-sort-icon field="start" /></th>
+        <th>{{ 'simple.time' | translate }}</th>
+        <th class="numeric">{{ 'simple.duration' | translate }}</th>
+        <th>{{ 'simple.task' | translate }}</th>
+        <th>{{ 'simple.note' | translate }}</th>
+        <th class="w-0 text-end!">{{ 'simple.actions' | translate }}</th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>
+          <p-column-filter class="w-full" field="taskId" matchMode="in" [showMenu]="false">
+            <ng-template #filter let-value let-filterCallback="filterCallback">
+              <p-multi-select class="w-full" [ngModel]="value" [options]="taskOptions()" [filter]="true" (onChange)="filterCallback($event.value)" [showClear]="true" appendTo="body" />
+            </ng-template>
+          </p-column-filter>
+        </th>
+        <th><p-column-filter class="w-full" type="text" field="note" filterOn="input" /></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-entry>
+      @let entryInfo = info(entry);
+      <tr class="cursor-pointer hover:bg-neutral-100! dark:hover:bg-neutral-800!" (click)="edit(entry)">
+        <td class="whitespace-nowrap">{{ entry.start | date: 'EEE, dd.MM.yyyy' }}</td>
+        <td class="whitespace-nowrap tabular-nums">{{ entry.start | date: 'HH:mm' }} – {{ entry.end | date: 'HH:mm' }}</td>
+        <td class="numeric">{{ duration(entry) }}</td>
+        <td>
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 shrink-0 rounded-sm" [style.background]="entryInfo.color"></span>
+            <span>{{ entryInfo.task }}</span>
+            <span class="text-muted-color">{{ entryInfo.project }}</span>
+          </div>
+        </td>
+        <td class="max-w-80 truncate">{{ entry.note }}</td>
+        <td class="text-end!">
+          <p-button icon="fas fa-edit" [rounded]="true" [text]="true" severity="secondary" [pTooltip]="'simple.edit' | translate" tooltipPosition="left" />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td class="text-center" colspan="100">{{ 'simple.noResults' | translate }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

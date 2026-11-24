@@ -13,11 +13,13 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { create } from '../fn/tenant-http/create';
 import { Create$Params } from '../fn/tenant-http/create';
+import { delete$ } from '../fn/tenant-http/delete';
+import { Delete$Params } from '../fn/tenant-http/delete';
 import { list } from '../fn/tenant-http/list';
 import { List$Params } from '../fn/tenant-http/list';
 import { read } from '../fn/tenant-http/read';
 import { Read$Params } from '../fn/tenant-http/read';
-import { Tenant } from '../models/tenant';
+import { TenantEntity } from '../models/tenant-entity';
 import { update } from '../fn/tenant-http/update';
 import { Update$Params } from '../fn/tenant-http/update';
 
@@ -36,7 +38,15 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list$Response(params?: List$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Tenant>>> {
+  list$Response(
+    params?: List$Params,
+    context?: HttpContext,
+  ): Observable<
+    StrictHttpResponse<{
+      items: Array<TenantEntity>;
+      count: number;
+    }>
+  > {
     return list(this.http, this.rootUrl, params, context);
   }
 
@@ -46,9 +56,25 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list(params?: List$Params, context?: HttpContext): Observable<Array<Tenant>> {
+  list(
+    params?: List$Params,
+    context?: HttpContext,
+  ): Observable<{
+    items: Array<TenantEntity>;
+    count: number;
+  }> {
     return this.list$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Tenant>>): Array<Tenant> => r.body)
+      map(
+        (
+          r: StrictHttpResponse<{
+            items: Array<TenantEntity>;
+            count: number;
+          }>,
+        ): {
+          items: Array<TenantEntity>;
+          count: number;
+        } => r.body,
+      ),
     );
   }
 
@@ -61,7 +87,7 @@ export class TenantHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
+  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<TenantEntity>> {
     return create(this.http, this.rootUrl, params, context);
   }
 
@@ -71,10 +97,8 @@ export class TenantHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<Tenant> {
-    return this.create$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Tenant>): Tenant => r.body)
-    );
+  create(params: Create$Params, context?: HttpContext): Observable<TenantEntity> {
+    return this.create$Response(params, context).pipe(map((r: StrictHttpResponse<TenantEntity>): TenantEntity => r.body));
   }
 
   /** Path part for operation `tenantControllerRead()` */
@@ -86,7 +110,7 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
+  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<TenantEntity>> {
     return read(this.http, this.rootUrl, params, context);
   }
 
@@ -96,10 +120,8 @@ export class TenantHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read(params: Read$Params, context?: HttpContext): Observable<Tenant> {
-    return this.read$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Tenant>): Tenant => r.body)
-    );
+  read(params: Read$Params, context?: HttpContext): Observable<TenantEntity> {
+    return this.read$Response(params, context).pipe(map((r: StrictHttpResponse<TenantEntity>): TenantEntity => r.body));
   }
 
   /** Path part for operation `tenantControllerUpdate()` */
@@ -122,9 +144,29 @@ export class TenantHttpService extends BaseService {
    * This method sends `application/json` and handles request body of type `application/json`.
    */
   update(params: Update$Params, context?: HttpContext): Observable<void> {
-    return this.update$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
+    return this.update$Response(params, context).pipe(map((r: StrictHttpResponse<void>): void => r.body));
   }
 
+  /** Path part for operation `tenantControllerDelete()` */
+  static readonly TenantControllerDeletePath = '/tenants/{tenantId}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `delete()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return delete$(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `delete$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
+    return this.delete$Response(params, context).pipe(map((r: StrictHttpResponse<void>): void => r.body));
+  }
 }

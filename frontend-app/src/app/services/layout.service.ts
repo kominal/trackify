@@ -1,22 +1,34 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, map, shareReplay, tap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, distinctUntilChanged, map, shareReplay, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LayoutService {
-  public loading$ = new BehaviorSubject<string[]>([]);
+  public readonly loading$ = new BehaviorSubject<string[]>([]);
 
-  public isLoading$ = this.loading$.asObservable().pipe(
-    map((loading) => loading.length > 0),
-    debounceTime(10),
-    distinctUntilChanged(),
-    tap((loading) => {
-      if (loading) {
-        (document.activeElement as HTMLElement)?.blur();
-      }
-    }),
-    shareReplay(1),
+  private lastFocusedElement: HTMLElement | undefined;
+
+  public isLoading = toSignal(
+    this.loading$.asObservable().pipe(
+      map((loading) => loading.length > 0),
+      distinctUntilChanged(),
+      tap((loading) => {
+        if (loading) {
+          const activeElement = document.activeElement as HTMLElement | null;
+          this.lastFocusedElement = activeElement ?? undefined;
+          activeElement?.blur();
+        } else {
+          const elementToRefocus = this.lastFocusedElement;
+          this.lastFocusedElement = undefined;
+          if (elementToRefocus && document.contains(elementToRefocus)) {
+            elementToRefocus.focus();
+          }
+        }
+      }),
+      shareReplay(1),
+    ),
   );
 
   public startLoading(type: string): void {

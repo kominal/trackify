@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://trackify.kominal.cloud",
+    "secure": true,
+    "changeOrigin": true
+  }
+}

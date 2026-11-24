@@ -1,4 +1,0 @@
-@if (trackingService.trackingState$ | async; as trackingState) {
-  <app-clock [since]="trackingState.start"></app-clock>
-  <p-button icon="pi pi-stop" [rounded]="true" [text]="true" (click)="trackingService.stopTracking()" />
-}

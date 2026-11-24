@@ -1,0 +1,7 @@
+<div class="flex flex-col gap-4">
+  <app-input-text label="simple.name" [formElement]="$any(formElement.controls.name)" />
+  <div class="flex justify-end gap-2">
+    <p-button [attr.data-testid]="'tenant-add-cancel-button'" severity="secondary" [outlined]="true" [label]="'simple.cancel' | translate" (click)="close()" />
+    <p-button [attr.data-testid]="'tenant-add-save-button'" [label]="'simple.save' | translate" [disabled]="formElement.invalid" (click)="submit()" />
+  </div>
+</div>

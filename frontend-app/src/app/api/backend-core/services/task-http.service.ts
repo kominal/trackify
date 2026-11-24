@@ -19,11 +19,9 @@ import { list } from '../fn/task-http/list';
 import { List$Params } from '../fn/task-http/list';
 import { read } from '../fn/task-http/read';
 import { Read$Params } from '../fn/task-http/read';
-import { Task } from '../models/task';
+import { TaskEntity } from '../models/task-entity';
 import { update } from '../fn/task-http/update';
 import { Update$Params } from '../fn/task-http/update';
-import { upsert } from '../fn/task-http/upsert';
-import { Upsert$Params } from '../fn/task-http/upsert';
 
 @Injectable({ providedIn: 'root' })
 export class TaskHttpService extends BaseService {
@@ -40,10 +38,15 @@ export class TaskHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list$Response(params: List$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-'items': Array<Task>;
-'count': number;
-}>> {
+  list$Response(
+    params: List$Params,
+    context?: HttpContext,
+  ): Observable<
+    StrictHttpResponse<{
+      items: Array<TaskEntity>;
+      count: number;
+    }>
+  > {
     return list(this.http, this.rootUrl, params, context);
   }
 
@@ -53,18 +56,25 @@ export class TaskHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  list(params: List$Params, context?: HttpContext): Observable<{
-'items': Array<Task>;
-'count': number;
-}> {
+  list(
+    params: List$Params,
+    context?: HttpContext,
+  ): Observable<{
+    items: Array<TaskEntity>;
+    count: number;
+  }> {
     return this.list$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-'items': Array<Task>;
-'count': number;
-}>): {
-'items': Array<Task>;
-'count': number;
-} => r.body)
+      map(
+        (
+          r: StrictHttpResponse<{
+            items: Array<TaskEntity>;
+            count: number;
+          }>,
+        ): {
+          items: Array<TaskEntity>;
+          count: number;
+        } => r.body,
+      ),
     );
   }
 
@@ -77,7 +87,7 @@ export class TaskHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Task>> {
+  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<TaskEntity>> {
     return create(this.http, this.rootUrl, params, context);
   }
 
@@ -87,10 +97,8 @@ export class TaskHttpService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<Task> {
-    return this.create$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Task>): Task => r.body)
-    );
+  create(params: Create$Params, context?: HttpContext): Observable<TaskEntity> {
+    return this.create$Response(params, context).pipe(map((r: StrictHttpResponse<TaskEntity>): TaskEntity => r.body));
   }
 
   /** Path part for operation `taskControllerRead()` */
@@ -102,7 +110,7 @@ export class TaskHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<Task>> {
+  read$Response(params: Read$Params, context?: HttpContext): Observable<StrictHttpResponse<TaskEntity>> {
     return read(this.http, this.rootUrl, params, context);
   }
 
@@ -112,60 +120,8 @@ export class TaskHttpService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  read(params: Read$Params, context?: HttpContext): Observable<Task> {
-    return this.read$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Task>): Task => r.body)
-    );
-  }
-
-  /** Path part for operation `taskControllerUpsert()` */
-  static readonly TaskControllerUpsertPath = '/tenants/{tenantId}/tasks/{uuid}';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `upsert()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  upsert$Response(params: Upsert$Params, context?: HttpContext): Observable<StrictHttpResponse<(Task | void)>> {
-    return upsert(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `upsert$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  upsert(params: Upsert$Params, context?: HttpContext): Observable<(Task | void)> {
-    return this.upsert$Response(params, context).pipe(
-      map((r: StrictHttpResponse<(Task | void)>): (Task | void) => r.body)
-    );
-  }
-
-  /** Path part for operation `taskControllerDelete()` */
-  static readonly TaskControllerDeletePath = '/tenants/{tenantId}/tasks/{uuid}';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete$(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
-    return this.delete$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
+  read(params: Read$Params, context?: HttpContext): Observable<TaskEntity> {
+    return this.read$Response(params, context).pipe(map((r: StrictHttpResponse<TaskEntity>): TaskEntity => r.body));
   }
 
   /** Path part for operation `taskControllerUpdate()` */
@@ -188,9 +144,29 @@ export class TaskHttpService extends BaseService {
    * This method sends `application/json` and handles request body of type `application/json`.
    */
   update(params: Update$Params, context?: HttpContext): Observable<void> {
-    return this.update$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
+    return this.update$Response(params, context).pipe(map((r: StrictHttpResponse<void>): void => r.body));
   }
 
+  /** Path part for operation `taskControllerDelete()` */
+  static readonly TaskControllerDeletePath = '/tenants/{tenantId}/tasks/{uuid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `delete()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return delete$(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `delete$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
+    return this.delete$Response(params, context).pipe(map((r: StrictHttpResponse<void>): void => r.body));
+  }
 }
