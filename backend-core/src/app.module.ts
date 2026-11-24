@@ -16,7 +16,7 @@ export const moduleDefinition = {
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 1_000 }]),
     MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING ?? 'mongodb://localhost/trackify'),
     MailerModule.forRoot({
-      transport: process.env.MAIL_CONNECTION_STRING ?? 'smtps://user@example.com:topsecret@smtp.example.com',
+      transport: process.env.MAIL_CONNECTION_STRING || 'smtps://user@example.com:topsecret@smtp.example.com',
     }),
   ],
   providers: [CommonLogger, { provide: APP_GUARD, useClass: ThrottlerGuard }],

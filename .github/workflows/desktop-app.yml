@@ -51,6 +51,16 @@ jobs:
         if: steps.version.outputs.exists == 'true'
         run: npm run dist
 
+      # GitHub only publishes a release for an existing tag.
+      - name: Tag version
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          tag="v${{ steps.version.outputs.version }}"
+          if ! git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
+            git tag "$tag"
+            git push origin "$tag"
+          fi
+
       - name: Build and publish installer
         if: steps.version.outputs.exists == 'false'
         run: npm run release
