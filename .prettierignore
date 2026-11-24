@@ -6,3 +6,4 @@ coverage
 .nx
 package-lock.json
 *.min.*
+desktop-app/release

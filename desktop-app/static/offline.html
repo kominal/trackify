@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'" />
+    <title>Trackify</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        font-family: 'Segoe UI', sans-serif;
+        background: #f4f4f5;
+        color: #27272a;
+        text-align: center;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      img {
+        width: 64px;
+        height: 64px;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin: 0;
+      }
+      p {
+        margin: 0;
+        color: #71717a;
+        max-width: 420px;
+      }
+      button {
+        padding: 8px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #4f46e5;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #18181b;
+          color: #f4f4f5;
+        }
+        p {
+          color: #a1a1aa;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <img src="icon.png" alt="" />
+    <h1 id="title">Trackify is not reachable</h1>
+    <p id="text">There is no connection to the server right now. Window activity keeps being recorded and is sent as soon as the connection is back. Trying again every 30 seconds.</p>
+    <button id="retry">Try again</button>
+    <script>
+      if (new URLSearchParams(location.search).get('de') === '1') {
+        document.getElementById('title').textContent = 'Trackify ist nicht erreichbar';
+        document.getElementById('text').textContent = 'Gerade besteht keine Verbindung zum Server. Die Fensteraktivität wird weiter aufgezeichnet und gesendet, sobald die Verbindung wieder steht. Neuer Versuch alle 30 Sekunden.';
+        document.getElementById('retry').textContent = 'Erneut versuchen';
+      }
+      // The main process passes the app's address; it also retries on its own.
+      const target = new URLSearchParams(location.search).get('url');
+      document.getElementById('retry').addEventListener('click', () => target && location.assign(target));
+    </script>
+  </body>
+</html>

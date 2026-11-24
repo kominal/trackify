@@ -1,0 +1,64 @@
+{
+  "name": "trackify-desktop",
+  "productName": "Trackify",
+  "version": "1.0.0",
+  "description": "Kominal Trackify for Windows: autostart, reminders and window activity next to the web app.",
+  "author": "Kominal",
+  "license": "MIT",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder --win --publish never",
+    "release": "npm run build && electron-builder --win --publish always"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.0",
+    "get-windows": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.0",
+    "esbuild": "^0.27.0",
+    "typescript": "~6.0.3"
+  },
+  "build": {
+    "appId": "com.kominal.trackify",
+    "productName": "Trackify",
+    "artifactName": "Trackify-Setup-${version}.${ext}",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**",
+      "static/**",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/get-windows/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Trackify"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "kominal",
+        "repo": "trackify",
+        "releaseType": "release"
+      }
+    ]
+  }
+}

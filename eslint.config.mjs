@@ -14,6 +14,11 @@ export default tseslint.config(
     tsconfigRootDir: import.meta.dirname,
     files: ['backend-core/**/*.ts'],
   }),
+  // The Electron main process and preload are plain Node/TypeScript: the NestJS rule set fits them best.
+  ...nestjs({
+    tsconfigRootDir: import.meta.dirname,
+    files: ['desktop-app/src/**/*.ts'],
+  }),
 
   // Adopted flow conventions: the architecture this app copies from flow (Eager change detection,
   // any-typed values flowing through the generated API client and mongoose, PrimeNG template
