@@ -5,6 +5,7 @@ Kominal Trackify: time tracking at **trackify.kominal.cloud**, plus a Windows de
 Multi-app repo: NestJS backend (`backend-core/`), Angular web app (`frontend-app/`) and Electron desktop app (`desktop-app/`). Part of the `kominal/workspace` root; see the root [`CLAUDE.md`](../../CLAUDE.md) for shared tooling conventions.
 
 The architecture follows `sentry`, which follows `flow`:
+
 - `@kominal/common-nestjs` bootstrap;
 - path-based multi-tenancy (`tenants/:tenantId/...`, called "Organisation" in the UI);
 - Keycloak OIDC against the shared `kominal` realm, with the config served at `GET /frontend/configuration`;
