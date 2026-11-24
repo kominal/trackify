@@ -9,7 +9,7 @@ export class RequestLoggingMiddleware implements NestMiddleware {
     const time = new Date().getTime();
     const requestText = `${req.method} ${req.originalUrl}`;
     this.logger.log(requestText);
-    res.on('close', () => {
+    res.once('close', () => {
       const { statusCode } = res;
       const contentLength = res.get('content-length');
       this.logger.log(`${requestText} ${statusCode} ${contentLength} ${new Date().getTime() - time}ms`);

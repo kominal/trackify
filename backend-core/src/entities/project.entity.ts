@@ -1,16 +1,22 @@
+import { Color, ColorDecorator } from '@models/color.model';
+import { TECHNICAL_KEYS_TENANT_ENTITY, WithTenantEntity } from '@models/entity.model';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { OmitType } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
 import { Model } from 'mongoose';
-import { TECHNICAL_KEYS, TenantEntity } from '../models/core/entity.model';
 
-@Schema()
-export class Project extends TenantEntity {
-  @Prop() public clientId: string;
-  @Prop() public name: string;
+@Schema({ collection: 'projects' })
+export class ProjectEntity extends WithTenantEntity {
+  @Prop() @ApiProperty({ required: false }) @IsOptional() @IsUUID() public clientId?: string;
+  @Prop() @IsString() @MinLength(1) @MaxLength(120) public name: string;
+  @Prop() @IsEnum(Color) @ColorDecorator public color: Color;
+  @Prop({ default: false }) @IsBoolean() public archived: boolean;
 }
 
-export type ProjectModel = Model<Project>;
+export const ProjectSchema = SchemaFactory.createForClass(ProjectEntity).index({ tenantId: 1, uuid: 1 }, { unique: true });
+export type ProjectModel = Model<ProjectEntity>;
 
-export const ProjectSchema = SchemaFactory.createForClass(Project).index({ tenantId: 1 }).index({ tenantId: 1, uuid: 1 }, { unique: true });
-
-export class ProjectRequest extends OmitType(Project, TECHNICAL_KEYS) {}
+export class ProjectRequest extends OmitType(ProjectEntity, [...TECHNICAL_KEYS_TENANT_ENTITY, 'uuid', 'version']) {
+  // Required for updates (optimistic locking), ignored on create.
+  @ApiProperty({ required: false }) @IsOptional() @IsInt() public version?: number;
+}

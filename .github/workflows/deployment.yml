@@ -4,33 +4,80 @@ on:
   push:
     branches:
       - production
+    paths:
+      - platform/**
   workflow_call:
 
+# Two builds finishing close together must not run `docker stack deploy` at the same time.
+concurrency:
+  group: deployment-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
-  Production:
+  Deployment:
     runs-on: deployment
     defaults:
       run:
         working-directory: platform
-    environment: production
+    environment: ${{ github.ref_name }}
+    permissions:
+      contents: read
+      packages: read
     steps:
-      - name: Checkout production
+      - name: Checkout
         uses: actions/checkout@main
-        with:
-          ref: production
       - name: Define variables
         run: |
-          echo "MONGODB_CONNECTION_STRING=${{ secrets.MONGODB_CONNECTION_STRING }}" >> $GITHUB_ENV
-          echo "MAIL_CONNECTION_STRING=${{ secrets.MAIL_CONNECTION_STRING }}" >> $GITHUB_ENV
-      - name: Define base url
-        run: echo "BASE_URL=trackify.kominal.cloud" >> $GITHUB_ENV
-      - name: Define stack name
-        run: echo "STACK_NAME=trackify_production" >> $GITHUB_ENV
+          echo "BASE_URL=trackify.kominal.cloud" >> $GITHUB_ENV
+          echo "TAG=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "STACK_NAME=trackify_${{ github.ref_name }}" >> $GITHUB_ENV
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.DEPLOY_TOKEN }}
       - name: Deploy to Docker Swarm
+        timeout-minutes: 15
         run: docker stack deploy --prune --with-registry-auth -c docker-compose.yml ${STACK_NAME}
+        env:
+          OIDC_AUTHORITY: ${{ secrets.OIDC_AUTHORITY }}
+          OIDC_CLIENT_ID: ${{ secrets.OIDC_CLIENT_ID }}
+          MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
+          MAIL_CONNECTION_STRING: ${{ secrets.MAIL_CONNECTION_STRING }}
+          TENANT_CREATION: ${{ vars.TENANT_CREATION }}
+          UPDATE_ORDER: start-first
+          UPDATE_FAILURE_ACTION: rollback
+      - name: Check rollout
+        timeout-minutes: 12
+        run: |
+          sleep 5
+          services=$(docker stack services --format '{{.Name}}' "$STACK_NAME")
+          if [ -z "$services" ]; then
+            echo "::error::Stack $STACK_NAME has no services"
+            exit 1
+          fi
+          deadline=$((SECONDS + 600))
+          while :; do
+            pending=''
+            failed=''
+            for service in $services; do
+              case "$(docker service inspect --format '{{if .UpdateStatus}}{{.UpdateStatus.State}}{{end}}' "$service")" in
+                updating | rollback_started) pending="$pending $service" ;;
+                paused | rollback_paused | rollback_completed) failed="$failed $service" ;;
+              esac
+            done
+            if [ -z "$pending" ] || [ "$SECONDS" -ge "$deadline" ]; then
+              break
+            fi
+            sleep 10
+          done
+          docker service inspect --format '{{.Spec.Name}}: {{if .UpdateStatus}}{{.UpdateStatus.State}} {{.UpdateStatus.Message}}{{else}}not updated{{end}}' $services
+          if [ -n "$pending" ]; then
+            echo "::error::Rollout still running after 10 minutes:$pending"
+            exit 1
+          fi
+          if [ -n "$failed" ]; then
+            echo "::error::Rollout failed or was rolled back:$failed"
+            exit 1
+          fi

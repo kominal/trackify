@@ -7,5 +7,5 @@ export const CustomOperationName =
     NestApiOperation({
       ...op,
       'x-operation-name': prop.toString(),
-    } as any)(target, prop, descriptor);
+    } as ApiOperationOptions)(target, prop, descriptor);
   };

@@ -1,17 +1,19 @@
+import { DateTransform, WithTenantEntity } from '@models/entity.model';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { OmitType } from '@nestjs/swagger';
+import { IsDate, IsString, IsUUID } from 'class-validator';
 import { Model } from 'mongoose';
-import { TECHNICAL_KEYS, TenantEntity } from '../models/core/entity.model';
 
-@Schema()
-export class TrackingSession extends TenantEntity {
-  @Prop() public userId: string;
-  @Prop() public taskId: string;
-  @Prop() public start: Date;
+// The timer that is running right now: at most one per user and organisation.
+@Schema({ collection: 'tracking-sessions' })
+export class TrackingSessionEntity extends WithTenantEntity {
+  @Prop() @IsString() public userId: string;
+  @Prop() @IsUUID() public taskId: string;
+  @Prop() @IsDate() @DateTransform public start: Date;
 }
 
-export type TrackingSessionModel = Model<TrackingSession>;
+export const TrackingSessionSchema = SchemaFactory.createForClass(TrackingSessionEntity).index({ tenantId: 1, userId: 1 }, { unique: true });
+export type TrackingSessionModel = Model<TrackingSessionEntity>;
 
-export const TrackingSessionSchema = SchemaFactory.createForClass(TrackingSession).index({ tenantId: 1 }).index({ tenantId: 1, uuid: 1 }, { unique: true });
-
-export class TrackingSessionRequest extends OmitType(TrackingSession, [...TECHNICAL_KEYS, 'start', 'userId']) {}
+export class TrackingSessionRequest {
+  @IsUUID() public taskId: string;
+}

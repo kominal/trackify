@@ -1,19 +1,17 @@
+import { BaseEntity } from '@models/entity.model';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { OmitType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 import { Model } from 'mongoose';
-import { BaseEntity, TECHNICAL_KEYS_BASE_ENTITY } from '../models/core/entity.model';
-import { StoredFile } from '../models/core/stored-file.model';
 
-@Schema()
-export class Tenant extends BaseEntity {
-  @Prop() public name: string;
-  @Prop() public logo?: StoredFile;
+@Schema({ collection: 'tenants' })
+export class TenantEntity extends BaseEntity {
+  @Prop() @IsString() @MinLength(1) @MaxLength(120) public name: string;
 }
 
-export type TenantModel = Model<Tenant>;
+export const TenantSchema = SchemaFactory.createForClass(TenantEntity).index({ uuid: 1 }, { unique: true });
+export type TenantModel = Model<TenantEntity>;
 
-export const TenantSchema = SchemaFactory.createForClass(Tenant).index({ uuid: 1 }, { unique: true });
+export class TenantCreateRequest extends PickType(TenantEntity, ['name']) {}
 
-export class TenantCreateRequest extends OmitType(Tenant, [...TECHNICAL_KEYS_BASE_ENTITY, 'logo']) {}
-
-export class TenantUpdateRequest extends OmitType(Tenant, TECHNICAL_KEYS_BASE_ENTITY) {}
+export class TenantUpdateRequest extends PickType(TenantEntity, ['name']) {}

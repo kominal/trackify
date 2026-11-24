@@ -5,8 +5,28 @@
       "post": {
         "operationId": "TenantController_create",
         "parameters": [],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TenantCreateRequest" } } } },
-        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Tenant" } } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantEntity"
+                }
+              }
+            }
+          }
+        },
         "summary": "",
         "tags": ["tenant-http"],
         "x-operation-name": "create"
@@ -14,14 +34,79 @@
       "get": {
         "operationId": "TenantController_list",
         "parameters": [
-          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "active",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "pageIndex",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
-        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Tenant" } } } } } },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TenantEntity"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["items", "count"]
+                }
+              }
+            }
+          }
+        },
         "summary": "",
         "tags": ["tenant-http"],
         "x-operation-name": "list"
@@ -30,42 +115,16 @@
     "/tenants/{tenantId}": {
       "get": {
         "operationId": "TenantController_read",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Tenant" } } } } },
-        "summary": "",
-        "tags": ["tenant-http"],
-        "x-operation-name": "read"
-      },
-      "put": {
-        "operationId": "TenantController_update",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TenantUpdateRequest" } } } },
-        "responses": { "200": { "description": "" } },
-        "summary": "",
-        "tags": ["tenant-http"],
-        "x-operation-name": "update"
-      }
-    },
-    "/tenants/{tenantId}/clients": {
-      "post": {
-        "operationId": "ClientController_create",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
-        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } } },
-        "summary": "",
-        "tags": ["client-http"],
-        "x-operation-name": "create"
-      },
-      "get": {
-        "operationId": "ClientController_list",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -73,7 +132,456 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Client" } }, "count": { "type": "number" } },
+                  "$ref": "#/components/schemas/TenantEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["tenant-http"],
+        "x-operation-name": "read"
+      },
+      "put": {
+        "operationId": "TenantController_update",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["tenant-http"],
+        "x-operation-name": "update"
+      },
+      "delete": {
+        "operationId": "TenantController_delete",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["tenant-http"],
+        "x-operation-name": "delete"
+      }
+    },
+    "/tenants/{tenantId}/memberships/me": {
+      "get": {
+        "operationId": "MembershipController_readCurrentMembership",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["membership-http"],
+        "x-operation-name": "readCurrentMembership"
+      }
+    },
+    "/tenants/{tenantId}/memberships": {
+      "post": {
+        "operationId": "MembershipController_create",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["membership-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "MembershipController_list",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "pageIndex",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MembershipEntity"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["items", "count"]
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["membership-http"],
+        "x-operation-name": "list"
+      }
+    },
+    "/tenants/{tenantId}/memberships/{uuid}": {
+      "get": {
+        "operationId": "MembershipController_read",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["membership-http"],
+        "x-operation-name": "read"
+      },
+      "put": {
+        "operationId": "MembershipController_update",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["membership-http"],
+        "x-operation-name": "update"
+      },
+      "delete": {
+        "operationId": "MembershipController_delete",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["membership-http"],
+        "x-operation-name": "delete"
+      }
+    },
+    "/tenants/{tenantId}/clients": {
+      "post": {
+        "operationId": "ClientController_create",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "ClientController_list",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "pageIndex",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ClientEntity"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
                   "required": ["items", "count"]
                 }
               }
@@ -89,83 +597,24 @@
       "get": {
         "operationId": "ClientController_read",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } } },
-        "summary": "",
-        "tags": ["client-http"],
-        "x-operation-name": "read"
-      },
-      "patch": {
-        "operationId": "ClientController_update",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
-        "responses": { "200": { "description": "" } },
-        "summary": "",
-        "tags": ["client-http"],
-        "x-operation-name": "update"
-      },
-      "put": {
-        "operationId": "ClientController_upsert",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ClientRequest" } } } },
-        "responses": {
-          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Client" }, { "type": "void" }] } } } }
-        },
-        "summary": "",
-        "tags": ["client-http"],
-        "x-operation-name": "upsert"
-      },
-      "delete": {
-        "operationId": "ClientController_delete",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "responses": { "200": { "description": "" } },
-        "summary": "",
-        "tags": ["client-http"],
-        "x-operation-name": "delete"
-      }
-    },
-    "/tenants/{tenantId}/dashboard": {
-      "post": {
-        "operationId": "DashboardController_get",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DashboardRequest" } } } },
-        "responses": { "201": { "description": "" } },
-        "summary": "",
-        "tags": ["dashboard-http"],
-        "x-operation-name": "get"
-      }
-    },
-    "/tenants/{tenantId}/projects": {
-      "post": {
-        "operationId": "ProjectController_create",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectRequest" } } } },
-        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Project" } } } } },
-        "summary": "",
-        "tags": ["project-http"],
-        "x-operation-name": "create"
-      },
-      "get": {
-        "operationId": "ProjectController_list",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -173,7 +622,208 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Project" } }, "count": { "type": "number" } },
+                  "$ref": "#/components/schemas/ClientEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "read"
+      },
+      "put": {
+        "operationId": "ClientController_update",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "update"
+      },
+      "delete": {
+        "operationId": "ClientController_delete",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["client-http"],
+        "x-operation-name": "delete"
+      }
+    },
+    "/tenants/{tenantId}/projects": {
+      "post": {
+        "operationId": "ProjectController_create",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["project-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "ProjectController_list",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "pageIndex",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProjectEntity"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
                   "required": ["items", "count"]
                 }
               }
@@ -189,72 +839,24 @@
       "get": {
         "operationId": "ProjectController_read",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Project" } } } } },
-        "summary": "",
-        "tags": ["project-http"],
-        "x-operation-name": "read"
-      },
-      "patch": {
-        "operationId": "ProjectController_update",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectRequest" } } } },
-        "responses": { "200": { "description": "" } },
-        "summary": "",
-        "tags": ["project-http"],
-        "x-operation-name": "update"
-      },
-      "put": {
-        "operationId": "ProjectController_upsert",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectRequest" } } } },
-        "responses": {
-          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Project" }, { "type": "void" }] } } } }
-        },
-        "summary": "",
-        "tags": ["project-http"],
-        "x-operation-name": "upsert"
-      },
-      "delete": {
-        "operationId": "ProjectController_delete",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "responses": { "200": { "description": "" } },
-        "summary": "",
-        "tags": ["project-http"],
-        "x-operation-name": "delete"
-      }
-    },
-    "/tenants/{tenantId}/records": {
-      "post": {
-        "operationId": "RecordController_create",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RecordRequest" } } } },
-        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Record" } } } } },
-        "summary": "",
-        "tags": ["record-http"],
-        "x-operation-name": "create"
-      },
-      "get": {
-        "operationId": "RecordController_list",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -262,74 +864,125 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Record" } }, "count": { "type": "number" } },
-                  "required": ["items", "count"]
+                  "$ref": "#/components/schemas/ProjectEntity"
                 }
               }
             }
           }
         },
         "summary": "",
-        "tags": ["record-http"],
-        "x-operation-name": "list"
-      }
-    },
-    "/tenants/{tenantId}/records/{uuid}": {
-      "get": {
-        "operationId": "RecordController_read",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Record" } } } } },
-        "summary": "",
-        "tags": ["record-http"],
+        "tags": ["project-http"],
         "x-operation-name": "read"
       },
-      "patch": {
-        "operationId": "RecordController_update",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RecordRequest" } } } },
-        "responses": { "200": { "description": "" } },
-        "summary": "",
-        "tags": ["record-http"],
-        "x-operation-name": "update"
-      },
       "put": {
-        "operationId": "RecordController_upsert",
+        "operationId": "ProjectController_update",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RecordRequest" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Record" }, { "type": "void" }] } } } }
+          "200": {
+            "description": ""
+          }
         },
         "summary": "",
-        "tags": ["record-http"],
-        "x-operation-name": "upsert"
+        "tags": ["project-http"],
+        "x-operation-name": "update"
       },
       "delete": {
-        "operationId": "RecordController_delete",
+        "operationId": "ProjectController_delete",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
-        "responses": { "200": { "description": "" } },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "summary": "",
-        "tags": ["record-http"],
+        "tags": ["project-http"],
         "x-operation-name": "delete"
       }
     },
     "/tenants/{tenantId}/tasks": {
       "post": {
         "operationId": "TaskController_create",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskRequest" } } } },
-        "responses": { "201": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Task" } } } } },
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskEntity"
+                }
+              }
+            }
+          }
+        },
         "summary": "",
         "tags": ["task-http"],
         "x-operation-name": "create"
@@ -337,13 +990,64 @@
       "get": {
         "operationId": "TaskController_list",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "active", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "direction", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "pageIndex", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "pageSize", "required": false, "in": "query", "schema": { "type": "number" } },
-          { "name": "filter", "required": false, "in": "query", "schema": { "type": "string" } },
-          { "name": "select", "required": false, "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "pageIndex",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -351,7 +1055,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Task" } }, "count": { "type": "number" } },
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TaskEntity"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
                   "required": ["items", "count"]
                 }
               }
@@ -367,220 +1081,1556 @@
       "get": {
         "operationId": "TaskController_read",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
-        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Task" } } } } },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskEntity"
+                }
+              }
+            }
+          }
+        },
         "summary": "",
         "tags": ["task-http"],
         "x-operation-name": "read"
       },
-      "patch": {
+      "put": {
         "operationId": "TaskController_update",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskRequest" } } } },
-        "responses": { "200": { "description": "" } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "summary": "",
         "tags": ["task-http"],
         "x-operation-name": "update"
       },
-      "put": {
-        "operationId": "TaskController_upsert",
-        "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": false, "in": "path", "schema": { "type": "string" } }
-        ],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskRequest" } } } },
-        "responses": { "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/Task" }, { "type": "void" }] } } } } },
-        "summary": "",
-        "tags": ["task-http"],
-        "x-operation-name": "upsert"
-      },
       "delete": {
         "operationId": "TaskController_delete",
         "parameters": [
-          { "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } },
-          { "name": "uuid", "required": true, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
         ],
-        "responses": { "200": { "description": "" } },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "summary": "",
         "tags": ["task-http"],
         "x-operation-name": "delete"
       }
     },
-    "/tenants/{tenantId}/tracking-sessions/active": {
-      "get": {
-        "operationId": "TrackingSessionController_readActive",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
+    "/tenants/{tenantId}/time-entries": {
+      "post": {
+        "operationId": "TimeEntryController_create",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeEntryRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "", "content": { "application/json": { "schema": { "oneOf": [{ "$ref": "#/components/schemas/TrackingSession" }, { "type": "null" }] } } } }
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeEntryEntity"
+                }
+              }
+            }
+          }
         },
         "summary": "",
-        "tags": ["tracking-session-http"],
-        "x-operation-name": "readActive"
+        "tags": ["time-entry-http"],
+        "x-operation-name": "create"
+      },
+      "get": {
+        "operationId": "TimeEntryController_list",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "pageIndex",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TimeEntryEntity"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["items", "count"]
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["time-entry-http"],
+        "x-operation-name": "list"
+      }
+    },
+    "/tenants/{tenantId}/time-entries/{uuid}": {
+      "get": {
+        "operationId": "TimeEntryController_read",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeEntryEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["time-entry-http"],
+        "x-operation-name": "read"
       },
       "put": {
-        "operationId": "TrackingSessionController_updateActive",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TrackingSessionRequest" } } } },
-        "responses": { "200": { "description": "" } },
+        "operationId": "TimeEntryController_update",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeEntryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "summary": "",
-        "tags": ["tracking-session-http"],
-        "x-operation-name": "updateActive"
+        "tags": ["time-entry-http"],
+        "x-operation-name": "update"
       },
       "delete": {
-        "operationId": "TrackingSessionController_stopActive",
-        "parameters": [{ "name": "tenantId", "required": true, "in": "path", "schema": { "type": "string" } }],
-        "responses": { "200": { "description": "" } },
+        "operationId": "TimeEntryController_delete",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "summary": "",
-        "tags": ["tracking-session-http"],
-        "x-operation-name": "stopActive"
+        "tags": ["time-entry-http"],
+        "x-operation-name": "delete"
+      }
+    },
+    "/tenants/{tenantId}/tracking": {
+      "get": {
+        "operationId": "TrackingController_read",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackingSessionEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["tracking-http"],
+        "x-operation-name": "read"
+      },
+      "put": {
+        "operationId": "TrackingController_start",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingSessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackingSessionEntity"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["tracking-http"],
+        "x-operation-name": "start"
+      },
+      "delete": {
+        "operationId": "TrackingController_stop",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["tracking-http"],
+        "x-operation-name": "stop"
+      }
+    },
+    "/tenants/{tenantId}/dashboard": {
+      "get": {
+        "operationId": "DashboardController_read",
+        "parameters": [
+          {
+            "name": "tenantId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeZone",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dashboard"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["dashboard-http"],
+        "x-operation-name": "read"
+      }
+    },
+    "/me/settings": {
+      "get": {
+        "operationId": "MeController_readSettings",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettings"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["me-http"],
+        "x-operation-name": "readSettings"
+      },
+      "put": {
+        "operationId": "MeController_updateSettings",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSettings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["me-http"],
+        "x-operation-name": "updateSettings"
+      }
+    },
+    "/me/activities": {
+      "post": {
+        "operationId": "MeController_uploadActivities",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityUploadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["me-http"],
+        "x-operation-name": "uploadActivities"
+      },
+      "get": {
+        "operationId": "MeController_listActivities",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityEntity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["me-http"],
+        "x-operation-name": "listActivities"
+      },
+      "delete": {
+        "operationId": "MeController_deleteActivities",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["me-http"],
+        "x-operation-name": "deleteActivities"
+      }
+    },
+    "/frontend/configuration": {
+      "get": {
+        "operationId": "FrontendController_readConfiguration",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrontendConfiguration"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["frontend-http"],
+        "x-operation-name": "readConfiguration"
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_readHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["health-http"],
+        "x-operation-name": "readHealth"
       }
     }
   },
-  "info": { "title": "Core", "description": "", "version": "1.0.0", "contact": {} },
+  "info": {
+    "title": "Core",
+    "description": "",
+    "version": "1.0.0",
+    "contact": {}
+  },
   "tags": [],
   "servers": [
-    { "url": "/api/core", "description": "Current installation" },
-    { "url": "https://app.trackify.com/api/core/api", "description": "Production" }
+    {
+      "url": "/api/core",
+      "description": "Current installation"
+    }
   ],
   "components": {
-    "securitySchemes": { "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" } },
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
     "schemas": {
-      "TenantCreateRequest": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"] },
-      "StoredFile": {
-        "type": "object",
-        "properties": { "name": { "type": "string" }, "location": { "type": "string" }, "key": { "type": "string" } },
-        "required": ["name", "location", "key"]
-      },
-      "Tenant": {
+      "TenantCreateRequest": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "logo": { "$ref": "#/components/schemas/StoredFile" },
-          "_id": { "type": "string" },
-          "uuid": { "type": "string" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "createdBy": { "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" },
-          "updatedBy": { "type": "string" },
-          "version": { "type": "number" }
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
         },
-        "required": ["name", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["name"]
       },
-      "TenantUpdateRequest": { "type": "object", "properties": { "name": { "type": "string" }, "logo": { "$ref": "#/components/schemas/StoredFile" } }, "required": ["name"] },
-      "ClientRequest": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"] },
-      "Client": {
+      "TenantEntity": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "tenantId": { "type": "string" },
-          "_id": { "type": "string" },
-          "uuid": { "type": "string" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "createdBy": { "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" },
-          "updatedBy": { "type": "string" },
-          "version": { "type": "number" }
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "_id": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedBy": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          }
         },
-        "required": ["name", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["name", "_id", "uuid", "createdAt", "createdBy", "changedAt", "changedBy", "version"]
       },
-      "PhysicalRiskScenario": { "type": "string", "enum": ["DUMMY"] },
-      "TransitionRiskScenario": { "type": "string", "enum": ["DUMMY"] },
-      "DashboardRequest": {
+      "TenantUpdateRequest": {
         "type": "object",
         "properties": {
-          "physicalRiskScenario": { "allOf": [{ "$ref": "#/components/schemas/PhysicalRiskScenario" }] },
-          "transitionRiskScenario": { "allOf": [{ "$ref": "#/components/schemas/TransitionRiskScenario" }] },
-          "assetId": { "type": "string" },
-          "period": { "type": "array", "items": { "format": "date-time", "type": "string" } }
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
         },
-        "required": ["physicalRiskScenario", "transitionRiskScenario", "assetId", "period"]
+        "required": ["name"]
       },
-      "ProjectRequest": { "type": "object", "properties": { "clientId": { "type": "string" }, "name": { "type": "string" } }, "required": ["clientId", "name"] },
-      "Project": {
+      "MembershipPermission": {
+        "type": "string",
+        "enum": ["MANAGE_TENANT", "MANAGE_MEMBERSHIPS", "MANAGE_CATALOG"]
+      },
+      "MembershipStatus": {
+        "type": "string",
+        "enum": ["INVITED", "ACTIVE", "DISABLED"]
+      },
+      "MembershipEntity": {
         "type": "object",
         "properties": {
-          "clientId": { "type": "string" },
-          "name": { "type": "string" },
-          "tenantId": { "type": "string" },
-          "_id": { "type": "string" },
-          "uuid": { "type": "string" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "createdBy": { "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" },
-          "updatedBy": { "type": "string" },
-          "version": { "type": "number" }
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MembershipPermission"
+            }
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MembershipStatus"
+              }
+            ]
+          },
+          "userId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedBy": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          }
         },
-        "required": ["clientId", "name", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["permissions", "status", "userId", "email", "tenantId", "_id", "uuid", "createdAt", "createdBy", "changedAt", "changedBy", "version"]
       },
-      "RecordRequest": {
-        "type": "object",
-        "properties": { "taskId": { "type": "string" }, "start": { "format": "date-time", "type": "string" }, "end": { "format": "date-time", "type": "string" } },
-        "required": ["taskId", "start", "end"]
-      },
-      "Record": {
+      "MembershipCreateRequest": {
         "type": "object",
         "properties": {
-          "taskId": { "type": "string" },
-          "userId": { "type": "string" },
-          "start": { "format": "date-time", "type": "string" },
-          "end": { "format": "date-time", "type": "string" },
-          "tenantId": { "type": "string" },
-          "_id": { "type": "string" },
-          "uuid": { "type": "string" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "createdBy": { "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" },
-          "updatedBy": { "type": "string" },
-          "version": { "type": "number" }
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MembershipPermission"
+            }
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
         },
-        "required": ["taskId", "userId", "start", "end", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["permissions", "email"]
+      },
+      "MembershipUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MembershipPermission"
+            }
+          }
+        },
+        "required": ["permissions"]
+      },
+      "ClientRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": ["name"]
+      },
+      "ClientEntity": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedBy": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": ["name", "tenantId", "_id", "uuid", "createdAt", "createdBy", "changedAt", "changedBy", "version"]
+      },
+      "Color": {
+        "type": "string",
+        "enum": ["BLUE", "ORANGE", "GREEN", "YELLOW", "PINK", "TEAL", "PURPLE", "RED", "GRAY"]
+      },
+      "ProjectRequest": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "color": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": ["color", "name", "archived"]
+      },
+      "ProjectEntity": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "color": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedBy": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": ["color", "name", "archived", "tenantId", "_id", "uuid", "createdAt", "createdBy", "changedAt", "changedBy", "version"]
       },
       "TaskRequest": {
         "type": "object",
-        "properties": { "projectId": { "type": "string" }, "name": { "type": "string" }, "color": { "type": "string" }, "priority": { "type": "number" } },
-        "required": ["projectId", "name", "color", "priority"]
+        "properties": {
+          "color": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              }
+            ]
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "priority": {
+            "type": "number"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": ["projectId", "name", "priority", "archived"]
       },
-      "Task": {
+      "TaskEntity": {
         "type": "object",
         "properties": {
-          "projectId": { "type": "string" },
-          "name": { "type": "string" },
-          "color": { "type": "string" },
-          "priority": { "type": "number" },
-          "tenantId": { "type": "string" },
-          "_id": { "type": "string" },
-          "uuid": { "type": "string" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "createdBy": { "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" },
-          "updatedBy": { "type": "string" },
-          "version": { "type": "number" }
+          "color": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              }
+            ]
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "priority": {
+            "type": "number"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedBy": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          }
         },
-        "required": ["projectId", "name", "color", "priority", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["projectId", "name", "priority", "archived", "tenantId", "_id", "uuid", "createdAt", "createdBy", "changedAt", "changedBy", "version"]
       },
-      "TrackingSession": {
+      "TimeEntryRequest": {
         "type": "object",
         "properties": {
-          "userId": { "type": "string" },
-          "taskId": { "type": "string" },
-          "start": { "format": "date-time", "type": "string" },
-          "tenantId": { "type": "string" },
-          "_id": { "type": "string" },
-          "uuid": { "type": "string" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "createdBy": { "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" },
-          "updatedBy": { "type": "string" },
-          "version": { "type": "number" }
+          "note": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "end": {
+            "format": "date-time",
+            "type": "string"
+          }
         },
-        "required": ["userId", "taskId", "start", "tenantId", "_id", "uuid", "createdAt", "createdBy", "updatedAt", "updatedBy", "version"]
+        "required": ["taskId", "start", "end"]
       },
-      "TrackingSessionRequest": { "type": "object", "properties": { "taskId": { "type": "string" } }, "required": ["taskId"] }
+      "TimeEntryEntity": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "start": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "end": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedBy": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": ["taskId", "userId", "start", "end", "tenantId", "_id", "uuid", "createdAt", "createdBy", "changedAt", "changedBy", "version"]
+      },
+      "TrackingSessionEntity": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedBy": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          }
+        },
+        "required": ["userId", "taskId", "start", "tenantId", "_id", "uuid", "createdAt", "createdBy", "changedAt", "changedBy", "version"]
+      },
+      "TrackingSessionRequest": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": ["taskId"]
+      },
+      "DashboardProjectShare": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "minutes": {
+            "type": "number"
+          }
+        },
+        "required": ["projectId", "minutes"]
+      },
+      "DashboardDay": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardProjectShare"
+            }
+          },
+          "day": {
+            "type": "string"
+          },
+          "trackedMinutes": {
+            "type": "number"
+          },
+          "activeMinutes": {
+            "type": "number"
+          },
+          "coveredMinutes": {
+            "type": "number"
+          }
+        },
+        "required": ["start", "projects", "day", "trackedMinutes", "activeMinutes", "coveredMinutes"]
+      },
+      "DashboardTaskTotal": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string"
+          },
+          "minutes": {
+            "type": "number"
+          },
+          "entryCount": {
+            "type": "number"
+          }
+        },
+        "required": ["taskId", "minutes", "entryCount"]
+      },
+      "DashboardProjectTotal": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardTaskTotal"
+            }
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "minutes": {
+            "type": "number"
+          },
+          "entryCount": {
+            "type": "number"
+          }
+        },
+        "required": ["tasks", "projectId", "minutes", "entryCount"]
+      },
+      "DashboardAppTotal": {
+        "type": "object",
+        "properties": {
+          "app": {
+            "type": "string"
+          },
+          "minutes": {
+            "type": "number"
+          },
+          "coveredMinutes": {
+            "type": "number"
+          }
+        },
+        "required": ["app", "minutes", "coveredMinutes"]
+      },
+      "DashboardTimelineEntry": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "taskId": {
+            "type": "string"
+          },
+          "running": {
+            "type": "boolean"
+          }
+        },
+        "required": ["start", "end", "taskId", "running"]
+      },
+      "DashboardTimelineActivity": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "app": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "idle": {
+            "type": "boolean"
+          }
+        },
+        "required": ["start", "end", "app", "title", "idle"]
+      },
+      "DashboardGap": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["start", "end"]
+      },
+      "DashboardTotals": {
+        "type": "object",
+        "properties": {
+          "trackedMinutes": {
+            "type": "number"
+          },
+          "activeMinutes": {
+            "type": "number"
+          },
+          "coveredMinutes": {
+            "type": "number"
+          },
+          "untrackedMinutes": {
+            "type": "number"
+          },
+          "offlineTrackedMinutes": {
+            "type": "number"
+          },
+          "workingDays": {
+            "type": "number"
+          },
+          "longestUntrackedMinutes": {
+            "type": "number"
+          },
+          "hasActivity": {
+            "type": "boolean"
+          }
+        },
+        "required": ["trackedMinutes", "activeMinutes", "coveredMinutes", "untrackedMinutes", "offlineTrackedMinutes", "workingDays", "longestUntrackedMinutes", "hasActivity"]
+      },
+      "Dashboard": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardDay"
+            }
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardProjectTotal"
+            }
+          },
+          "apps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardAppTotal"
+            }
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardTimelineEntry"
+            }
+          },
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardTimelineActivity"
+            }
+          },
+          "gaps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardGap"
+            }
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/DashboardTotals"
+          }
+        },
+        "required": ["from", "to", "days", "projects", "apps", "entries", "activities", "gaps", "timeZone", "totals"]
+      },
+      "UserSettings": {
+        "type": "object",
+        "properties": {
+          "timeZone": {
+            "type": "string"
+          },
+          "reminderMinutes": {
+            "type": "number",
+            "minimum": 5,
+            "maximum": 240
+          }
+        },
+        "required": ["timeZone", "reminderMinutes"]
+      },
+      "ActivitySegment": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "end": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "app": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "idle": {
+            "type": "boolean"
+          }
+        },
+        "required": ["start", "end", "app", "title", "idle"]
+      },
+      "ActivityUploadRequest": {
+        "type": "object",
+        "properties": {
+          "segments": {
+            "maxItems": 2000,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivitySegment"
+            }
+          }
+        },
+        "required": ["segments"]
+      },
+      "ActivityEntity": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "start": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "end": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "app": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "idle": {
+            "type": "boolean"
+          }
+        },
+        "required": ["_id", "userId", "start", "end", "app", "title", "idle"]
+      },
+      "FrontendConfigurationOidc": {
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          }
+        },
+        "required": ["authority", "clientId"]
+      },
+      "FrontendConfiguration": {
+        "type": "object",
+        "properties": {
+          "tenantCreation": {
+            "enum": ["USER", "ADMIN"],
+            "type": "string"
+          },
+          "oidc": {
+            "$ref": "#/components/schemas/FrontendConfigurationOidc"
+          }
+        },
+        "required": ["tenantCreation", "oidc"]
+      }
     }
   }
 }

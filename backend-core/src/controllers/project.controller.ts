@@ -1,53 +1,51 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
-import { Project, ProjectRequest } from '../entities/project.entity';
-import { TenantGuard } from '../guards/tenant.guard';
-import { UserContext, UserCtx } from '../helpers/context.decorator';
-import { CustomOperationName } from '../helpers/custom-operation-name.decorator';
-import { EntitiesPathParams, EntityPathParams, ListParams, ListResponse, OpenApiPaginationResponse, OptionalEntityPathParams } from '../helpers/entity-service.helper';
-import { ProjectService } from '../services/project.service';
+import { ProjectEntity, ProjectRequest } from '@entities/project.entity';
+import { MembershipPermission } from '@entities/membership.entity';
+import { ProjectService } from '@entity-services/project.service';
+import { Permissions, TenantGuard } from '@guards/tenant.guard';
+import { UserContext, UserCtx } from '@helpers/context.decorator';
+import { CustomOperationName } from '@helpers/custom-operation-name.decorator';
+import { ListParams, ListResponse, OpenApiPaginationResponse } from '@models/list.model';
+import { TenantEntitiesPathParams, TenantEntityPathParams } from '@models/path.model';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 @UseGuards(TenantGuard)
 @ApiTags('project-http')
 @Controller('tenants/:tenantId/projects')
 export class ProjectController {
-  public constructor(private projectService: ProjectService) {}
+  public constructor(private readonly service: ProjectService) {}
 
   @Post()
+  @Permissions(MembershipPermission.MANAGE_CATALOG)
   @CustomOperationName()
-  public create(@UserCtx() userContext: UserContext, @Param() params: EntitiesPathParams, @Body() request: ProjectRequest): Promise<Project> {
-    return this.projectService.create(userContext, params, request);
+  public create(@UserCtx() userContext: UserContext, @Param() params: TenantEntitiesPathParams, @Body() request: ProjectRequest): Promise<ProjectEntity> {
+    return this.service.create(userContext, params, request);
   }
 
   @Get()
   @CustomOperationName()
-  @OpenApiPaginationResponse(Project)
-  public list(@Param() params: EntitiesPathParams, @Query() listParams: ListParams): Promise<ListResponse<Project>> {
-    return this.projectService.list(params, listParams);
+  @OpenApiPaginationResponse(ProjectEntity)
+  public list(@Param() params: TenantEntitiesPathParams, @Query() listParams: ListParams): Promise<ListResponse<ProjectEntity>> {
+    return this.service.list(params, listParams);
   }
 
   @Get(':uuid')
   @CustomOperationName()
-  public read(@Param() params: EntityPathParams): Promise<Project> {
-    return this.projectService.read(params);
+  public read(@Param() params: TenantEntityPathParams): Promise<ProjectEntity> {
+    return this.service.read(params);
   }
 
-  @Patch(':uuid')
+  @Put(':uuid')
+  @Permissions(MembershipPermission.MANAGE_CATALOG)
   @CustomOperationName()
-  public update(@UserCtx() userContext: UserContext, @Param() params: EntityPathParams, @Body() request: ProjectRequest): Promise<void> {
-    return this.projectService.update(userContext, params, request);
-  }
-
-  @Put('{:uuid}')
-  @CustomOperationName()
-  @ApiOkResponse({ schema: { oneOf: [{ $ref: getSchemaPath(Project) }, { type: 'void' }] } })
-  public upsert(@UserCtx() userContext: UserContext, @Param() params: OptionalEntityPathParams, @Body() request: ProjectRequest): Promise<Project | void> {
-    return this.projectService.upsert(userContext, params, request);
+  public update(@UserCtx() userContext: UserContext, @Param() params: TenantEntityPathParams, @Body() request: ProjectRequest): Promise<void> {
+    return this.service.update(userContext, params, request);
   }
 
   @Delete(':uuid')
+  @Permissions(MembershipPermission.MANAGE_CATALOG)
   @CustomOperationName()
-  public delete(@Param() params: EntityPathParams): Promise<void> {
-    return this.projectService.delete(params);
+  public async delete(@Param() params: TenantEntityPathParams): Promise<void> {
+    await this.service.delete(params);
   }
 }

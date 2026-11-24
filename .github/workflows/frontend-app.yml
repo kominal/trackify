@@ -10,29 +10,45 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend-app
     steps:
-      - name: Checkout production
-        uses: actions/checkout@main
+      # The workspace repo hosts the shared code (common/) this app builds against; it must be
+      # checked out first, with trackify nested inside it at projects/trackify — the layout the
+      # @kominal/common-angular file: dependency expects.
+      - name: Checkout workspace
+        uses: actions/checkout@v4
         with:
-          ref: production
+          repository: kominal/workspace
+          token: ${{ secrets.WORKSPACE_READ_TOKEN }}
 
-      - name: Node
-        uses: actions/setup-node@main
-      - name: Cache node modules
-        uses: actions/cache@main
+      - name: Checkout trackify
+        uses: actions/checkout@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          ref: ${{ github.ref }}
+          path: projects/trackify
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: projects/trackify/frontend-app/package-lock.json
+
+      - name: Install workspace dependencies
+        run: npm ci
+
       - name: Install dependencies
-        run: npm ci --force
+        working-directory: projects/trackify/frontend-app
+        run: npm install --force
+      # Usage statistics go to Kominal Sentry (sentry.kominal.cloud). Its key is public (it ends up in
+      # the page source) and kept as the organisation secret SENTRY_KEY; the branch name is reported
+      # as the environment. Without the key the build carries no tracker.
       - name: Build
-        run: npm run build
+        working-directory: projects/trackify/frontend-app
+        run: npm run build -- --define "SENTRY_KEY='${SENTRY_KEY}'" --define "SENTRY_ENVIRONMENT='${{ github.ref_name }}'"
+        env:
+          SENTRY_KEY: ${{ vars.SENTRY_KEY || secrets.SENTRY_KEY }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -47,11 +63,13 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: frontend-app
+          context: projects/trackify/frontend-app
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
   Deployment:
-    needs: build
+    needs: Build
     uses: ./.github/workflows/deployment.yml
     secrets: inherit

@@ -8,54 +8,50 @@
   "scripts": {
     "build": "nest build",
     "start": "nest start --watch",
-    "generate-swagger": "set GENERATE_SWAGGER=true && nest start && npx prettier swagger.json --write && ng-openapi-gen --input swagger.json --output ../frontend-app/src/app/api/backend-core"
+    "test": "jest",
+    "generate-swagger": "GENERATE_SWAGGER=true nest start && npx prettier swagger.json --write && ng-openapi-gen --input swagger.json --output ../frontend-app/src/app/api/backend-core && npx prettier ../frontend-app/src/app/api/backend-core --write"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
-    "@nestjs/common": "^11.0.1",
-    "@nestjs/config": "^4.0.1",
-    "@nestjs/core": "^11.0.1",
-    "@nestjs/mongoose": "^11.0.1",
-    "@nestjs/platform-express": "^11.0.1",
-    "@nestjs/schedule": "^5.0.1",
-    "@nestjs/swagger": "^11.0.6",
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/mongoose": "^11.0.3",
+    "@nestjs/platform-express": "^11.1.9",
+    "@nestjs/swagger": "^11.2.3",
+    "@nestjs/throttler": "^6.5.0",
+    "body-parser": "^2.2.0",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
-    "dayjs": "^1.11.13",
+    "class-validator": "^0.14.3",
+    "express": "^5.1.0",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.2",
-    "jwks-rsa": "^3.1.0",
-    "mongoose": "^8.12.1",
+    "jwks-rsa": "^3.2.0",
+    "mongoose": "^8.20.1",
+    "nodemailer": "^8.0.5",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1",
-    "swagger-ui-express": "^5.0.1"
+    "rxjs": "^7.8.2",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.18.0",
-    "@kominal/ng-openapi-gen": "^0.52.0",
-    "@nestjs/cli": "^11.0.0",
-    "@nestjs/schematics": "^11.0.0",
-    "@nestjs/testing": "^11.0.1",
-    "@swc/cli": "^0.6.0",
-    "@swc/core": "^1.10.7",
-    "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.7",
-    "@types/supertest": "^6.0.2",
-    "eslint": "^9.18.0",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-prettier": "^5.2.2",
-    "globals": "^16.0.0",
-    "jest": "^29.7.0",
-    "prettier": "^3.4.2",
+    "@kominal/ng-openapi-gen": "^0.53.1",
+    "@nestjs/cli": "^11.0.14",
+    "@nestjs/schematics": "^11.0.9",
+    "@nestjs/testing": "^11.1.9",
+    "@types/express": "^5.0.5",
+    "@types/jest": "30.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "24.10.1",
+    "@types/uuid": "^11.0.0",
+    "jest": "30.2.0",
+    "mongodb-memory-server": "^10.2.0",
     "source-map-support": "^0.5.21",
-    "supertest": "^7.0.0",
-    "ts-jest": "^29.2.5",
-    "ts-loader": "^9.5.2",
+    "ts-jest": "29.4.5",
+    "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0"
+    "tsconfig-paths": "4.2.0",
+    "typescript": "^5.9.3"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -68,10 +64,25 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
+    "transformIgnorePatterns": [
+      "/node_modules/(?!uuid/)"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "moduleNameMapper": {
+      "^@nestjs/(common|core|mongoose|swagger)$": "<rootDir>/../node_modules/@nestjs/$1",
+      "^@nestjs/(common|core|mongoose|swagger)/(.*)$": "<rootDir>/../node_modules/@nestjs/$1/$2",
+      "^(mongoose|class-validator|class-transformer)$": "<rootDir>/../node_modules/$1",
+      "^@kominal/common-nestjs$": "<rootDir>/../../../../common/nestjs/src/index.ts",
+      "^@kominal/common-nestjs/(.*)$": "<rootDir>/../../../../common/nestjs/src/$1",
+      "^@entities/(.*)$": "<rootDir>/entities/$1",
+      "^@helpers/(.*)$": "<rootDir>/helpers/$1",
+      "^@middlewares/(.*)$": "<rootDir>/middlewares/$1",
+      "^@models/(.*)$": "<rootDir>/models/$1",
+      "^@services/(.*)$": "<rootDir>/services/$1",
+      "^@guards/(.*)$": "<rootDir>/guards/$1",
+      "^@controllers/(.*)$": "<rootDir>/controllers/$1",
+      "^@entity-services/(.*)$": "<rootDir>/entity-services/$1"
+    },
+    "testEnvironment": "node",
+    "testTimeout": 120000
   }
 }

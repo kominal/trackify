@@ -1,38 +1,39 @@
 {
   "folders": [
-    { "name": "Frontend App", "path": "frontend-app" },
+    { "name": "Trackify", "path": "." },
     { "name": "Backend Core", "path": "backend-core" },
+    { "name": "Frontend App", "path": "frontend-app" },
     { "name": "Platform", "path": "platform" },
     { "name": "GitHub Actions", "path": ".github/workflows" },
-    { "name": "Trackify", "path": "." },
   ],
   "settings": {
     "editor.tabSize": 2,
     "editor.formatOnSave": true,
-    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.detectIndentation": false,
+    "editor.suggestSelection": "first",
+    "editor.inlineSuggest.enabled": true,
+    "editor.rulers": [180, 300],
     "editor.quickSuggestions": {
       "other": true,
       "comments": false,
       "strings": false,
     },
+    "diffEditor.ignoreTrimWhitespace": false,
     "debug.console.acceptSuggestionOnEnter": "on",
     "typescript.tsserver.log": "off",
-    "typescript.preferences.importModuleSpecifier": "relative",
-    "editor.suggestSelection": "first",
-    "editor.detectIndentation": false,
     "javascript.suggest.enabled": false,
-    "editor.inlineSuggest.enabled": true,
-    "github.copilot.enable": {
-      "*": true,
-      "yaml": true,
-      "plaintext": true,
-      "markdown": true,
+    "git.confirmSync": false,
+    "files.eol": "\n",
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/api": true,
     },
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit",
       },
+      "typescript.preferences.importModuleSpecifier": "non-relative",
     },
     "[html]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -40,7 +41,6 @@
     "[json]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
-    "git.confirmSync": false,
     "[jsonc]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
@@ -50,16 +50,21 @@
     "[scss]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
-    "files.eol": "\n",
   },
   "extensions": {
-    "recommendations": [
-      "angular.ng-template",
-      "dbaeumer.vscode-eslint",
-      "eamodio.gitlens",
-      "esbenp.prettier-vscode",
-      "yigitfindikli.primeflexsnippets",
-      "netcorext.uuid-generator",
+    "recommendations": ["angular.ng-template", "dbaeumer.vscode-eslint", "eamodio.gitlens", "esbenp.prettier-vscode"],
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "ng serve",
+        "type": "chrome",
+        "request": "launch",
+        "preLaunchTask": "npm: start",
+        "url": "http://localhost:4200/",
+      },
     ],
+    "compounds": [],
   },
 }

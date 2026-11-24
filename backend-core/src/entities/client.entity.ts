@@ -1,15 +1,18 @@
+import { TECHNICAL_KEYS_TENANT_ENTITY, WithTenantEntity } from '@models/entity.model';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { OmitType } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { IsInt, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { Model } from 'mongoose';
-import { TECHNICAL_KEYS, TenantEntity } from '../models/core/entity.model';
 
-@Schema()
-export class Client extends TenantEntity {
-  @Prop() public name: string;
+@Schema({ collection: 'clients' })
+export class ClientEntity extends WithTenantEntity {
+  @Prop() @IsString() @MinLength(1) @MaxLength(120) public name: string;
 }
 
-export type ClientModel = Model<Client>;
+export const ClientSchema = SchemaFactory.createForClass(ClientEntity).index({ tenantId: 1, uuid: 1 }, { unique: true });
+export type ClientModel = Model<ClientEntity>;
 
-export const ClientSchema = SchemaFactory.createForClass(Client).index({ tenantId: 1 }).index({ tenantId: 1, uuid: 1 }, { unique: true });
-
-export class ClientRequest extends OmitType(Client, TECHNICAL_KEYS) {}
+export class ClientRequest extends OmitType(ClientEntity, [...TECHNICAL_KEYS_TENANT_ENTITY, 'uuid', 'version']) {
+  // Required for updates (optimistic locking), ignored on create.
+  @ApiProperty({ required: false }) @IsOptional() @IsInt() public version?: number;
+}

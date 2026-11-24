@@ -10,22 +10,47 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend-core
     steps:
-      - name: Checkout production
-        uses: actions/checkout@main
+      # The workspace repo hosts the shared code (common/) this app builds against; it must be
+      # checked out first (the outer checkout cleans the directory), with trackify nested inside it
+      # at projects/trackify — the layout the @kominal/common-nestjs tsconfig path mapping expects.
+      - name: Checkout workspace
+        uses: actions/checkout@v4
         with:
-          ref: production
+          repository: kominal/workspace
+          token: ${{ secrets.WORKSPACE_READ_TOKEN }}
 
-      - name: Node
-        uses: actions/setup-node@main
-      - name: Install dependencies
+      - name: Checkout trackify
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          path: projects/trackify
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: projects/trackify/backend-core/package-lock.json
+
+      - name: Install workspace dependencies
         run: npm ci
+
+      - name: Install dependencies
+        working-directory: projects/trackify/backend-core
+        run: npm install
+      # The specs run against an in-memory MongoDB. Its binary (about 180 MB) is downloaded outside
+      # node_modules, which is copied into the image as a whole.
+      - name: Test
+        working-directory: projects/trackify/backend-core
+        run: npm test
+        env:
+          MONGOMS_DOWNLOAD_DIR: ${{ runner.temp }}/mongodb-binaries
       - name: Build
+        working-directory: projects/trackify/backend-core
         run: npm run build
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -40,11 +65,13 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: backend-core
+          context: projects/trackify/backend-core
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
   Deployment:
-    needs: build
+    needs: Build
     uses: ./.github/workflows/deployment.yml
     secrets: inherit

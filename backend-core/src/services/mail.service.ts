@@ -1,48 +1,26 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, Logger } from '@nestjs/common';
-import mjml2html from 'mjml';
-
-const TEMPLATE = `<mjml>
-  <mj-body>
-    <mj-section>
-      <mj-column>
-        <mj-image width="100px" src="https://app.cbamfacilitator.com/assets/images/logo.png"></mj-image>
-        <mj-divider border-color="#2f7774"></mj-divider>        
-        <mj-text>{{TEXT1}}</mj-text>
-        <mj-button background-color="#2f7774" color="white" href="{{LINK}}">
-        Proceed to CBAM Facilitator
-        </mj-button>
-        <mj-text>{{TEXT2}}</mj-text>
-        {{EXTRAS}}
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>`;
+import { Attachment } from 'nodemailer/lib/mailer';
 
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
 
-  public constructor(private mailerService: MailerService) {}
+  public constructor(private readonly mailerService: MailerService) {}
 
-  public async sendMail(to: string | string[], subject: string, html: string): Promise<void> {
+  public async sendMail(to: string | string[], subject: string, html: string, attachments?: Attachment[]): Promise<void> {
     try {
       await this.mailerService.sendMail({
         to,
-        from: '"Climate Resilience Suite" <noreply@climate-resilience-suite.com>',
+        from: '"Kominal Trackify" <noreply@kominal.com>',
         subject,
         html,
+        attachments,
       });
+      // Log metadata only — never recipients' addresses, subjects or bodies.
+      this.logger.log(`Mail sent (recipients: ${Array.isArray(to) ? to.length : 1})`);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error('Failed to send mail', e instanceof Error ? e.stack : String(e));
     }
-  }
-
-  public async sendMailWithTemplate(to: string, subject: string, text1: string, link: string, text2?: string, extras?: string): Promise<void> {
-    const html = TEMPLATE.replace('{{TEXT1}}', text1)
-      .replace('{{LINK}}', link)
-      .replace('{{TEXT2}}', text2 || '')
-      .replace('{{EXTRAS}}', extras || '');
-    await this.sendMail(to, subject, mjml2html(html).html);
   }
 }

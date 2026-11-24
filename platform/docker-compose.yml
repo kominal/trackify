@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 networks:
   global:
@@ -7,36 +7,54 @@ networks:
 
 services:
   frontend-app:
-    image: ghcr.io/kominal/trackify/frontend-app:production
+    image: ghcr.io/kominal/trackify/frontend-app:${TAG}
     deploy:
       replicas: 1
+      update_config:
+        order: '${UPDATE_ORDER:-stop-first}'
+        failure_action: '${UPDATE_FAILURE_ACTION:-pause}'
+        monitor: 1m
+      rollback_config:
+        order: '${UPDATE_ORDER:-stop-first}'
       labels:
         - 'traefik.enable=true'
         - 'traefik.http.routers.${STACK_NAME}_frontend-app.entrypoints=https'
         - 'traefik.http.routers.${STACK_NAME}_frontend-app.tls=true'
         - 'traefik.http.routers.${STACK_NAME}_frontend-app.tls.certresolver=https'
-        - 'traefik.http.routers.${STACK_NAME}_frontend-app.rule=Host(`app.${BASE_URL}`) && !PathPrefix(`/api`)'
+        - 'traefik.http.routers.${STACK_NAME}_frontend-app.rule=Host(`${BASE_URL}`) && !PathPrefix(`/api`)'
         - 'traefik.http.services.${STACK_NAME}_frontend-app.loadbalancer.server.port=8080'
+        - 'traefik.swarm.lbswarm=true'
     networks:
       - global
+
   backend-core:
-    image: ghcr.io/kominal/trackify/backend-core:production
+    image: ghcr.io/kominal/trackify/backend-core:${TAG}
     deploy:
       replicas: 1
+      update_config:
+        order: '${UPDATE_ORDER:-stop-first}'
+        failure_action: '${UPDATE_FAILURE_ACTION:-pause}'
+        monitor: 1m
+      rollback_config:
+        order: '${UPDATE_ORDER:-stop-first}'
       labels:
         - 'traefik.enable=true'
         - 'traefik.http.middlewares.${STACK_NAME}_backend-core.stripprefix.prefixes=/api/core'
         - 'traefik.http.routers.${STACK_NAME}_backend-core.entrypoints=https'
         - 'traefik.http.routers.${STACK_NAME}_backend-core.tls=true'
-        - 'traefik.http.routers.${STACK_NAME}_backend-core.rule=(Host(`${BASE_URL}`) || Host(`app.${BASE_URL}`)) && PathPrefix(`/api/core`)'
+        - 'traefik.http.routers.${STACK_NAME}_backend-core.tls.certresolver=https'
+        - 'traefik.http.routers.${STACK_NAME}_backend-core.rule=Host(`${BASE_URL}`) && PathPrefix(`/api/core`)'
         - 'traefik.http.routers.${STACK_NAME}_backend-core.middlewares=${STACK_NAME}_backend-core'
         - 'traefik.http.services.${STACK_NAME}_backend-core.loadbalancer.server.port=3000'
+        - 'traefik.swarm.lbswarm=true'
     networks:
       - global
     environment:
-      BASE_URL: '$BASE_URL'
-      S3_ACCESS_KEY: '$S3_ACCESS_KEY'
-      S3_SECRET_KEY: '$S3_SECRET_KEY'
-      S3_BUCKET: '$S3_BUCKET'
-      MONGODB_CONNECTION_STRING: '$MONGODB_CONNECTION_STRING'
-      MAIL_CONNECTION_STRING: '$MAIL_CONNECTION_STRING'
+      BASE_URL: '${BASE_URL}'
+      STACK_NAME: '${STACK_NAME}'
+      OIDC_AUTHORITY: '${OIDC_AUTHORITY}'
+      OIDC_CLIENT_ID: '${OIDC_CLIENT_ID}'
+      MONGODB_CONNECTION_STRING: '${MONGODB_CONNECTION_STRING}'
+      MAIL_CONNECTION_STRING: '${MAIL_CONNECTION_STRING}'
+      # USER: every signed-in user may create organisations (like flow). ADMIN: administrators only.
+      TENANT_CREATION: '${TENANT_CREATION:-USER}'

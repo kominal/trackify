@@ -1,7 +1,8 @@
+import { TECHNICAL_KEYS_TENANT_ENTITY, WithTenantEntity } from '@models/entity.model';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { IsEmail, IsEnum, IsString } from 'class-validator';
 import { Model } from 'mongoose';
-import { TenantEntity } from '../models/core/entity.model';
 
 export enum MembershipStatus {
   INVITED = 'INVITED',
@@ -10,30 +11,35 @@ export enum MembershipStatus {
 }
 export const MembershipStatusDecorator = ApiProperty({ enum: MembershipStatus, enumName: 'MembershipStatus' });
 
-@Schema()
-export class Membership extends TenantEntity {
-  @Prop() public userId: string;
-  @Prop() public email: string;
-  @Prop() public permissions: string[];
-  @Prop() public roles: string[];
-  @Prop() @MembershipStatusDecorator public status: MembershipStatus;
+export enum MembershipPermission {
+  // Organisation name.
+  MANAGE_TENANT = 'MANAGE_TENANT',
+  // Invite, edit and remove members.
+  MANAGE_MEMBERSHIPS = 'MANAGE_MEMBERSHIPS',
+  // Create, edit and delete clients, projects and tasks. Every member may track time on them.
+  MANAGE_CATALOG = 'MANAGE_CATALOG',
+}
+export const ALL_PERMISSIONS = Object.values(MembershipPermission);
+export const MembershipPermissionsDecorator = ApiProperty({ enum: MembershipPermission, enumName: 'MembershipPermission', isArray: true });
+
+@Schema({ collection: 'memberships' })
+export class MembershipEntity extends WithTenantEntity {
+  @Prop() @IsString() public userId: string;
+  @Prop() @IsEmail() public email: string;
+  @Prop() @IsEnum(MembershipPermission, { each: true }) @MembershipPermissionsDecorator public permissions: MembershipPermission[];
+  @Prop() @IsEnum(MembershipStatus) @MembershipStatusDecorator public status: MembershipStatus;
 }
 
-export type MembershipModel = Model<Membership>;
-
-export const MembershipSchema = SchemaFactory.createForClass(Membership)
-  .index({ tenantId: 1 })
-  .index({ tenantId: 1, uuid: 1 }, { unique: true })
-  .index({ tenantId: 1, userId: 1 }, { unique: true });
+export const MembershipSchema = SchemaFactory.createForClass(MembershipEntity).index({ tenantId: 1, uuid: 1 }, { unique: true }).index({ tenantId: 1, userId: 1 }).index({ userId: 1 }).index({ email: 1, status: 1 });
+export type MembershipModel = Model<MembershipEntity>;
 
 export class MembershipCreateRequest {
-  public email: string;
+  @IsEmail() public email: string;
+  @IsEnum(MembershipPermission, { each: true }) @MembershipPermissionsDecorator public permissions: MembershipPermission[];
 }
 
 export class MembershipUpdateRequest {
-  public permissions: string[];
+  @IsEnum(MembershipPermission, { each: true }) @MembershipPermissionsDecorator public permissions: MembershipPermission[];
 }
 
-export class MembershipPathParams {
-  public userId: string;
-}
+export class MembershipResponse extends OmitType(MembershipEntity, TECHNICAL_KEYS_TENANT_ENTITY) {}
