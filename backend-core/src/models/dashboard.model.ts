@@ -61,12 +61,20 @@ export class DashboardTimelineEntry {
   public running: boolean;
 }
 
+export class DashboardActivityDetour {
+  public app: string;
+  public seconds: number;
+}
+
+// One stretch of work in an app. Window title changes and short looks at other apps (see activityBlocks) do not end it.
 export class DashboardTimelineActivity {
   public app: string;
+  // The window title that was in focus longest.
   public title: string;
   @ApiProperty({ type: String, format: 'date-time' }) public start: Date;
   @ApiProperty({ type: String, format: 'date-time' }) public end: Date;
   public idle: boolean;
+  @ApiProperty({ type: [DashboardActivityDetour] }) public detours: DashboardActivityDetour[];
 }
 
 export class DashboardGap {

@@ -2400,6 +2400,18 @@
         },
         "required": ["start", "end", "taskId", "running"]
       },
+      "DashboardActivityDetour": {
+        "type": "object",
+        "properties": {
+          "app": {
+            "type": "string"
+          },
+          "seconds": {
+            "type": "number"
+          }
+        },
+        "required": ["app", "seconds"]
+      },
       "DashboardTimelineActivity": {
         "type": "object",
         "properties": {
@@ -2411,6 +2423,12 @@
             "type": "string",
             "format": "date-time"
           },
+          "detours": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardActivityDetour"
+            }
+          },
           "app": {
             "type": "string"
           },
@@ -2421,7 +2439,7 @@
             "type": "boolean"
           }
         },
-        "required": ["start", "end", "app", "title", "idle"]
+        "required": ["start", "end", "detours", "app", "title", "idle"]
       },
       "DashboardGap": {
         "type": "object",

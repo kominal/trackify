@@ -80,6 +80,24 @@ describe('DashboardService', () => {
     expect(dashboard.totals.hasActivity).toBe(false);
   });
 
+  it('folds a short look at another app into the timeline block but keeps the numbers exact', async () => {
+    await db.activityModel.create([
+      { userId: 'alice', app: 'Code', title: 'a.ts', idle: false, start: d('2026-11-24T08:00:00Z'), end: d('2026-11-24T08:30:00Z') },
+      { userId: 'alice', app: 'Code', title: 'b.ts', idle: false, start: d('2026-11-24T08:30:00Z'), end: d('2026-11-24T08:40:00Z') },
+      { userId: 'alice', app: 'chrome', title: 'docs', idle: false, start: d('2026-11-24T08:40:00Z'), end: d('2026-11-24T08:43:00Z') },
+      { userId: 'alice', app: 'Code', title: 'a.ts', idle: false, start: d('2026-11-24T08:43:00Z'), end: d('2026-11-24T09:00:00Z') },
+    ]);
+
+    const dashboard = await service.read(ALICE, { tenantId: TENANT }, { from: d('2026-11-23T23:00:00Z'), to: d('2026-11-24T23:00:00Z'), timeZone: 'Europe/Berlin' }, d('2026-11-24T20:00:00Z'));
+
+    expect(dashboard.activities).toEqual([{ app: 'Code', title: 'a.ts', idle: false, start: d('2026-11-24T08:00:00Z'), end: d('2026-11-24T09:00:00Z'), detours: [{ app: 'chrome', seconds: 180 }] }]);
+    expect(dashboard.totals.activeMinutes).toBe(60);
+    expect(dashboard.apps).toEqual([
+      { app: 'Code', minutes: 57, coveredMinutes: 0 },
+      { app: 'chrome', minutes: 3, coveredMinutes: 0 },
+    ]);
+  });
+
   it('refuses ranges that are empty or too long', async () => {
     await expect(service.read(ALICE, { tenantId: TENANT }, { from: d('2026-11-24T00:00:00Z'), to: d('2026-11-24T00:00:00Z') })).rejects.toThrow('exception.invalidRange');
     await expect(service.read(ALICE, { tenantId: TENANT }, { from: d('2026-01-01T00:00:00Z'), to: d('2026-11-24T00:00:00Z') })).rejects.toThrow('exception.invalidRange');

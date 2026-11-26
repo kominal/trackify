@@ -2,6 +2,7 @@ import { ActivityEntity, ActivityModel } from '@entities/activity.entity';
 import { TaskEntity, TaskModel } from '@entities/task.entity';
 import { TimeEntryEntity, TimeEntryModel } from '@entities/time-entry.entity';
 import { TrackingSessionEntity, TrackingSessionModel } from '@entities/tracking-session.entity';
+import { activityBlocks } from '@helpers/activity-block.helper';
 import { UserContext } from '@helpers/context.decorator';
 import { clip, duration, intersect, Interval, MINUTE_MS, minutes, subtract, union } from '@helpers/interval.helper';
 import { addDays, daysBetween, isValidTimeZone, startOfDay } from '@helpers/time-zone.helper';
@@ -101,7 +102,8 @@ export class DashboardService {
       projects: this.projects(entries, projectOf),
       apps: this.apps(clippedActivities, tracked),
       entries: entries.map(({ uuid, taskId, start, end, running }) => ({ uuid, taskId, start: new Date(start), end: new Date(end), running })),
-      activities: clippedActivities.map(({ app, title, start, end, idle }) => ({ app, title, start: new Date(start), end: new Date(end), idle })),
+      // The timeline gets calmed-down blocks (short detours folded in); every number above counts the exact segments.
+      activities: activityBlocks(clippedActivities).map((block) => ({ ...block, start: new Date(block.start), end: new Date(block.end) })),
       gaps: gaps.map(({ start, end }) => ({ start: new Date(start), end: new Date(end) })),
     };
   }

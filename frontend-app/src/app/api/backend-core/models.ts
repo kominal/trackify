@@ -9,6 +9,7 @@ export type { ClientEntity } from './models/client-entity';
 export type { ClientRequest } from './models/client-request';
 export { Color } from './models/color';
 export type { Dashboard } from './models/dashboard';
+export type { DashboardActivityDetour } from './models/dashboard-activity-detour';
 export type { DashboardAppTotal } from './models/dashboard-app-total';
 export type { DashboardDay } from './models/dashboard-day';
 export type { DashboardGap } from './models/dashboard-gap';
