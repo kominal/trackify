@@ -1,27 +1,40 @@
 @let hourInfo = hours();
+@let big = large();
+<ng-template #grid>
+  <div class="pointer-events-none absolute inset-0">
+    @for (line of gridLines(); track $index) {
+      <span class="absolute inset-y-0 w-px" [class]="line.major ? 'bg-surface-300 dark:bg-surface-600' : 'bg-surface-200 dark:bg-surface-700'" [style.left.%]="line.left"></span>
+    }
+  </div>
+</ng-template>
 <div class="flex flex-col gap-1">
-  <div class="text-muted-color grid grid-cols-[88px_minmax(0,1fr)_72px] items-end gap-3 text-xs">
+  <div class="text-muted-color grid grid-cols-[88px_minmax(0,1fr)_72px] items-end gap-3" [class]="big ? 'text-sm' : 'text-xs'">
     <span></span>
-    <div class="relative h-4">
+    <div class="relative" [class]="big ? 'h-5' : 'h-4'">
       @for (hour of hourInfo.ticks; track hour; let index = $index) {
-        <span class="absolute -translate-x-1/2 tabular-nums" [style.left.%]="(index / (hourInfo.ticks.length - 1)) * 100">{{ hour }}</span>
+        <span class="absolute -translate-x-1/2 tabular-nums" [style.left.%]="(index / (hourInfo.ticks.length - 1)) * 100">{{ big ? hour.toString().padStart(2, '0') + ':00' : hour }}</span>
       }
     </div>
     <span></span>
   </div>
   @for (row of rows(); track row.day) {
-    <div class="grid grid-cols-[88px_minmax(0,1fr)_72px] items-center gap-3 py-1" [attr.data-testid]="'timeline-row-' + row.day">
-      <div class="flex flex-col leading-tight">
-        <span class="font-medium">{{ row.date | date: 'EEE' }}</span>
-        <span class="text-muted-color text-xs">{{ row.date | date: 'dd.MM.' }}</span>
-      </div>
-      <div class="relative flex flex-col gap-0.5">
-        <div class="pointer-events-none absolute inset-0">
-          @for (hour of hourInfo.ticks; track hour; let index = $index) {
-            <span class="bg-surface-200 dark:bg-surface-700 absolute inset-y-0 w-px" [style.left.%]="(index / (hourInfo.ticks.length - 1)) * 100"></span>
-          }
+    <div class="grid grid-cols-[88px_minmax(0,1fr)_72px] gap-3" [class]="big ? 'py-2' : 'items-center py-1'" [attr.data-testid]="'timeline-row-' + row.day">
+      @if (big) {
+        <!-- The page title already names the day, so the lanes are named instead. -->
+        <div class="text-muted-color flex flex-col gap-6 text-sm">
+          <span class="flex h-20 items-center">{{ 'dashboard.legendTracked' | translate }}</span>
+          <span class="flex h-12 items-center">{{ 'dashboard.legendActivity' | translate }}</span>
         </div>
-        <div class="bg-surface-100 dark:bg-surface-800 relative h-7 rounded">
+      } @else {
+        <div class="flex flex-col leading-tight">
+          <span class="font-medium">{{ row.date | date: 'EEE' }}</span>
+          <span class="text-muted-color text-xs">{{ row.date | date: 'dd.MM.' }}</span>
+        </div>
+      }
+      <div class="relative flex flex-col" [class]="big ? 'gap-6' : 'gap-1'">
+        <ng-container [ngTemplateOutlet]="grid" />
+        <div class="bg-surface-100 dark:bg-surface-800 relative rounded" [class]="big ? 'h-20' : 'h-8'" [attr.data-testid]="'timeline-tracked'">
+          <ng-container [ngTemplateOutlet]="grid" />
           @for (gap of row.gaps; track $index) {
             <button
               type="button"
@@ -35,21 +48,45 @@
             ></button>
           }
           @for (bar of row.entries; track $index) {
-            <div class="absolute inset-y-0 rounded-sm" [class.running-bar]="bar.running" [style.left.%]="bar.left" [style.width.%]="bar.width" [style.background]="bar.color" [pTooltip]="bar.tooltip" tooltipPosition="top"></div>
+            <div class="absolute inset-y-0 flex items-center overflow-hidden rounded-sm" [class.running-bar]="bar.running" [style.left.%]="bar.left" [style.width.%]="bar.width" [style.background]="bar.color" [pTooltip]="bar.tooltip" tooltipPosition="top">
+              @if (big && bar.width >= labelMinWidth) {
+                <span class="truncate px-2 text-base font-medium" [style.color]="bar.text">{{ bar.label }}</span>
+              }
+            </div>
           }
         </div>
-        <div class="bg-surface-100 dark:bg-surface-800 relative h-2.5 rounded">
+        <div class="bg-surface-100 dark:bg-surface-800 relative rounded" [class]="big ? 'h-12' : 'h-4'" [attr.data-testid]="'timeline-activity'">
+          <ng-container [ngTemplateOutlet]="grid" />
           @for (bar of row.activities; track $index) {
-            <div class="absolute inset-y-0" [style.left.%]="bar.left" [style.width.%]="bar.width" [style.background]="bar.color" [pTooltip]="bar.tooltip" tooltipPosition="bottom"></div>
+            <div
+              class="border-surface-50 dark:border-surface-900 absolute inset-y-0 flex items-center overflow-hidden"
+              [class.border-l]="big"
+              [style.left.%]="bar.left"
+              [style.width.%]="bar.width"
+              [style.background]="bar.color"
+              [pTooltip]="bar.detours ? bar.tooltip + '\n' + ('dashboard.including' | translate: { apps: bar.detours }) : bar.tooltip"
+              tooltipPosition="bottom"
+            >
+              @if (big && bar.width >= labelMinWidth) {
+                <span class="truncate px-2 text-sm" [style.color]="bar.text">{{ bar.label }}</span>
+              }
+            </div>
           }
         </div>
       </div>
-      <div class="flex flex-col items-end leading-tight">
-        <span class="font-semibold tabular-nums">{{ formatMinutes(row.trackedMinutes) }}</span>
-        @if (row.activeMinutes > 0) {
-          <span class="text-muted-color text-xs tabular-nums">{{ formatMinutes(row.activeMinutes) }}</span>
-        }
-      </div>
+      @if (big) {
+        <div class="flex flex-col items-end gap-6 tabular-nums">
+          <span class="flex h-20 items-center text-base font-semibold">{{ formatMinutes(row.trackedMinutes) }}</span>
+          <span class="text-muted-color flex h-12 items-center text-sm">{{ row.activeMinutes > 0 ? formatMinutes(row.activeMinutes) : '' }}</span>
+        </div>
+      } @else {
+        <div class="flex flex-col items-end leading-tight">
+          <span class="font-semibold tabular-nums">{{ formatMinutes(row.trackedMinutes) }}</span>
+          @if (row.activeMinutes > 0) {
+            <span class="text-muted-color text-xs tabular-nums">{{ formatMinutes(row.activeMinutes) }}</span>
+          }
+        </div>
+      }
     </div>
   } @empty {
     <div class="text-muted-color py-8 text-center">{{ 'dashboard.noData' | translate }}</div>

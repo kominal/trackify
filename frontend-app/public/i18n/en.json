@@ -200,7 +200,8 @@
     "clickToBook": "Click to book this time",
     "legendTracked": "Tracked",
     "legendActivity": "PC activity",
-    "legendUntracked": "PC used, not tracked"
+    "legendUntracked": "PC used, not tracked",
+    "including": "Including: {{apps}}"
   },
   "preferences": {
     "general": "General",

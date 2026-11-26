@@ -200,7 +200,8 @@
     "clickToBook": "Klicken, um diese Zeit nachzutragen",
     "legendTracked": "Erfasst",
     "legendActivity": "PC-Aktivität",
-    "legendUntracked": "PC benutzt, nicht erfasst"
+    "legendUntracked": "PC benutzt, nicht erfasst",
+    "including": "Darin: {{apps}}"
   },
   "preferences": {
     "general": "Allgemein",

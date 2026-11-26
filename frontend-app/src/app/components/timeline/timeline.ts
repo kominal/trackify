@@ -1,7 +1,7 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { Dashboard, DashboardGap } from '@api/models';
-import { colorOf } from '@constants/colors';
+import { colorOf, textOn } from '@constants/colors';
 import { formatMinutes, minutesBetween } from '@helpers/duration';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Catalog } from '@services/catalog.service';
@@ -14,9 +14,23 @@ interface Bar {
   left: number;
   width: number;
   color: string;
+  // Text colour that is readable on `color`.
+  text: string;
+  // Written into the bar on the single-day view, where bars are wide enough for it.
+  label: string;
   tooltip: string;
   running?: boolean;
+  // Apps looked at for a moment inside an activity block ("chrome 0:03 h, Slack 0:01 h").
+  detours?: string;
 }
+
+interface GridLine {
+  left: number;
+  major: boolean;
+}
+
+// Bars narrower than this share of the lane stay without a label.
+const LABEL_MIN_WIDTH = 2.5;
 
 interface GapBar {
   left: number;
@@ -37,9 +51,10 @@ interface Row {
 
 // One row per day with two lanes: tracked time (task colours) above, PC activity (by app) below.
 // Untracked PC use is hatched on the tracked lane; clicking it offers to book that stretch.
+// A single day gets a large layout: higher lanes further apart, half-hour lines and names inside the bars.
 @Component({
   selector: 'app-timeline',
-  imports: [TooltipModule, DatePipe, TranslatePipe],
+  imports: [TooltipModule, DatePipe, NgTemplateOutlet, TranslatePipe],
   templateUrl: './timeline.html',
   changeDetection: ChangeDetectionStrategy.Eager,
 })
@@ -50,6 +65,9 @@ export class Timeline {
   public readonly gapClick = output<DashboardGap>();
 
   protected readonly formatMinutes = formatMinutes;
+  protected readonly labelMinWidth = LABEL_MIN_WIDTH;
+
+  protected readonly large = computed(() => this.dashboard().days.length === 1);
 
   // Hours shown: what the data spans, at least 08–18, rounded to whole hours.
   protected readonly hours = computed(() => {
@@ -68,6 +86,12 @@ export class Timeline {
       }
     }
     return { first, last, ticks: Array.from({ length: last - first + 1 }, (_, index) => first + index) };
+  });
+
+  protected readonly gridLines = computed((): GridLine[] => {
+    const { first, last } = this.hours();
+    const steps = (last - first) * (this.large() ? 2 : 1);
+    return Array.from({ length: steps + 1 }, (_, index) => ({ left: (index / steps) * 100, major: !this.large() || index % 2 === 0 }));
   });
 
   protected readonly rows = computed((): Row[] => {
@@ -94,11 +118,14 @@ export class Timeline {
             return [];
           }
           const info = catalog.taskInfo.get(entry.taskId);
+          const color = colorOf(info?.task.color ?? info?.project?.color, this.dark());
           return [
             {
               ...position,
               running: entry.running,
-              color: colorOf(info?.task.color ?? info?.project?.color, this.dark()),
+              color,
+              text: textOn(color),
+              label: info?.task.name ?? '?',
               tooltip: `${info?.task.name ?? '?'} · ${info?.project?.name ?? ''}\n${this.time(entry.start)} – ${this.time(entry.end)} (${formatMinutes(minutesBetween(entry.start, entry.end))})`,
             },
           ];
@@ -107,7 +134,24 @@ export class Timeline {
           .filter(({ idle }) => !idle)
           .flatMap((activity): Bar[] => {
             const position = place(activity.start, activity.end);
-            return position ? [{ ...position, color: appColors.get(activity.app) ?? '#999', tooltip: `${activity.app}\n${activity.title}\n${this.time(activity.start)} – ${this.time(activity.end)}` }] : [];
+            if (!position) {
+              return [];
+            }
+            const color = appColors.get(activity.app) ?? '#999999';
+            const detours = activity.detours
+              .filter(({ seconds }) => seconds >= 30)
+              .map(({ app, seconds }) => `${app} ${formatMinutes(seconds / 60)}`)
+              .join(', ');
+            return [
+              {
+                ...position,
+                color,
+                text: textOn(color),
+                label: activity.app,
+                tooltip: `${activity.app}\n${activity.title}\n${this.time(activity.start)} – ${this.time(activity.end)} (${formatMinutes(minutesBetween(activity.start, activity.end))})`,
+                detours: detours || undefined,
+              },
+            ];
           });
         const gaps = dashboard.gaps.flatMap((gap): GapBar[] => {
           const position = place(gap.start, gap.end);

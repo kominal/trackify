@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { formatMinutes } from '@helpers/duration';
 import { loaded } from '@helpers/loaded.helper';
 import { background, queryDate } from '@helpers/util';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ApplicationStateService } from '@services/application-state.service';
+import { ApplicationStateService, DashboardPreset } from '@services/application-state.service';
 import { CatalogService } from '@services/catalog.service';
 import { NativeService } from '@services/native.service';
 import { TenantService } from '@services/tenant.service';
@@ -28,7 +28,9 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { map } from 'rxjs';
 
-type Preset = 'day' | 'week' | 'month' | 'custom';
+type Preset = DashboardPreset | 'custom';
+
+const REMEMBERED_PRESETS: DashboardPreset[] = ['day', 'week', 'month'];
 
 interface Range {
   from: Date;
@@ -50,7 +52,8 @@ function formatDay(date: Date): string {
   imports: [ButtonModule, SelectButtonModule, DatePickerModule, FormsModule, TranslatePipe, DatePipe, DecimalPipe, TooltipModule, SkeletonModule, Message, Timeline, DaysChart],
   templateUrl: './dashboard.page.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  host: { class: 'scroll-page' },
+  // The timeline profits from every pixel, so this page uses the full window width.
+  host: { class: 'scroll-page max-w-none!' },
 })
 export class DashboardPage {
   private readonly route = inject(ActivatedRoute);
@@ -71,13 +74,15 @@ export class DashboardPage {
   ];
 
   // The range lives in the URL (?preset=week&from=2026-11-23), so it survives reloads and can be shared.
+  // Opened without one (the menu link), the dashboard continues where it was left.
   protected readonly range = toSignal(
     this.route.queryParamMap.pipe(
       map((params): Range => {
-        const preset = (params.get('preset') as Preset | null) ?? 'week';
-        const from = parseDay(params.get('from'));
+        const query = params.has('preset') ? { preset: params.get('preset'), from: params.get('from'), to: params.get('to') } : this.remembered();
+        const preset = (query.preset as Preset | null) ?? 'week';
+        const from = parseDay(query.from ?? null);
         if (preset === 'custom') {
-          const to = parseDay(params.get('to'));
+          const to = parseDay(query.to ?? null);
           if (from && to && to >= from) {
             return { preset, from, to: addLocalDays(to, 1) };
           }
@@ -96,6 +101,19 @@ export class DashboardPage {
     ),
     { requireSync: true },
   );
+
+  public constructor() {
+    effect(() => {
+      const { preset, from, to } = this.range();
+      const params: Record<string, string> = { preset, from: formatDay(from) };
+      if (preset === 'custom') {
+        params['to'] = formatDay(addLocalDays(to, -1));
+      } else {
+        this.applicationStateService.formElement.controls.dashboardPreset.setValue(preset);
+      }
+      this.applicationStateService.dashboardRange = { params, storedOn: formatDay(new Date()) };
+    });
+  }
 
   private readonly reload = signal(0);
   private readonly dashboard = loaded(
@@ -149,6 +167,15 @@ export class DashboardPage {
     const total = data?.totals.activeMinutes || 1;
     return (data?.apps ?? []).map((app) => ({ ...app, share: (app.minutes / total) * 100, coverage: app.minutes > 0 ? (app.coveredMinutes / app.minutes) * 100 : 0 }));
   });
+
+  private remembered(): { preset: string; from?: string; to?: string } {
+    const { dashboardRange, formElement } = this.applicationStateService;
+    if (dashboardRange?.storedOn === formatDay(new Date())) {
+      return dashboardRange.params as { preset: string; from?: string; to?: string };
+    }
+    const preset = formElement.controls.dashboardPreset.value;
+    return { preset: REMEMBERED_PRESETS.includes(preset) ? preset : 'week' };
+  }
 
   protected selectPreset(preset: Preset): void {
     void this.router.navigate([], { queryParams: { preset, from: formatDay(new Date()) }, replaceUrl: true });

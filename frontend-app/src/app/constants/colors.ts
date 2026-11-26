@@ -25,3 +25,14 @@ export function colorOf(color: Color | undefined, dark: boolean): string {
   const tone = COLORS[color ?? Color.Gray];
   return dark ? tone.dark : tone.light;
 }
+
+// Text colour that stays readable on the given background (#rrggbb): dark on light fills, white on dark ones.
+export function textOn(background: string): string {
+  const [red, green, blue] = [1, 3, 5].map((index) => {
+    const channel = parseInt(background.slice(index, index + 2), 16) / 255;
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  // Whichever of white and near-black has the higher contrast ratio against the fill.
+  return 1.05 / (luminance + 0.05) >= (luminance + 0.05) / 0.06 ? '#ffffff' : '#18181b';
+}

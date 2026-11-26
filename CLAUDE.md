@@ -30,9 +30,15 @@ The architecture follows `sentry`, which follows `flow`:
 - **`DashboardService`.** Computes everything the dashboard shows for the signed-in user, in the requested time zone:
   - totals, per day, per project/task, per app;
   - coverage (active PC time ∩ tracked time);
-  - untracked gaps of at least 5 minutes.
+  - untracked gaps of at least 5 minutes;
+  - the timeline's activity blocks (`helpers/activity-block.helper.ts`): one block per stretch of work in an app. Title changes never cut a block, and a look at other apps for less than 5 minutes followed by a return stays inside it as a "detour". Idle time and unrecorded stretches always end a block. Only the timeline is smoothed this way; totals, coverage, gaps and the app list count the exact segments, and the stored activity is never changed.
   - `helpers/interval.helper.ts` and `helpers/time-zone.helper.ts` hold the interval and local-midnight math.
 - **Permissions (`MembershipPermission`).** `MANAGE_TENANT`, `MANAGE_MEMBERSHIPS`, `MANAGE_CATALOG`, enforced by `@Permissions(...)` in `TenantGuard`. Admins are the Keycloak client role `administrator`.
+
+## Dashboard (frontend)
+
+- The range lives in the URL (`?preset=day&from=…`). Opened without one (the menu link), the page restores the range it showed last (kept in memory for the same day) or at least the last preset (`dashboardPreset` in `ApplicationStateService`, localStorage).
+- `components/timeline` has two layouts: compact rows for several days, and a large one for a single day (higher lanes, half-hour lines, names inside the bars). The dashboard is the only page that uses the full window width.
 
 ## Desktop app (`desktop-app/`)
 
